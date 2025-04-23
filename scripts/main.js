@@ -3,6 +3,170 @@
  * Oyun başlangıcı ve genel kontroller
  */
 
+// Oyuncu ve bot yıldız sayıları - global değişkenler
+let oyuncuYildizSayisi = 0;
+let bot1YildizSayisi = 0;
+let bot2YildizSayisi = 0;
+let bot3YildizSayisi = 0;
+
+// Ana ekranlar arası geçiş fonksiyonları - global scope
+function oyunuBaslat() {
+    console.log("Oyun başlatılıyor...");
+    // Ana menüyü gizle
+    document.getElementById('menu-screen').classList.add('gizli');
+    
+    // Oyun ekranını göster
+    document.getElementById('oyun-screen').classList.remove('gizli');
+    
+    // Test amaçlı kartları oluştur
+    testKartlariOlustur();
+    
+    // Durum mesajını güncelle
+    document.getElementById('durum-mesaji').textContent = 'Oyun başladı! Sıra sizde.';
+}
+
+function ayarlarEkraniniGoster() {
+    console.log("Ayarlar ekranı gösteriliyor...");
+    // Ana menüyü gizle
+    document.getElementById('menu-screen').classList.add('gizli');
+    
+    // Ayarlar ekranını göster
+    document.getElementById('ayarlar-screen').classList.remove('gizli');
+}
+
+function ayarlarEkraniniGizle() {
+    console.log("Ayarlar ekranı gizleniyor...");
+    // Ayarlar ekranını gizle
+    document.getElementById('ayarlar-screen').classList.add('gizli');
+    
+    // Ana menüyü göster
+    document.getElementById('menu-screen').classList.remove('gizli');
+}
+
+function ayarlariKaydet() {
+    console.log("Ayarlar kaydediliyor...");
+    // Form elemanlarından değerleri al
+    const botSayisi = document.getElementById('bot-sayisi').value;
+    const zorlukSeviyesi = document.getElementById('zorluk-seviyesi').value;
+    const sesEfektleri = document.getElementById('ses-efektleri').checked;
+    const muzik = document.getElementById('muzik').checked;
+    
+    // Ayarları localStorage'a kaydet
+    const ayarlar = {
+        botSayisi: botSayisi,
+        zorlukSeviyesi: zorlukSeviyesi,
+        sesEfektleri: sesEfektleri,
+        muzik: muzik
+    };
+    
+    localStorage.setItem('periyodikOkey_ayarlar', JSON.stringify(ayarlar));
+    
+    // Başarılı mesajı göster
+    bildirimGoster("Ayarlar kaydedildi!", "success");
+    
+    // Ayarlar ekranını kapat
+    ayarlarEkraniniGizle();
+}
+
+function ekranlariAyarla() {
+    console.log("Ekranlar ayarlanıyor...");
+    
+    // Ana menü butonları
+    const btnBasla = document.getElementById('btn-oyuna-basla');
+    if (btnBasla) {
+        btnBasla.addEventListener('click', oyunuBaslat);
+        console.log("Oyuna başla butonu ayarlandı");
+    } else {
+        console.error("'btn-oyuna-basla' bulunamadı");
+    }
+    
+    const btnAyarlar = document.getElementById('btn-ayarlar');
+    if (btnAyarlar) {
+        btnAyarlar.addEventListener('click', ayarlarEkraniniGoster);
+        console.log("Ayarlar butonu ayarlandı");
+    } else {
+        console.error("'btn-ayarlar' bulunamadı");
+    }
+    
+    // Ayarlar ekranı butonları
+    const btnAyarlarKaydet = document.getElementById('btn-ayarlar-kaydet');
+    if (btnAyarlarKaydet) {
+        btnAyarlarKaydet.addEventListener('click', ayarlariKaydet);
+        console.log("Ayarlar kaydet butonu ayarlandı");
+    } else {
+        console.error("'btn-ayarlar-kaydet' bulunamadı");
+    }
+    
+    const btnAyarlarIptal = document.getElementById('btn-ayarlar-iptal');
+    if (btnAyarlarIptal) {
+        btnAyarlarIptal.addEventListener('click', ayarlarEkraniniGizle);
+        console.log("Ayarlar iptal butonu ayarlandı");
+    } else {
+        console.error("'btn-ayarlar-iptal' bulunamadı");
+    }
+    
+    // Oyun sonu ekranı butonları
+    const btnYeniOyun = document.getElementById('btn-yeni-oyun');
+    if (btnYeniOyun) {
+        btnYeniOyun.addEventListener('click', () => {
+            console.log("Yeni oyun butonu tıklandı");
+            // Oyun sonu ekranını gizle
+            document.getElementById('oyun-sonu-screen').classList.add('gizli');
+            
+            // Yeni oyun başlat
+            // Tüm puanları ve yıldızları sıfırla
+            document.getElementById('oyuncu-puan').textContent = '0';
+            document.getElementById('bot1-puan').textContent = '0';
+            document.getElementById('bot2-puan').textContent = '0';
+            document.getElementById('bot3-puan').textContent = '0';
+            
+            oyuncuYildizSayisi = 0;
+            bot1YildizSayisi = 0;
+            bot2YildizSayisi = 0;
+            bot3YildizSayisi = 0;
+            
+            yildizlariGuncelle();
+            
+            // Kart dağıtma animasyonuyla yeni oyuna başla
+            yeniTurBaslat();
+            
+            // Oyun ekranını göster
+            document.getElementById('oyun-screen').classList.remove('gizli');
+        });
+        console.log("Yeni oyun butonu ayarlandı");
+    } else {
+        console.error("'btn-yeni-oyun' bulunamadı");
+    }
+    
+    const btnAnaMenu = document.getElementById('btn-ana-menu');
+    if (btnAnaMenu) {
+        btnAnaMenu.addEventListener('click', () => {
+            console.log("Ana menü butonu tıklandı");
+            // Oyun sonu ekranını gizle
+            document.getElementById('oyun-sonu-screen').classList.add('gizli');
+            
+            // Tüm puanları ve yıldızları sıfırla
+            document.getElementById('oyuncu-puan').textContent = '0';
+            document.getElementById('bot1-puan').textContent = '0';
+            document.getElementById('bot2-puan').textContent = '0';
+            document.getElementById('bot3-puan').textContent = '0';
+            
+            oyuncuYildizSayisi = 0;
+            bot1YildizSayisi = 0;
+            bot2YildizSayisi = 0;
+            bot3YildizSayisi = 0;
+            
+            yildizlariGuncelle();
+            
+            // Ana menüyü göster
+            document.getElementById('menu-screen').classList.remove('gizli');
+        });
+        console.log("Ana menü butonu ayarlandı");
+    } else {
+        console.error("'btn-ana-menu' bulunamadı");
+    }
+}
+
 // Sayfa tam olarak yüklendiğinde başla
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM yüklendi, oyun başlatılıyor...");
@@ -43,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Oyun başlamadan önce ayarları uygula
     function oyunAyarlariniUygula() {
-        // Kayıtlı ayarları yükle
+    // Kayıtlı ayarları yükle
         const ayarlar = JSON.parse(localStorage.getItem('periyodikOkey_ayarlar') || '{}');
         
         // Bot sayısını ayarla (varsayılan: 3)
@@ -69,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Zorluk seviyesini global değişkene ata
         window.ZORLUK_SEVIYESI = zorlukSeviyesi;
         
-        return {
+            return {
             botSayisi: botSayisi,
             zorlukSeviyesi: zorlukSeviyesi
         };
@@ -1266,7 +1430,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const yeniKart = elementKartiOlusturDOM(element, 1, jokerMi);
                             
                             // Açık kart alanına kartı ekle
-                            const acikKartAlani = document.querySelector('.acik-kart-alani');
+            const acikKartAlani = document.querySelector('.acik-kart-alani');
                             acikKartAlani.innerHTML = ''; // Temizle
                             acikKartAlani.appendChild(yeniKart);
                             
@@ -1275,11 +1439,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             bildirimGoster(`Bot ${botSayisi} açık kart alanına kart bıraktı: ${kartTipi}`, "info");
                             
                             // Tur oyuncuya geçiyor
-                            setTimeout(() => {
+            setTimeout(() => {
                                 durumMesaji.textContent = 'Sizin sıranız. Kart çekin veya açık kartı alın.';
-                                turBaslat();
+                turBaslat();
                             }, 1000);
-                        } else {
+        } else {
                             // Normal hamlesine devam et - kart ver
                             if (botKartlari && botKartlari.children.length > 0) {
                                 // Botun bir kartını azalt
@@ -1903,121 +2067,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         console.log("Oynanmış kartlar güncellendi. Toplam:", oynanmisKartlar.length);
-    }
-
-    /**
-     * Oyun ekranlarını ve butonlarını ayarlar
-     */
-    function ekranlariAyarla() {
-        // Ana menü butonları
-        document.getElementById('btn-basla').addEventListener('click', oyunuBaslat);
-        document.getElementById('btn-ayarlar').addEventListener('click', ayarlarEkraniniGoster);
-        
-        // Ayarlar ekranı butonları
-        document.getElementById('btn-ayarlar-kaydet').addEventListener('click', ayarlariKaydet);
-        document.getElementById('btn-ayarlar-iptal').addEventListener('click', ayarlarEkraniniGizle);
-        
-        // Oyun sonu ekranı butonları
-        document.getElementById('btn-yeni-oyun').addEventListener('click', () => {
-            // Oyun sonu ekranını gizle
-            document.getElementById('oyun-sonu-screen').classList.add('gizli');
-            
-            // Yeni oyun başlat
-            // Tüm puanları ve yıldızları sıfırla
-            document.getElementById('oyuncu-puan').textContent = '0';
-            document.getElementById('bot1-puan').textContent = '0';
-            document.getElementById('bot2-puan').textContent = '0';
-            document.getElementById('bot3-puan').textContent = '0';
-            
-            oyuncuYildizSayisi = 0;
-            bot1YildizSayisi = 0;
-            bot2YildizSayisi = 0;
-            bot3YildizSayisi = 0;
-            
-            yildizlariGuncelle();
-            
-            // Kart dağıtma animasyonuyla yeni oyuna başla
-            yeniTurBaslat();
-            
-            // Oyun ekranını göster
-            document.getElementById('oyun-screen').classList.remove('gizli');
-        });
-        
-        document.getElementById('btn-ana-menu').addEventListener('click', () => {
-            // Oyun sonu ekranını gizle
-            document.getElementById('oyun-sonu-screen').classList.add('gizli');
-            
-            // Tüm puanları ve yıldızları sıfırla
-            document.getElementById('oyuncu-puan').textContent = '0';
-            document.getElementById('bot1-puan').textContent = '0';
-            document.getElementById('bot2-puan').textContent = '0';
-            document.getElementById('bot3-puan').textContent = '0';
-            
-            oyuncuYildizSayisi = 0;
-            bot1YildizSayisi = 0;
-            bot2YildizSayisi = 0;
-            bot3YildizSayisi = 0;
-            
-            yildizlariGuncelle();
-            
-            // Ana menüyü göster
-            document.getElementById('menu-screen').classList.remove('gizli');
-        });
-    }
-
-    /**
-     * Yıldız kazanma bildirimi gösterir
-     * @param {string} mesaj - Gösterilecek mesaj
-     * @param {string} oyuncu - Yıldız kazanan oyuncu ('oyuncu', 'bot1', 'bot2', 'bot3')
-     * @returns {Promise} - Bildirim kapandığında çözülen promise
-     */
-    function yildizKazanmaBildirimiGoster(mesaj, oyuncu) {
-        return new Promise((resolve) => {
-            // Bildirim konteynerini oluştur
-            const bildirimKonteyner = document.createElement('div');
-            bildirimKonteyner.className = 'yildiz-bildirimi';
-            
-            // Büyük yıldız oluştur
-            const buyukYildiz = document.createElement('div');
-            buyukYildiz.className = 'buyuk-yildiz';
-            buyukYildiz.innerHTML = '★';
-            
-            // Mesaj oluştur
-            const bildirimMesaj = document.createElement('div');
-            bildirimMesaj.className = 'bildirim-mesaj';
-            bildirimMesaj.textContent = mesaj;
-            
-            // Kaç yıldız olduğunu göster
-            let yildizSayisi = 0;
-            if (oyuncu === 'oyuncu') yildizSayisi = oyuncuYildizSayisi + 1;
-            else if (oyuncu === 'bot1') yildizSayisi = bot1YildizSayisi + 1;
-            else if (oyuncu === 'bot2') yildizSayisi = bot2YildizSayisi + 1;
-            else if (oyuncu === 'bot3') yildizSayisi = bot3YildizSayisi + 1;
-            
-            const bildirimYildizSayisi = document.createElement('div');
-            bildirimYildizSayisi.className = 'bildirim-yildiz-sayisi';
-            bildirimYildizSayisi.textContent = `Toplam Yıldız: ${yildizSayisi}`;
-            
-            // Elementleri konteyner'a ekle
-            bildirimKonteyner.appendChild(bildirimMesaj);
-            bildirimKonteyner.appendChild(buyukYildiz);
-            bildirimKonteyner.appendChild(bildirimYildizSayisi);
-            
-            // Sayfaya ekle
-            document.body.appendChild(bildirimKonteyner);
-            
-            // 3 saniye sonra kapat
-            setTimeout(() => {
-                // Kapanma animasyonu
-                bildirimKonteyner.style.opacity = '0';
-                bildirimKonteyner.style.transform = 'translate(-50%, -70%)';
-                
-                // Animasyon bittikten sonra elementi kaldır
-                setTimeout(() => {
-                    document.body.removeChild(bildirimKonteyner);
-                    resolve();
-                }, 500);
-            }, 3000);
-        });
     }
 }); 

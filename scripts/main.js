@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Kombinasyon alanını sürükleme hedefi yap
     function surukleHedefleriniAyarla() {
-        const kombinasyonIcerik = document.getElementById('kombinasyon-icerik');
+        const kombinasyonIcerik = document.getElementById('kombinasyon-canvas');
         if (kombinasyonIcerik) {
             kombinasyonIcerik.classList.add('surukle-hedef');
             kombinasyonIcerik.addEventListener('dragover', handleDragOver);
@@ -325,14 +325,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Örnek element verileri
         const elementler = ELEMENT_VERILERI.slice(0, 10);
         
-        // Deste
+        // Deste alanı
         const desteAlani = document.querySelector('.deste-alani');
+        desteAlani.innerHTML = ''; // İçeriği temizle
         const arkaYuzKart = document.createElement('div');
         arkaYuzKart.className = 'element-kart arka-yuz';
         desteAlani.appendChild(arkaYuzKart);
         
-        // Açık kart
+        // Açık kart alanı
         const acikKartAlani = document.querySelector('.acik-kart-alani');
+        acikKartAlani.innerHTML = ''; // İçeriği temizle
         const acikKart = elementKartiOlustur(elementler[0], 1);
         acikKartAlani.appendChild(acikKart);
         
@@ -341,44 +343,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const oyuncuKartlariDiv = document.createElement('div');
         oyuncuKartlariDiv.className = 'oyuncu-kartlari';
         oyuncuKartlariDiv.id = 'oyuncu-kartlari';
+        oyuncuAlani.innerHTML = ''; // İçeriği temizle
         
+        // İlk 10 elemandan kartlar oluştur, 5. kart joker olsun
         elementler.forEach((element, index) => {
-            const kart = elementKartiOlustur(element, 1, index === 5); // 5. kart joker
+            const kart = elementKartiOlustur(element, 1, index === 5);
             oyuncuKartlariDiv.appendChild(kart);
         });
         
         oyuncuAlani.appendChild(oyuncuKartlariDiv);
         
-        // Kombinasyon alanı - Sadece bir tane oluştur
-        const kombinasyonDiv = document.createElement('div');
-        kombinasyonDiv.id = 'kombinasyon-alani';
-        kombinasyonDiv.className = 'kombinasyon-alani';
-        
-        const kombinasyonBaslik = document.createElement('div');
-        kombinasyonBaslik.className = 'kombinasyon-baslik';
-        kombinasyonBaslik.textContent = 'Kombinasyon Alanı';
-        
-        const kombinasyonIcerik = document.createElement('div');
-        kombinasyonIcerik.className = 'kombinasyon-icerik surukle-hedef';
-        kombinasyonIcerik.id = 'kombinasyon-icerik';
-        
-        kombinasyonDiv.appendChild(kombinasyonBaslik);
-        kombinasyonDiv.appendChild(kombinasyonIcerik);
-        
-        // Kombinasyon alanını ekle
-        const oyunAlani = document.querySelector('.oyun-alani');
-        oyunAlani.insertBefore(kombinasyonDiv, oyuncuAlani);
+        // HTML'de var olan kombinasyon alanını bul ve sürükleme hedefi olarak işaretle
+        const kombinasyonAlani = document.getElementById('kombinasyon-alani');
+        if (kombinasyonAlani) {
+            const kombinasyonIcerik = kombinasyonAlani.querySelector('.kombinasyon-icerik');
+            if (kombinasyonIcerik) {
+                kombinasyonIcerik.classList.add('surukle-hedef');
+            }
+        }
         
         // Bot kartlarını göster (kapalı olarak)
         document.querySelectorAll('.bot-kartlar').forEach(botAlani => {
+            botAlani.innerHTML = ''; // İçeriği temizle
             for (let i = 0; i < 7; i++) {
-                const kapalıKart = document.createElement('div');
-                kapalıKart.className = 'element-kart arka-yuz';
-                kapalıKart.style.width = '20px'; // Daha küçük göster
-                kapalıKart.style.height = '30px';
-                kapalıKart.style.margin = '2px';
-                kapalıKart.style.display = 'inline-block';
-                botAlani.appendChild(kapalıKart);
+                const kapaliKart = document.createElement('div');
+                kapaliKart.className = 'element-kart arka-yuz';
+                kapaliKart.style.width = '20px'; // Daha küçük göster
+                kapaliKart.style.height = '30px';
+                kapaliKart.style.margin = '2px';
+                kapaliKart.style.display = 'inline-block';
+                botAlani.appendChild(kapaliKart);
             }
         });
         

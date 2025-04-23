@@ -440,3 +440,38 @@ h2 {
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+/* Puan animasyonu */
+@keyframes puanDegisimi {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
+
+.puan-degisti {
+    animation: puanDegisimi 0.5s ease-in-out;
+}
+
+/* Oyuncu ve bot puanları için gelişmiş stiller */
+.oyuncu-puan, .bot-puan {
+    font-weight: bold;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    min-width: 30px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.oyuncu-puan {
+    font-size: 20px;
+    color: #ffd700; /* Altın rengi */
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.bot-puan {
+    font-size: 16px;
+    color: #ff9900; /* Turuncu */
+}

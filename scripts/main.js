@@ -197,11 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
         isim.textContent = joker ? 'JOKER' : element.isim;
         kart.appendChild(isim);
         
-        // Grup-Periyot
+        // Grup-Periyot - Daha açık ve belirgin yap
         if (!joker) {
             const grupPeriyot = document.createElement('div');
             grupPeriyot.className = 'grup-periyot';
-            grupPeriyot.textContent = `G:${element.grup} P:${element.periyot}`;
+            grupPeriyot.innerHTML = `<strong>G:</strong>${element.grup} <strong>P:</strong>${element.periyot}`;
             kart.appendChild(grupPeriyot);
         }
         
@@ -245,6 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/html', this.innerHTML);
+        
+        // Kartın kaynağını belirle - kombinasyon alanından mı oyuncu kartlarından mı
+        const parent = this.parentElement;
+        this.dataset.kaynak = parent.id || parent.className;
     }
     
     function handleDragEnd(e) {
@@ -272,7 +276,24 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
         
         if (suruklenenKart !== this && this.classList.contains('surukle-hedef')) {
-            this.appendChild(suruklenenKart);
+            // Eğer sürüklenen kart kombinasyon alanından oyuncu alanına taşınıyorsa
+            if (suruklenenKart.dataset.kaynak && 
+                suruklenenKart.dataset.kaynak.includes('kombinasyon') && 
+                this.id === 'oyuncu-kartlari') {
+                // Kartı oyuncu kartlarına geri al
+                this.appendChild(suruklenenKart);
+            } 
+            // Eğer sürüklenen kart oyuncu alanından kombinasyon alanına taşınıyorsa
+            else if (suruklenenKart.dataset.kaynak && 
+                    !suruklenenKart.dataset.kaynak.includes('kombinasyon') && 
+                    this.classList.contains('kombinasyon-icerik')) {
+                // Kartı kombinasyon alanına taşı
+                this.appendChild(suruklenenKart);
+            }
+            // Eğer aynı alan içinde taşınıyorsa (sıralama için)
+            else if (this.classList.contains('surukle-hedef')) {
+                this.appendChild(suruklenenKart);
+            }
         }
         
         return false;
@@ -280,13 +301,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Kombinasyon alanını sürükleme hedefi yap
     function surukleHedefleriniAyarla() {
-        const kombinasyonAlani = document.getElementById('kombinasyon-alani');
-        if (kombinasyonAlani) {
-            kombinasyonAlani.classList.add('surukle-hedef');
-            kombinasyonAlani.addEventListener('dragover', handleDragOver);
-            kombinasyonAlani.addEventListener('dragenter', handleDragEnter);
-            kombinasyonAlani.addEventListener('dragleave', handleDragLeave);
-            kombinasyonAlani.addEventListener('drop', handleDrop);
+        const kombinasyonIcerik = document.getElementById('kombinasyon-icerik');
+        if (kombinasyonIcerik) {
+            kombinasyonIcerik.classList.add('surukle-hedef');
+            kombinasyonIcerik.addEventListener('dragover', handleDragOver);
+            kombinasyonIcerik.addEventListener('dragenter', handleDragEnter);
+            kombinasyonIcerik.addEventListener('dragleave', handleDragLeave);
+            kombinasyonIcerik.addEventListener('drop', handleDrop);
         }
         
         const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
@@ -328,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         oyuncuAlani.appendChild(oyuncuKartlariDiv);
         
-        // Kombinasyon alanı - Container oluştur
+        // Kombinasyon alanı - Sadece bir tane oluştur
         const kombinasyonDiv = document.createElement('div');
         kombinasyonDiv.id = 'kombinasyon-alani';
         kombinasyonDiv.className = 'kombinasyon-alani';
@@ -338,7 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
         kombinasyonBaslik.textContent = 'Kombinasyon Alanı';
         
         const kombinasyonIcerik = document.createElement('div');
-        kombinasyonIcerik.className = 'kombinasyon-icerik';
+        kombinasyonIcerik.className = 'kombinasyon-icerik surukle-hedef';
+        kombinasyonIcerik.id = 'kombinasyon-icerik';
         
         kombinasyonDiv.appendChild(kombinasyonBaslik);
         kombinasyonDiv.appendChild(kombinasyonIcerik);

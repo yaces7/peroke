@@ -389,7 +389,6 @@ h2 {
 /* Bildirim stilleri */
 .bildirim {
     position: fixed;
-    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 20px;
@@ -399,6 +398,11 @@ h2 {
     color: #000000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s ease;
+    margin-bottom: 10px;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .bildirim-success {
@@ -419,6 +423,39 @@ h2 {
 .bildirim-info {
     background-color: #b3e0ff; /* Açık mavi */
     border-left: 5px solid #17a2b8;
+}
+
+/* Sabit puan göstergesi */
+.sabit-puan {
+    background-color: rgba(25, 118, 210, 0.8);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 16px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    z-index: 50;
+}
+
+.sabit-puan-deger {
+    color: #ffd700;
+    font-size: 18px;
+}
+
+/* Puan değişimi animasyonu sabit puan için de geçerli */
+.sabit-puan-deger.puan-degisti {
+    animation: puanDegisimi 0.5s ease-in-out;
+    color: #ffff00;
+    text-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
 }
 
 @keyframes fadeIn {

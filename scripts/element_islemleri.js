@@ -19,97 +19,175 @@ const ELEMENT_VERILERI = [
 ];
 
 /**
- * CSV verisini parse ederek element verilerini döndürür
- * @param {string} csvVerisi - CSV formatında element verileri
- * @return {Array} İşlenmiş element verileri dizisi veya varsayılan veriler
+ * CSV dosyasından elementleri yükler
+ * @param {string} csvData - CSV formatında element verileri
+ * @returns {Array} - İşlenmiş element nesneleri dizisi
  */
-function csvDosyasindanElementleriYukle(csvVerisi) {
-    const satirlar = csvVerisi.split('\n');
-    const baslikSatiri = satirlar[0].split(',');
+function csvDosyasindanElementleriYukle(csvData) {
+    // CSV boş ise varsayılan verileri döndür
+    if (!csvData || csvData.trim() === '') {
+        console.warn('CSV verisi boş veya tanımsız. Varsayılan veriler kullanılıyor.');
+        return ELEMENT_VERILERI;
+    }
+
+    const satirlar = csvData.trim().split('\n');
+    if (satirlar.length <= 1) {
+        console.warn('CSV verileri yetersiz. Varsayılan veriler kullanılıyor.');
+        return ELEMENT_VERILERI;
+    }
+
+    // İlk satır başlıkları içerir
+    const basliklar = satirlar[0].split(',').map(baslik => baslik.trim());
     
-    // CSV başlık indekslerini bul - 'elementler.csv' dosyasındaki başlıklara göre güncellendi
-    const indeksler = {
-        atom_no: baslikSatiri.indexOf('AtomNumarasi'),
-        sembol: baslikSatiri.indexOf('Sembol'),
-        isim: baslikSatiri.indexOf('Isim'),
-        grup_kodu: baslikSatiri.indexOf('GrupNumarasi'),
-        periyot: baslikSatiri.indexOf('PeriyotNumarasi'),
-        element_turu: baslikSatiri.indexOf('GrupTuru')
-    };
+    // Başlıkların doğruluğunu kontrol et
+    const atomNoIndeksi = basliklar.findIndex(b => b === 'AtomNumarasi');
+    const sembolIndeksi = basliklar.findIndex(b => b === 'Sembol');
+    const isimIndeksi = basliklar.findIndex(b => b === 'Isim');
+    const grupIndeksi = basliklar.findIndex(b => b === 'GrupNumarasi');
+    const periyotIndeksi = basliklar.findIndex(b => b === 'PeriyotNumarasi');
+    const atomKutlesiIndeksi = basliklar.findIndex(b => b === 'AtomKutlesi');
+    const elementTuruIndeksi = basliklar.findIndex(b => b === 'ElementTuru');
+    const renkIndeksi = basliklar.findIndex(b => b === 'Renk');
     
-    // Başlıkların doğru formatta olup olmadığını kontrol et
-    if (indeksler.atom_no === -1 || indeksler.sembol === -1 || 
-        indeksler.isim === -1 || indeksler.grup_kodu === -1 || 
-        indeksler.periyot === -1) {
-        console.error("CSV dosyası geçerli başlıklara sahip değil!");
-        return ELEMENT_VERILERI; // Varsayılan verileri döndür
+    // Gerekli başlıkların var olup olmadığını kontrol et
+    if (atomNoIndeksi === -1 || sembolIndeksi === -1 || isimIndeksi === -1 || 
+        grupIndeksi === -1 || periyotIndeksi === -1) {
+        console.warn('CSV dosyasında gerekli başlıklar eksik. Varsayılan veriler kullanılıyor.');
+        return ELEMENT_VERILERI;
     }
     
     const elementler = [];
     
-    // İlk satır başlık olduğu için 1'den başla
+    // İlk satırı atla (başlıklar)
     for (let i = 1; i < satirlar.length; i++) {
-        const satir = satirlar[i].trim();
-        if (!satir) continue; // Boş satırları atla
+        if (!satirlar[i].trim()) continue; // Boş satırları atla
         
-        const degerler = satir.split(',');
+        const veri = satirlar[i].split(',').map(deger => deger.trim());
         
-        // Değer sayısı doğru mu kontrol et
-        if (degerler.length < 5) {
-            console.warn(`Satır ${i} yeterli veri içermiyor, atlanıyor: ${satir}`);
+        // Minimum veri uzunluğunu kontrol et
+        if (veri.length < Math.max(atomNoIndeksi, sembolIndeksi, isimIndeksi, grupIndeksi, periyotIndeksi) + 1) {
+            console.warn(`Satır ${i+1}'de yetersiz veri. Bu satır atlanıyor.`);
             continue;
         }
         
-        // Grup kodunu (1A, 8A, 3B gibi) grup numarasına dönüştür
-        const grupKodu = degerler[indeksler.grup_kodu].trim();
-        let grupNo = 0;
-        
-        if (grupKodu.includes('A')) {
-            // A grubu: 1A-8A
-            grupNo = parseInt(grupKodu.replace('A', ''));
-            // 8A = 18. grup olarak değerlendir
-            if (grupNo === 8) grupNo = 18;
-        } else if (grupKodu.includes('B')) {
-            // B grubu: 3B-8B, 1B, 2B
-            const bGrupNo = parseInt(grupKodu.replace('B', ''));
-            if (bGrupNo >= 3 && bGrupNo <= 8) {
-                grupNo = bGrupNo + 2; // 3B=5, 4B=6, 5B=7, 6B=8, 7B=9, 8B=10
-            } else if (bGrupNo === 1) {
-                grupNo = 11; // 1B = 11. grup
-            } else if (bGrupNo === 2) {
-                grupNo = 12; // 2B = 12. grup
+        // Grup ve periyot verilerini doğru şekilde işle
+        let grupNumarasi = veri[grupIndeksi];
+        // Eğer grup A/B formatındaysa (örn: 1A, 8B), sayısal değere dönüştür
+        if (typeof grupNumarasi === 'string' && grupNumarasi.match(/^\d+[AB]$/)) {
+            const grupHarfi = grupNumarasi.slice(-1);
+            const grupRakam = parseInt(grupNumarasi.slice(0, -1));
+            
+            if (grupHarfi === 'A') {
+                // A grupları: 1A-8A doğrudan sayıya dönüştürülür
+                grupNumarasi = grupRakam;
+            } else if (grupHarfi === 'B') {
+                // B grupları: 1B-8B --> 3-12 arasında eşleştirilir
+                const bGrupHaritasi = {1: 3, 2: 4, 3: 5, 4: 6, 5: 7, 6: 8, 7: 9, 8: 10, 9: 11, 10: 12};
+                grupNumarasi = bGrupHaritasi[grupRakam] || grupRakam;
             }
-        } else if (grupKodu === 'LN' || grupKodu === 'AN') {
-            // Lantanitler ve Aktinitler için özel işlem
-            grupNo = 3; // 3. gruba dahil edilir
+        } else {
+            // Sayısal değer ise parseInt ile dönüştür
+            grupNumarasi = parseInt(grupNumarasi);
         }
         
+        let periyotNumarasi = parseInt(veri[periyotIndeksi]);
+        
+        // Atom numarası ve diğer sayısal değerleri kontrol et
+        const atomNo = parseInt(veri[atomNoIndeksi]);
+        if (isNaN(atomNo) || isNaN(grupNumarasi) || isNaN(periyotNumarasi)) {
+            console.warn(`Satır ${i+1}'de geçersiz sayısal değer. Bu satır atlanıyor.`);
+            continue;
+        }
+        
+        // Yeni element nesnesi oluştur
         const element = {
-            atom_no: parseInt(degerler[indeksler.atom_no]),
-            sembol: degerler[indeksler.sembol].trim(),
-            isim: degerler[indeksler.isim].trim(),
-            grup: grupNo,
-            periyot: parseInt(degerler[indeksler.periyot]),
-            element_turu: indeksler.element_turu !== -1 ? degerler[indeksler.element_turu].trim() : null
+            atom_no: atomNo,
+            sembol: veri[sembolIndeksi],
+            isim: veri[isimIndeksi],
+            grup: grupNumarasi,
+            periyot: periyotNumarasi
         };
         
-        // Geçerli veri kontrol et
-        if (isNaN(element.atom_no) || !element.sembol || !element.isim || 
-            element.grup === 0 || isNaN(element.periyot)) {
-            console.warn(`Satır ${i} geçersiz veri içeriyor, atlanıyor: ${satir}`);
-            continue;
+        // İsteğe bağlı alanları ekle
+        if (atomKutlesiIndeksi !== -1 && veri[atomKutlesiIndeksi]) {
+            element.atom_kutlesi = parseFloat(veri[atomKutlesiIndeksi]);
+        }
+        
+        if (elementTuruIndeksi !== -1 && veri[elementTuruIndeksi]) {
+            element.element_turu = veri[elementTuruIndeksi];
+        }
+        
+        if (renkIndeksi !== -1 && veri[renkIndeksi]) {
+            element.renk = veri[renkIndeksi];
         }
         
         elementler.push(element);
     }
     
-    return elementler.length > 0 ? elementler : ELEMENT_VERILERI;
+    if (elementler.length === 0) {
+        console.warn('CSV dosyasında geçerli element verisi bulunamadı. Varsayılan veriler kullanılıyor.');
+        return ELEMENT_VERILERI;
+    }
+    
+    console.log(`${elementler.length} element başarıyla yüklendi.`);
+    return elementler;
 }
 
 /**
- * Element verisinin renk kodunu döndürür
- * @param {Object|null} element - Element verisi
- * @return {string} Element türüne veya grubuna göre renk kodu, element null ise gri renk döndürür
+ * Element türüne göre renk kodu döndürür
+ * @param {string} elementTuru - Element türü
+ * @returns {string} - Renk kodu
+ */
+function elementTuruneGoreRenkGetir(elementTuru) {
+    const renkHaritasi = {
+        'Metal': '#b39ddb',         // Mor
+        'Ametal': '#81c784',        // Yeşil
+        'Yarı Metal': '#90caf9',    // Mavi
+        'Soy Gaz': '#ffcc80',       // Turuncu
+        'Halojen': '#ef9a9a',       // Kırmızı
+        'Alkali Metal': '#f48fb1',  // Pembe
+        'Toprak Alkali Metal': '#ffe082', // Sarı
+        'Lantanit': '#ce93d8',      // Açık mor
+        'Aktinit': '#9fa8da'        // Açık mavi
+    };
+    
+    return renkHaritasi[elementTuru] || '#CCCCCC'; // Varsayılan gri
+}
+
+/**
+ * Grup numarasına göre renk kodu döndürür
+ * @param {number} grupNo - Grup numarası
+ * @returns {string} - Renk kodu
+ */
+function grupNumarasinaGoreRenkGetir(grupNo) {
+    const grupRenkHaritasi = {
+        1: '#f48fb1',  // Grup 1 (1A) - Pembe - Alkali Metaller
+        2: '#ffe082',  // Grup 2 (2A) - Sarı - Toprak Alkali Metaller
+        3: '#c5cae9',  // Grup 3 (3B) - Açık mavi
+        4: '#b39ddb',  // Grup 4 (4B) - Mor
+        5: '#9fa8da',  // Grup 5 (5B) - Açık mavi
+        6: '#90caf9',  // Grup 6 (6B) - Mavi
+        7: '#81d4fa',  // Grup 7 (7B) - Açık mavi
+        8: '#80deea',  // Grup 8 (8B) - Turkuaz
+        9: '#80cbc4',  // Grup 9 (8B) - Açık yeşil
+        10: '#a5d6a7', // Grup 10 (8B) - Yeşil
+        11: '#c5e1a5', // Grup 11 (1B) - Açık yeşil
+        12: '#e6ee9c', // Grup 12 (2B) - Sarımsı yeşil
+        13: '#fff59d', // Grup 13 (3A) - Açık sarı
+        14: '#ffe082', // Grup 14 (4A) - Sarı
+        15: '#ffcc80', // Grup 15 (5A) - Turuncu
+        16: '#ffab91', // Grup 16 (6A) - Turuncu kırmızı
+        17: '#ef9a9a', // Grup 17 (7A) - Kırmızı - Halojenler
+        18: '#ffcc80'  // Grup 18 (8A) - Turuncu - Soy Gazlar
+    };
+    
+    return grupRenkHaritasi[grupNo] || '#CCCCCC'; // Varsayılan gri
+}
+
+/**
+ * Element nesnesine göre renk kodu döndürür
+ * @param {Object} element - Element nesnesi
+ * @returns {string} - Renk kodu
  */
 function elementRengiGetir(element) {
     // Element null veya undefined ise varsayılan renk döndür
@@ -117,53 +195,23 @@ function elementRengiGetir(element) {
         return '#CCCCCC'; // Varsayılan gri
     }
     
-    // Element türü varsa, türe göre renk döndür
+    // Eğer elementin kendi renk kodu varsa, onu kullan
+    if (element.renk) {
+        return element.renk;
+    }
+    
+    // Eğer elementin türü tanımlıysa, tür rengini kullan
     if (element.element_turu) {
         return elementTuruneGoreRenkGetir(element.element_turu);
     }
     
-    // Element türü belirtilmemişse, gruba göre renk döndür
-    return grupNumarasinaGoreRenkGetir(element.grup);
-}
-
-/**
- * Grup numarasına göre renk kodu döndürür
- * @param {number|null} grupNo - Element grup numarası
- * @return {string} Grup numarasına göre renk kodu, grup no geçersizse gri renk döndürür
- */
-function grupNumarasinaGoreRenkGetir(grupNo) {
-    // Grup numarası null, undefined veya geçersiz ise
-    if (!grupNo || isNaN(grupNo)) {
-        return '#CCCCCC'; // Varsayılan gri
+    // Son olarak grup numarasına göre renk belirle
+    if (element.grup) {
+        return grupNumarasinaGoreRenkGetir(element.grup);
     }
     
-    // Grup numarasına göre renk ata (varsayılan renkler)
-    const grupRenkleri = {
-        1: '#FF6B6B',   // Grup 1 (Alkali Metaller)
-        2: '#FFA06B',   // Grup 2 (Toprak Alkali Metaller)
-        3: '#FFD06B',   // Grup 3
-        4: '#FFEE6B',   // Grup 4
-        5: '#D0FF6B',   // Grup 5
-        6: '#A0FF6B',   // Grup 6
-        7: '#6BFF6B',   // Grup 7
-        8: '#6BFFA0',   // Grup 8
-        9: '#6BFFD0',   // Grup 9
-        10: '#6BD0FF',  // Grup 10
-        11: '#6BA0FF',  // Grup 11
-        12: '#6B6BFF',  // Grup 12
-        13: '#A06BFF',  // Grup 13
-        14: '#D06BFF',  // Grup 14
-        15: '#FF6BD0',  // Grup 15
-        16: '#FF6BA0',  // Grup 16 (Kalkojenler)
-        17: '#FF6B6B',  // Grup 17 (Halojenler)
-        18: '#6BD0FF'   // Grup 18 (Soy Gazlar)
-    };
-    
-    return grupRenkleri[grupNo] || '#CCCCCC'; // Varsayılan gri
+    return '#CCCCCC'; // Hiçbiri yoksa varsayılan gri
 }
-
-// Eski fonksiyon adını desteklemek için alias oluştur
-const grupRengiGetir = grupNumarasinaGoreRenkGetir;
 
 /**
  * Belirli bir gruba ait elementleri filtreler
@@ -205,39 +253,10 @@ function atomNoyaGoreElementBul(elementler, atomNo) {
     return elementler.find(element => element.atom_no === atomNo);
 }
 
-/**
- * Element türüne göre renk kodu döndürür
- * @param {string|null} elementTuru - Element türü (metal, ametal, yari_metal, vb.)
- * @return {string} Element türüne göre renk kodu, tür geçersizse gri renk döndürür
- */
-function elementTuruneGoreRenkGetir(elementTuru) {
-    // Element türü null veya undefined ise
-    if (!elementTuru) {
-        return '#CCCCCC'; // Varsayılan gri
-    }
-    
-    // Element türüne göre renk ata
-    const elementTurleriRenkleri = {
-        'metal': '#6B8EFF',          // Mavi-mor
-        'ametal': '#FF6B6B',         // Kırmızı
-        'yari_metal': '#FFD06B',     // Sarı
-        'soygaz': '#6BD0FF',         // Açık mavi
-        'halojen': '#FF6BA0',        // Pembe
-        'alkali_metal': '#FF8C6B',   // Turuncu
-        'toprak_alkali': '#FFA06B',  // Açık turuncu
-        'gecis_metali': '#A06BFF',   // Mor
-        'lantanit': '#D06BFF',       // Açık mor
-        'aktinit': '#FF6BD0'         // Pembe-mor
-    };
-    
-    return elementTurleriRenkleri[elementTuru] || '#CCCCCC'; // Varsayılan gri
-}
-
 // Tüm fonksiyonları global olarak erişilebilir yap
 window.ELEMENT_VERILERI = ELEMENT_VERILERI;
 window.csvDosyasindanElementleriYukle = csvDosyasindanElementleriYukle;
 window.elementRengiGetir = elementRengiGetir;
-window.grupRengiGetir = grupRengiGetir;
 window.grupNumarasinaGoreRenkGetir = grupNumarasinaGoreRenkGetir;
 window.grupElementleriniGetir = grupElementleriniGetir;
 window.periyotElementleriniGetir = periyotElementleriniGetir;

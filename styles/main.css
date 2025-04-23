@@ -5,17 +5,17 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f8ff;
-    color: #333;
+    background-color: #1a1a2e;
+    color: #e6e6e6;
 }
 
 #oyun-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #16213e;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Ekran Stilleri */
@@ -29,14 +29,14 @@ body {
 
 /* Başlık */
 h1 {
-    color: #1565c0;
+    color: #4cc9f0;
     text-align: center;
     font-size: 32px;
     margin-bottom: 20px;
 }
 
 h2 {
-    color: #0d47a1;
+    color: #4895ef;
     font-size: 24px;
     margin-top: 20px;
     margin-bottom: 15px;
@@ -88,13 +88,13 @@ h2 {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    background-color: #e3f2fd;
+    background-color: #0f3460;
     border-radius: 5px;
 }
 
 .durum-mesaji {
     font-weight: bold;
-    color: #0d47a1;
+    color: #4cc9f0;
 }
 
 /* Bot Alanları */
@@ -108,7 +108,7 @@ h2 {
     flex: 1;
     margin: 0 10px;
     padding: 10px;
-    background-color: #e8f5e9;
+    background-color: #1f4068;
     border-radius: 5px;
     text-align: center;
 }
@@ -145,26 +145,26 @@ h2 {
 
 /* Kombinasyon alanı */
 .kombinasyon-alani {
-    background-color: rgba(255, 248, 220, 0.7);
-    border: 2px solid #e9a14f;
+    background-color: rgba(31, 64, 104, 0.7);
+    border: 2px solid #4895ef;
     border-radius: 10px;
     padding: 10px;
     margin: 10px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .kombinasyon-baslik {
     font-weight: bold;
     margin-bottom: 5px;
     text-align: center;
-    color: #4d3800;
+    color: #4cc9f0;
 }
 
 .kombinasyon-icerik {
-    background-color: rgba(255, 248, 220, 0.5);
+    background-color: rgba(31, 64, 104, 0.5);
     min-height: 140px;
     border-radius: 5px;
-    border: 1px dashed #e9a14f;
+    border: 1px dashed #4895ef;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -176,7 +176,7 @@ h2 {
 /* Oyuncu Alanı */
 .oyuncu-alani {
     padding: 15px;
-    background-color: #e3f2fd;
+    background-color: #0f3460;
     border-radius: 8px;
     margin-top: 20px;
 }
@@ -195,7 +195,7 @@ h2 {
 /* Oyuncu kartları için özel stil */
 .oyuncu-kartlari {
     min-height: 120px;
-    background-color: rgba(230, 255, 230, 0.5);
+    background-color: rgba(31, 64, 104, 0.5);
     border-radius: 5px;
     padding: 10px;
     display: flex;
@@ -216,9 +216,9 @@ h2 {
     width: 70px;
     height: 100px;
     margin: 5px;
-    border: 1px solid #000;
+    border: 1px solid #4895ef;
     border-radius: 5px;
-    background-color: #ffffff;
+    background-color: #0f3460;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
@@ -226,8 +226,9 @@ h2 {
     padding: 5px;
     position: relative;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: #e6e6e6;
 }
 
 .element-kart:hover {
@@ -274,8 +275,8 @@ h2 {
 }
 
 .element-kart.arka-yuz {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    color: white;
+    background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+    color: #4cc9f0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -314,7 +315,7 @@ h2 {
     padding: 15px;
     border-radius: 10px;
     margin: 0 10px;
-    background-color: #f5f5f5;
+    background-color: #1f4068;
 }
 
 .istatistik-satir {
@@ -341,7 +342,7 @@ h2 {
 .sonuc-kutusu {
     text-align: center;
     padding: 20px;
-    background-color: #e8f5e9;
+    background-color: #1f4068;
     border-radius: 10px;
     margin: 20px 0;
 }

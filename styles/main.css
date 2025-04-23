@@ -105,24 +105,66 @@ h2 {
 }
 
 .bot-alani {
-    flex: 1;
-    margin: 0 10px;
-    padding: 10px;
-    background-color: #1f4068;
-    border-radius: 5px;
-    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 8px;
+    margin: 10px 0;
+    background-color: rgba(220, 220, 220, 0.8);
     position: relative;
-    padding-top: 40px; /* Konuşma balonu için yeterli alan */
+    transition: all 0.3s ease;
 }
 
-.bot-bilgi {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+/* Botların zorluk seviyelerine göre renk kodlaması */
+.bot-alani[data-zorluk="kolay"] {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
 }
 
+.bot-alani[data-zorluk="orta"] {
+    border-color: #FFC107;
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+.bot-alani[data-zorluk="zor"] {
+    border-color: #F44336;
+    box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
+}
+
+/* Bot ismi alanı */
 .bot-isim {
     font-weight: bold;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    display: inline-block;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Bot zorluk seviyesi etiketi */
+.bot-zorluk {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.bot-zorluk.kolay {
+    background-color: #4CAF50;
+}
+
+.bot-zorluk.orta {
+    background-color: #FFC107;
+    color: #333;
+}
+
+.bot-zorluk.zor {
+    background-color: #F44336;
 }
 
 /* Orta Alan */
@@ -623,4 +665,48 @@ h2 {
         opacity: 0;
         transform: translateX(-50%) translateY(-10px);
     }
+}
+
+/* Ayarlar ekranı stillerini güncelle */
+.bot-sayisi-secici, .zorluk-seviyesi-secici {
+    margin: 15px 0;
+}
+
+.secim-etiket {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+select, input[type="range"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.ayar-aciklama {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Ayarlar kaydet butonu */
+#btn-ayarlar-kaydet {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#btn-ayarlar-kaydet:hover {
+    background-color: #218838;
 }

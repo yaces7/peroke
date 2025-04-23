@@ -17,30 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
     
-    // Ses efektlerini yükle
-    const sesler = {
-        kartAl: new Audio("assets/sounds/kart_al.mp3"),
-        kartVer: new Audio("assets/sounds/kart_ver.mp3"),
-        kombinasyonGecerli: new Audio("assets/sounds/kombinasyon_gecerli.mp3"),
-        kombinasyonGecersiz: new Audio("assets/sounds/kombinasyon_gecersiz.mp3"),
-        oyunBasla: new Audio("assets/sounds/oyun_basla.mp3"),
-        oyunBitir: new Audio("assets/sounds/oyun_bitir.mp3")
-    };
+    // Alternatif ses yönetici oluştur (hiçbir ses dosyasını yükleme)
+    const sesYoneticisi = new SesYoneticisi();
     
-    // Ses efektlerini sustur (varsayılan olarak)
-    Object.values(sesler).forEach(ses => {
-        ses.volume = 0;
-    });
-    
-    // Ses çalma fonksiyonu
+    // Ses çalma fonksiyonu (devre dışı)
     function sesEfektiCal(sesAdi) {
-        const sesAyari = localStorage.getItem('periyodikOkey_sesEfektleri');
-        if (sesAyari !== 'false' && sesler[sesAdi]) {
-            sesler[sesAdi].volume = 0.3;
-            sesler[sesAdi].currentTime = 0;
-            sesler[sesAdi].play().catch(e => console.log("Ses çalma hatası:", e));
-        }
+        // Ses devre dışı, hiçbir şey yapma
+        console.log(`Ses efekti çalma devre dışı: ${sesAdi}`);
+        return false;
     }
+    
+    // Global sesCal fonksiyonu tanımla (oyun mekanikleri için)
+    window.sesCal = sesEfektiCal;
     
     // Kayıtlı ayarları yükle
     function ayarlariYukle() {
@@ -72,37 +60,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ayarları yükle
     ayarlariYukle();
     
-    // İstatistikleri yükle
     function istatistikleriYukle() {
         try {
             const istatistikler = JSON.parse(localStorage.getItem('periyodikOkey_istatistikler'));
             if (istatistikler) {
-                // İstatistik elementlerine atama
-                document.getElementById('toplam-oyun').textContent = istatistikler.toplamOyun || 0;
-                document.getElementById('kazanilan-oyun').textContent = istatistikler.kazanilanOyun || 0;
-                document.getElementById('kaybedilen-oyun').textContent = istatistikler.kaybedilenOyun || 0;
+                // İstatistikleri göster
+                document.getElementById('oyun-sayisi').innerText = istatistikler.oyunSayisi || 0;
+                document.getElementById('kazanma-sayisi').innerText = istatistikler.kazanmaSayisi || 0;
+                document.getElementById('kaybetme-sayisi').innerText = istatistikler.kaybetmeSayisi || 0;
+                document.getElementById('toplam-puan').innerText = istatistikler.toplamPuan || 0;
                 
-                // Kazanma oranı
-                const kazanmaOrani = istatistikler.toplamOyun > 0 
-                    ? Math.round((istatistikler.kazanilanOyun / istatistikler.toplamOyun) * 100) 
-                    : 0;
-                document.getElementById('kazanma-orani').textContent = `${kazanmaOrani}%`;
+                // Kazanma oranını hesapla
+                const toplamOyun = istatistikler.oyunSayisi || 0;
+                const kazanma = istatistikler.kazanmaSayisi || 0;
                 
-                // Puan istatistikleri
-                document.getElementById('en-yuksek-puan').textContent = istatistikler.enYuksekPuan || 0;
-                const ortalamaPuan = istatistikler.toplamOyun > 0 
-                    ? Math.round(istatistikler.toplamPuan / istatistikler.toplamOyun) 
-                    : 0;
-                document.getElementById('ortalama-puan').textContent = ortalamaPuan;
-                document.getElementById('toplam-puan').textContent = istatistikler.toplamPuan || 0;
+                let kazanmaOrani = 0;
+                if (toplamOyun > 0) {
+                    kazanmaOrani = Math.round((kazanma / toplamOyun) * 100);
+                }
                 
-                // En çok kullanılan element, grup ve periyot
-                document.getElementById('en-cok-element').textContent = 
-                    istatistikler.enCokKullanilanElement || '-';
-                document.getElementById('en-cok-grup').textContent = 
-                    istatistikler.enCokKullanilanGrup || '-';
-                document.getElementById('en-cok-periyot').textContent = 
-                    istatistikler.enCokKullanilanPeriyot || '-';
+                document.getElementById('kazanma-orani').innerText = kazanmaOrani + '%';
+                
+                // En yüksek skoru göster
+                document.getElementById('en-yuksek-skor').innerText = istatistikler.enYuksekSkor || 0;
             }
         } catch (error) {
             console.error("İstatistikler yüklenirken hata oluştu:", error);
@@ -137,9 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Oyuna başla butonu için ses efekti
+    // Oyuna başla butonu için ses efekti (devre dışı)
     document.getElementById('btn-oyuna-basla').addEventListener('click', () => {
-        sesEfektiCal('oyunBasla');
+        console.log("Oyun başlatılıyor...");
+        // Oyun ekranını göster
+        document.getElementById('menu-screen').classList.add('gizli');
+        document.getElementById('oyun-screen').classList.remove('gizli');
     });
     
     // Ayarlar değiştiğinde ses durumunu güncelle
@@ -199,6 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
         
+        // SesYoneticisi sınıfı yüklendi mi
+        if (typeof SesYoneticisi === 'undefined') {
+            console.error("SesYoneticisi sınıfı yüklenemedi!");
+            alert("Ses yöneticisi yüklenemedi! Lütfen sayfayı yenileyin.");
+            return false;
+        }
+        
         return true;
     }
     
@@ -206,6 +196,34 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!tanimlariKontrolEt()) {
         return;
     }
+    
+    // Ana menüdeki butonların işlevselliği
+    document.getElementById('btn-nasil-oynanir').addEventListener('click', () => {
+        document.getElementById('menu-screen').classList.add('gizli');
+        document.getElementById('nasil-oynanir-screen').classList.remove('gizli');
+    });
+    
+    document.getElementById('btn-istatistikler').addEventListener('click', () => {
+        document.getElementById('menu-screen').classList.add('gizli');
+        document.getElementById('istatistikler-screen').classList.remove('gizli');
+    });
+    
+    document.getElementById('btn-ayarlar').addEventListener('click', () => {
+        document.getElementById('menu-screen').classList.add('gizli');
+        document.getElementById('ayarlar-screen').classList.remove('gizli');
+    });
+    
+    // Ekranlardan ana menüye dönüş butonları
+    document.querySelectorAll('.btn-geri').forEach(buton => {
+        buton.addEventListener('click', () => {
+            // Tüm ekranları gizle
+            document.querySelectorAll('.ekran').forEach(ekran => {
+                ekran.classList.add('gizli');
+            });
+            // Ana menüyü göster
+            document.getElementById('menu-screen').classList.remove('gizli');
+        });
+    });
     
     console.log("Periyodik Okey oyunu hazır!");
 }); 

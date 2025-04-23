@@ -1,6 +1,6 @@
 /* Periyodik Okey - Ana CSS Dosyası */
 
-/* Temel stiller */
+/* Genel Stil Ayarları */
 * {
     margin: 0;
     padding: 0;
@@ -8,354 +8,309 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #2c3e50;
-    color: white;
-    line-height: 1.6;
-    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 #oyun-container {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-}
-
-.ekran {
     width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    transition: all 0.3s ease-in-out;
-}
-
-.gizli {
-    display: none;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 h1 {
-    font-size: 3rem;
-    margin-bottom: 2rem;
-    color: #3498db;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: #2c3e50;
+    margin-bottom: 30px;
 }
 
 h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: #2ecc71;
+    color: #3498db;
+    margin-bottom: 20px;
 }
 
 h3 {
-    font-size: 1.4rem;
-    margin-bottom: 0.8rem;
-    color: #f1c40f;
+    color: #2980b9;
+    margin-bottom: 15px;
 }
 
-p {
-    margin-bottom: 0.5rem;
-}
-
-button {
+.btn {
     background-color: #3498db;
     color: white;
     border: none;
-    padding: 12px 20px;
-    margin: 10px;
+    padding: 10px 20px;
+    margin: 5px;
     border-radius: 5px;
-    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    transition: all 0.3s ease;
 }
 
-button:hover {
+.btn:hover {
     background-color: #2980b9;
     transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.btn-mini {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin: 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-/* Ana menü stili */
+.btn-mini:hover {
+    background-color: #2980b9;
+}
+
+.gizli {
+    display: none !important;
+}
+
+/* Ekran Stilleri */
+.ekran {
+    padding: 20px;
+}
+
+/* Menü Ekranı */
 .menu-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 300px;
+    margin-top: 20px;
 }
 
-.menu-buttons button {
-    width: 100%;
-    margin: 8px 0;
-    padding: 15px;
-    font-size: 18px;
+.menu-buttons .btn {
+    min-width: 200px;
+    margin: 10px 0;
 }
 
-/* Ayarlar ekranı */
+/* Ayarlar Ekranı */
 .ayarlar-form {
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.form-group {
     margin-bottom: 20px;
 }
 
-.ayar-grup {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-.ayar-grup label {
-    font-size: 16px;
-}
-
-.ayar-grup select, .ayar-grup input {
+.form-group select,
+.form-group input[type="checkbox"] {
     padding: 8px;
-    width: 150px;
-    border-radius: 5px;
-    border: none;
+    width: 100%;
+    max-width: 300px;
 }
 
-/* Nasıl Oynanır ekranı */
-.kurallar {
-    background-color: rgba(0, 0, 0, 0.3);
+/* Nasıl Oynanır Ekranı */
+.kural-kutusu {
+    text-align: left;
+    max-width: 800px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 10px;
-    width: 700px;
-    max-height: 60vh;
-    overflow-y: auto;
-    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
 }
 
-.kurallar ul {
+.kural-kutusu ul,
+.kural-kutusu ol {
     margin-left: 20px;
     margin-bottom: 20px;
 }
 
-.kurallar li {
+.kural-kutusu li {
     margin-bottom: 10px;
 }
 
-/* İstatistikler ekranı */
+/* İstatistikler Ekranı */
 .istatistik-kutusu {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    border-radius: 10px;
-    width: 800px;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 800px;
+    margin: 0 auto 30px;
 }
 
 .istatistik-grup {
-    flex: 1;
-    padding: 0 15px;
-}
-
-/* Oyun ekranı */
-#game-screen {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-}
-
-.ust-bilgi {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 10px 20px;
-    background-color: rgba(0, 0, 0, 0.3);
-}
-
-.skor-tablosu {
-    min-width: 150px;
-}
-
-.oyun-durumu {
-    flex-grow: 1;
-    text-align: center;
-}
-
-.oyun-butonlari {
-    min-width: 150px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.oyun-alani {
-    flex-grow: 1;
-    position: relative;
-    overflow: hidden;
-}
-
-.bot-alani {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    padding: 10px;
-}
-
-#bot1-alani {
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 120px;
-    height: 400px;
-}
-
-#bot2-alani {
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 120px;
-}
-
-#bot3-alani {
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 120px;
-    height: 400px;
-}
-
-.orta-alan {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-}
-
-.deste, .acik-kart {
-    width: 80px;
-    height: 120px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.kombinasyon-alani {
-    position: absolute;
-    bottom: 160px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 150px;
-    background-color: rgba(52, 152, 219, 0.2);
-    border: 2px dashed #3498db;
-    border-radius: 10px;
-}
-
-.oyuncu-alani {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 800px;
-    height: 150px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-.kontroller {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    display: flex;
-    flex-direction: column;
-}
-
-.kontroller button {
-    margin: 5px;
-}
-
-/* Oyun sonu ekranı */
-.sonuc-kutusu {
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 30px;
-    border-radius: 10px;
-    width: 500px;
-    text-align: center;
+    min-width: 300px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
     margin-bottom: 20px;
 }
 
-.sonuc-detay {
-    margin-top: 20px;
-    font-size: 18px;
+.istatistik-satir {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
 }
 
-/* Responsive tasarım */
-@media (max-width: 1200px) {
+.istatistik-satir:last-child {
+    border-bottom: none;
+}
+
+/* Oyun Ekranı */
+.oyun-alani {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.ust-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+}
+
+.durum-mesaji {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.bot-alanlari {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.bot-alani {
+    width: 30%;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.bot-bilgi {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.bot-kartlar {
+    height: 30px;
+    background-color: #eee;
+    border-radius: 3px;
+}
+
+.orta-alan {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin-bottom: 20px;
+}
+
+.deste-alani, .acik-kart-alani {
+    text-align: center;
+}
+
+.kalan-kart {
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.kombinasyon-alani {
+    margin-bottom: 20px;
+}
+
+.kombinasyon-baslik {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#kombinasyon-canvas, #oyuncu-canvas {
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.oyuncu-bilgi {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.kontroller {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Oyun Sonu Ekranı */
+.sonuc-kutusu {
+    max-width: 500px;
+    margin: 0 auto 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.sonuc-detay {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.sonuc-detay p {
+    margin-bottom: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* Duyarlı Tasarım */
+@media (max-width: 768px) {
+    .oyun-container {
+        padding: 10px;
+    }
+    
     .istatistik-kutusu {
         flex-direction: column;
-        width: 90%;
     }
     
-    .istatistik-grup {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-    
-    .kurallar {
-        width: 90%;
-    }
-    
-    .ayarlar-form {
-        width: 90%;
-    }
-    
-    .oyuncu-alani, .kombinasyon-alani {
-        width: 90%;
-    }
-}
-
-@media (max-width: 768px) {
-    h1 {
-        font-size: 2rem;
-    }
-    
-    .ust-bilgi {
+    .bot-alanlari {
         flex-direction: column;
-        gap: 10px;
-    }
-    
-    .oyun-butonlari {
-        width: 100%;
-        justify-content: center;
     }
     
     .bot-alani {
-        padding: 5px;
+        width: 100%;
+        margin-bottom: 10px;
     }
     
-    #bot1-alani, #bot3-alani {
-        width: 80px;
-        height: 300px;
+    .orta-alan {
+        flex-direction: column;
+        align-items: center;
     }
     
-    #bot2-alani {
-        width: 300px;
-        height: 80px;
+    .kontroller {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
     }
 } 

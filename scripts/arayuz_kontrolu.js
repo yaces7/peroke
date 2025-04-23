@@ -8,6 +8,8 @@ class ArayuzKontrol {
      * Arayüz kontrolü yapıcı metodu
      */
     constructor() {
+        console.log("Arayüz kontrolü başlatılıyor...");
+        
         // DOM Elementleri
         this.ekranlar = {
             menu: document.getElementById('menu-screen'),
@@ -28,7 +30,7 @@ class ArayuzKontrol {
             ayarlarKaydet: document.getElementById('btn-ayarlar-kaydet'),
             ayarlarIptal: document.getElementById('btn-ayarlar-iptal'),
             
-            geriDon: document.getElementById('btn-geri-don'),
+            geriDon: document.querySelectorAll('.btn-geri'),
             
             istatistikSifirla: document.getElementById('btn-istatistik-sifirla'),
             istatistikGeri: document.getElementById('btn-istatistik-geri'),
@@ -95,14 +97,65 @@ class ArayuzKontrol {
         // Kombinasyon alanı
         this.kombinasyonKartlari = [];
         
+        // Hata kontrolü: Eksik elementleri kontrol et ve konsola uyarı ver
+        this._eksikElementleriKontrolEt();
+        
+        // CSS sınıfları
+        this.CSS_SINIFLAR = {
+            GIZLI: 'gizli',
+            AKTIF: 'aktif',
+            SECILI: 'secili',
+            DEVRE_DISI: 'devre-disi'
+        };
+        
         // Olay dinleyicilerini ekle
-        this.olayDinleyicileriniEkle();
+        this._olayDinleyicileriniEkle();
+        
+        // Kayıtlı ayarları yükle
+        this._ayarlariYukle();
+        
+        console.log("Arayüz kontrolü hazır.");
+    }
+    
+    /**
+     * Eksik elementleri kontrol eder ve konsola uyarı verir
+     * @private
+     */
+    _eksikElementleriKontrolEt() {
+        // Ekranları kontrol et
+        for (const [ekranAdi, ekranElementi] of Object.entries(this.ekranlar)) {
+            if (!ekranElementi) {
+                console.warn(`'${ekranAdi}' ekranı bulunamadı!`);
+            }
+        }
+        
+        // Butonları kontrol et
+        for (const [butonAdi, butonElementi] of Object.entries(this.butonlar)) {
+            if (!butonElementi && butonAdi !== 'geriDon') {
+                console.warn(`'${butonAdi}' butonu bulunamadı!`);
+            }
+        }
+        
+        // Form elementlerini kontrol et
+        for (const [formAdi, formElementi] of Object.entries(this.formElementleri)) {
+            if (!formElementi) {
+                console.warn(`'${formAdi}' form elementi bulunamadı!`);
+            }
+        }
+        
+        // Oyun elementlerini kontrol et
+        for (const [oyunElemaniAdi, oyunElemani] of Object.entries(this.oyunAlanlari)) {
+            if (!oyunElemani) {
+                console.warn(`'${oyunElemaniAdi}' oyun elemanı bulunamadı!`);
+            }
+        }
     }
     
     /**
      * Olay dinleyicilerini ekler
+     * @private
      */
-    olayDinleyicileriniEkle() {
+    _olayDinleyicileriniEkle() {
         // Menü butonları
         this.butonlar.oyunaBasla.addEventListener('click', () => this.oyunuBaslat());
         this.butonlar.nasilOynanir.addEventListener('click', () => this.ekraniGoster('nasilOynanir'));
@@ -115,7 +168,9 @@ class ArayuzKontrol {
         this.butonlar.ayarlarIptal.addEventListener('click', () => this.ekraniGoster('menu'));
         
         // Nasıl oynanır butonları
-        this.butonlar.geriDon.addEventListener('click', () => this.ekraniGoster('menu'));
+        this.butonlar.geriDon.forEach(buton => {
+            buton.addEventListener('click', () => this.ekraniGoster('menu'));
+        });
         
         // İstatistik butonları
         this.butonlar.istatistikSifirla.addEventListener('click', () => this.istatistikleriSifirla());
@@ -145,6 +200,41 @@ class ArayuzKontrol {
         
         // Pencere olayları
         window.addEventListener('resize', () => this.pencereYenidenBoyutlandirildi());
+    }
+    
+    /**
+     * Kayıtlı ayarları yükler
+     * @private
+     */
+    _ayarlariYukle() {
+        try {
+            const kayitliAyarlar = localStorage.getItem('periyodikOkey_ayarlar');
+            if (kayitliAyarlar) {
+                const ayarlar = JSON.parse(kayitliAyarlar);
+                
+                // Ayarları güncelle
+                this.ayarlar = { ...this.ayarlar, ...ayarlar };
+                
+                // Form elementlerini güncelle
+                if (this.formElementleri.botSayisi) {
+                    this.formElementleri.botSayisi.value = this.ayarlar.botSayisi;
+                }
+                
+                if (this.formElementleri.zorlukSeviyesi) {
+                    this.formElementleri.zorlukSeviyesi.value = this.ayarlar.zorlukSeviyesi;
+                }
+                
+                if (this.formElementleri.sesEfektleri) {
+                    this.formElementleri.sesEfektleri.checked = this.ayarlar.sesEfektleri;
+                }
+                
+                if (this.formElementleri.muzik) {
+                    this.formElementleri.muzik.checked = this.ayarlar.muzik;
+                }
+            }
+        } catch (error) {
+            console.error("Ayarlar yüklenirken hata oluştu:", error);
+        }
     }
     
     /**

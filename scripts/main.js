@@ -172,8 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Element kartı oluşturma fonksiyonu (DOM tabanlı)
-    function elementKartiOlustur(element, takim = 1, joker = false) {
+    // DOM tabanlı kart oluşturucu (sınıf kullanmadan doğrudan DOM elementleri oluşturur)
+    function elementKartiOlusturDOM(element, takim = 1, joker = false) {
         const kart = document.createElement('div');
         kart.className = 'element-kart';
         kart.setAttribute('draggable', 'true');
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Rastgele bir element seç
             const rastgeleIndeks = Math.floor(Math.random() * elementler.length);
-            const acikKart = elementKartiOlustur(elementler[rastgeleIndeks], 1);
+            const acikKart = elementKartiOlusturDOM(elementler[rastgeleIndeks], 1);
             acikKartAlani.appendChild(acikKart);
             
             // Oyuncu kartları - Container oluştur
@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Seçilen elementlerden kartları oluştur
             rastgeleElementIndeksler.forEach((indeks, i) => {
-                const kart = elementKartiOlustur(elementler[indeks], 1, i === 3); // 4. kart joker
+                const kart = elementKartiOlusturDOM(elementler[indeks], 1, i === 3); // 4. kart joker
                 oyuncuKartlariDiv.appendChild(kart);
             });
             
@@ -450,6 +450,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Kalan kart sayısını güncelle
             document.getElementById('kalan-kart').textContent = elementler.length - 8; // 7 oyuncu + 1 açık kart
+        }).catch(error => {
+            console.error("Element verileri yüklenirken hata oluştu:", error);
+            alert("Elementler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.");
         });
     }
     
@@ -601,7 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (oyuncuKartlari) {
                 // Rastgele bir element al
                 const randomIndex = Math.floor(Math.random() * yuklenenElementler.length);
-                const yeniKart = elementKartiOlustur(yuklenenElementler[randomIndex], 1);
+                const yeniKart = elementKartiOlusturDOM(yuklenenElementler[randomIndex], 1);
                 oyuncuKartlari.appendChild(yeniKart);
                 
                 // Kart çekme durumunu güncelle
@@ -615,6 +618,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     kalanKartSpan.textContent = kalanKart;
                 }
             }
+        }).catch(error => {
+            console.error("Desteden kart çekerken hata oluştu:", error);
+            alert("Kart çekilirken bir hata oluştu. Lütfen tekrar deneyin.");
         });
     });
     

@@ -1,97 +1,113 @@
 /**
  * Periyodik Okey - Ses Yöneticisi
- * Oyun seslerini yönetmek için kullanılan sınıf
+ * 
+ * Bu dosya, oyun içinde kullanılan ses efektlerini yönetmek için
+ * gerekli fonksiyonları içerir.
  */
 
 class SesYoneticisi {
-    /**
-     * Ses yöneticisi yapıcı metodu
-     */
     constructor() {
-        // Ses açık/kapalı durumu
-        this.sesEfektleriAcik = false;
-        this.muzikAcik = false;
+        // Ses efektleri nesnesi
+        this.sesler = {};
         
-        // Ses efektleri
-        this.sesEfektleri = {
-            kartAl: null,
-            kartKoy: null,
-            okey: null,
-            hata: null,
-            basari: null,
-            tur: null
-        };
+        // Ses ayarları
+        this.sesAktif = true;
+        this.sesSeviyesi = 0.5; // 0.0 - 1.0 arasında
         
-        // Arka plan müziği
-        this.muzik = null;
-        
-        console.log("Ses yöneticisi oluşturuldu");
+        // Ses efektlerini yükle
+        this.sesleriYukle();
     }
     
     /**
-     * Ses efektlerini yükler
+     * Oyun için gerekli ses efektlerini yükler
      */
     sesleriYukle() {
-        try {
-            // Burada normalde ses dosyaları yüklenirdi
-            // Şu an sadece log mesajı yazdırıyoruz
-            console.log("Ses dosyaları yükleniyor");
-            return true;
-        } catch (error) {
-            console.error("Ses dosyaları yüklenirken hata oluştu:", error);
+        // Sesler henüz gerçekten yüklenmeyecek, sadece yükleme simülasyonu yapılacak
+        const sesListesi = [
+            'kart_al',
+            'kart_ver',
+            'kart_sec',
+            'yeni_oyun',
+            'oyun_sonu',
+            'kombinasyon_basarili',
+            'kombinasyon_basarisiz',
+            'buton_tikla'
+        ];
+        
+        console.log('Ses efektleri hazırlanıyor...');
+        
+        // Sesleri yükleyemiyormuş gibi simüle et
+        sesListesi.forEach(sesAdi => {
+            this.sesler[sesAdi] = null;
+            console.log(`Ses efekti hazırlandı: ${sesAdi}`);
+        });
+        
+        console.log('Ses efektleri hazır!');
+    }
+    
+    /**
+     * Ses seviyesini ayarlar
+     * @param {number} seviye - 0.0 ile 1.0 arasında bir değer
+     */
+    sesSeviyesiAyarla(seviye) {
+        this.sesSeviyesi = Math.max(0, Math.min(1, seviye));
+        
+        // Tüm seslerin seviyesini güncelle (gerçek projede burada audio elementlerinin
+        // volume değerleri güncellenecek)
+        console.log(`Ses seviyesi ayarlandı: ${this.sesSeviyesi}`);
+    }
+    
+    /**
+     * Tüm sesleri açar veya kapatır
+     * @param {boolean} aktif - Seslerin açık/kapalı durumu
+     */
+    sesleriAcKapat(aktif) {
+        this.sesAktif = aktif;
+        console.log(`Sesler ${aktif ? 'açıldı' : 'kapatıldı'}`);
+    }
+    
+    /**
+     * Belirtilen ses efektini çalar
+     * @param {string} sesAdi - Çalınacak ses efektinin adı
+     * @param {boolean} dongu - Sesin döngüde çalınıp çalınmayacağı
+     * @returns {boolean} - Ses çalma işlemi başarılı mı?
+     */
+    sesCal(sesAdi, dongu = false) {
+        // Ses kapalıysa veya ses yüklenmemişse çalma
+        if (!this.sesAktif || !this.sesler[sesAdi]) {
+            console.log(`Ses çalınamadı: ${sesAdi}`);
             return false;
         }
-    }
-    
-    /**
-     * Ses efektlerini açar/kapatır
-     * @param {boolean} durum - Açık/kapalı durumu
-     */
-    sesEfektleriniAyarla(durum) {
-        this.sesEfektleriAcik = durum;
-        console.log("Ses efektleri " + (durum ? "açıldı" : "kapatıldı"));
-    }
-    
-    /**
-     * Müziği açar/kapatır
-     * @param {boolean} durum - Açık/kapalı durumu
-     */
-    muzigiAyarla(durum) {
-        this.muzikAcik = durum;
-        console.log("Müzik " + (durum ? "açıldı" : "kapatıldı"));
-    }
-    
-    /**
-     * Ses efekti çalar
-     * @param {string} sesAdi - Çalınacak ses efektinin adı
-     */
-    sesEfektiCal(sesAdi) {
-        if (!this.sesEfektleriAcik) return;
         
-        console.log(`Ses efekti çalınıyor: ${sesAdi}`);
-        // Burada normalde ses efekti çalınırdı
+        // Gerçek projede burada ses çalma kodları olacak
+        // Şimdilik sadece log mesajı yazdır
+        console.log(`Ses çalınıyor: ${sesAdi}, Döngü: ${dongu ? 'Evet' : 'Hayır'}`);
+        return true;
     }
     
     /**
-     * Arka plan müziğini çalar
+     * Belirtilen ses efektini durdurur
+     * @param {string} sesAdi - Durdurulacak ses efektinin adı
      */
-    muzigiCal() {
-        if (!this.muzikAcik) return;
+    sesDurdur(sesAdi) {
+        if (!this.sesler[sesAdi]) {
+            return;
+        }
         
-        console.log("Arka plan müziği çalınıyor");
-        // Burada normalde müzik çalınırdı
+        // Gerçek projede burada ses durdurma kodları olacak
+        console.log(`Ses durduruldu: ${sesAdi}`);
     }
     
     /**
-     * Arka plan müziğini durdurur
+     * Tüm sesleri durdurur
      */
-    muzigiDurdur() {
-        console.log("Arka plan müziği durduruldu");
-        // Burada normalde müzik durdurulurdu
+    tumSesleriDurdur() {
+        // Gerçek projede burada tüm sesleri durdurma kodları olacak
+        console.log('Tüm sesler durduruldu');
     }
 }
 
-// Global olarak erişime izin ver
+// Global scope'a SesYoneticisi sınıfını ekle
 window.SesYoneticisi = SesYoneticisi;
 
 // Node.js ortamında modül olarak dışa aktar

@@ -1,11 +1,12 @@
 /**
- * Periyodik Okey - Element Kartı Sınıfı
+ * Periyodik Okey - Kart Sınıfı
  * Oyunda kullanılan element kartlarını temsil eden sınıf
  */
 
-class ElementKarti {
+// Bu sınıf adını değiştirerek, main.js'de oluşabilecek çakışmaları önlüyoruz
+class ElementKartiSinifi {
     /**
-     * ElementKarti sınıfı yapıcı metodu
+     * ElementKartiSinifi sınıfı yapıcı metodu
      * @param {Object} element - Element verisi
      * @param {number} takim - Kartın takım numarası (1 veya 2)
      * @param {boolean} joker - Kartın joker olup olmadığı
@@ -249,43 +250,108 @@ class ElementKarti {
             
             // Joker kartı özel gösterimi
             if (this.joker) {
-                kartDiv.innerHTML = `
-                    <div style="position: absolute; top: 10px; right: 10px; font-weight: bold;">T${this.takim}</div>
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                        <div style="font-size: 60px; font-weight: bold;">J</div>
-                        <div style="font-size: 24px; font-weight: bold;">JOKER</div>
-                    </div>
-                `;
+                kartDiv.classList.add('joker');
+                
+                // Joker sembolü
+                const jokerSembol = document.createElement('div');
+                jokerSembol.className = 'joker-sembol';
+                jokerSembol.style.fontSize = '36px';
+                jokerSembol.style.fontWeight = 'bold';
+                jokerSembol.style.textAlign = 'center';
+                jokerSembol.style.marginTop = '40px';
+                jokerSembol.textContent = 'J';
+                
+                // Joker yazısı
+                const jokerYazi = document.createElement('div');
+                jokerYazi.className = 'joker-yazi';
+                jokerYazi.style.fontSize = '18px';
+                jokerYazi.style.fontWeight = 'bold';
+                jokerYazi.style.textAlign = 'center';
+                jokerYazi.style.marginTop = '20px';
+                jokerYazi.textContent = 'JOKER';
+                
+                kartDiv.appendChild(jokerSembol);
+                kartDiv.appendChild(jokerYazi);
             } else {
-                // Normal element kartı
-                kartDiv.innerHTML = `
-                    <div style="position: absolute; top: 10px; left: 10px; font-size: 16px;">${this.element.atom_no}</div>
-                    <div style="position: absolute; top: 10px; right: 10px; font-weight: bold;">T${this.takim}</div>
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); text-align: center;">
-                        <div style="font-size: 40px; font-weight: bold;">${this.element.sembol}</div>
-                        <div style="font-size: 18px;">${this.element.isim}</div>
-                        <div style="font-size: 14px; margin-top: 10px;">
-                            Grup: ${this.element.grup} - Periyot: ${this.element.periyot}
-                        </div>
-                    </div>
-                `;
+                // Normal element kartı içeriği
+                
+                // Atom numarası
+                const atomNo = document.createElement('div');
+                atomNo.className = 'atom-no';
+                atomNo.style.position = 'absolute';
+                atomNo.style.top = '5px';
+                atomNo.style.left = '5px';
+                atomNo.style.fontSize = '12px';
+                atomNo.textContent = this.element.atom_no;
+                
+                // Element sembolü
+                const sembol = document.createElement('div');
+                sembol.className = 'element-sembol';
+                sembol.style.fontSize = '36px';
+                sembol.style.fontWeight = 'bold';
+                sembol.style.textAlign = 'center';
+                sembol.style.marginTop = '30px';
+                sembol.textContent = this.element.sembol;
+                
+                // Element ismi
+                const isim = document.createElement('div');
+                isim.className = 'element-isim';
+                isim.style.fontSize = '14px';
+                isim.style.textAlign = 'center';
+                isim.style.marginTop = '10px';
+                isim.textContent = this.element.isim;
+                
+                // Grup ve periyot bilgisi
+                const grupPeriyot = document.createElement('div');
+                grupPeriyot.className = 'grup-periyot';
+                grupPeriyot.style.fontSize = '12px';
+                grupPeriyot.style.textAlign = 'center';
+                grupPeriyot.style.marginTop = '15px';
+                grupPeriyot.style.padding = '2px 5px';
+                grupPeriyot.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                grupPeriyot.style.borderRadius = '3px';
+                grupPeriyot.style.width = '80%';
+                grupPeriyot.style.margin = '15px auto 0';
+                
+                // Grup ve periyot değerlerini kontrol et
+                const grupDegeri = this.element.grup ? this.element.grup : "-";
+                const periyotDegeri = this.element.periyot ? this.element.periyot : "-";
+                
+                grupPeriyot.innerHTML = `<strong>Grup:</strong> ${grupDegeri} <strong>Periyot:</strong> ${periyotDegeri}`;
+                
+                // Takım bilgisi
+                const takimBilgisi = document.createElement('div');
+                takimBilgisi.className = 'takim';
+                takimBilgisi.style.position = 'absolute';
+                takimBilgisi.style.top = '5px';
+                takimBilgisi.style.right = '5px';
+                takimBilgisi.style.fontSize = '12px';
+                takimBilgisi.style.fontWeight = 'bold';
+                takimBilgisi.textContent = `T${this.takim}`;
+                
+                kartDiv.appendChild(atomNo);
+                kartDiv.appendChild(sembol);
+                kartDiv.appendChild(isim);
+                kartDiv.appendChild(grupPeriyot);
+                kartDiv.appendChild(takimBilgisi);
             }
         }
         
-        // Seçili ise özel efekt ekle
-        if (this.secili) {
-            kartDiv.classList.add('secili');
-            kartDiv.style.transform = 'translateY(-10px)';
-            kartDiv.style.boxShadow = '0 10px 20px rgba(0,0,0,0.3)';
+        // Element verilerini data özelliklerinde sakla (sürükleme vs. için)
+        if (!this.joker && this.element) {
+            kartDiv.dataset.atomNo = this.element.atom_no;
+            kartDiv.dataset.sembol = this.element.sembol;
+            kartDiv.dataset.grup = this.element.grup;
+            kartDiv.dataset.periyot = this.element.periyot;
         }
         
         return kartDiv;
     }
     
     /**
-     * İki kartın aynı element türüne sahip olup olmadığını kontrol eder
-     * @param {ElementKarti} digerKart - Karşılaştırılacak kart
-     * @return {boolean} Aynı element türüne sahipse true
+     * İki kartın aynı türde olup olmadığını kontrol eder
+     * @param {ElementKartiSinifi} digerKart - Karşılaştırılacak kart
+     * @return {boolean} Aynı türdeyse true
      */
     ayniTur(digerKart) {
         if (this.joker || digerKart.joker) return true;
@@ -294,9 +360,9 @@ class ElementKarti {
     }
     
     /**
-     * İki kartın aynı gruba sahip olup olmadığını kontrol eder
-     * @param {ElementKarti} digerKart - Karşılaştırılacak kart
-     * @return {boolean} Aynı grupta ise true
+     * İki kartın aynı grupta olup olmadığını kontrol eder
+     * @param {ElementKartiSinifi} digerKart - Karşılaştırılacak kart
+     * @return {boolean} Aynı gruptaysa true
      */
     ayniGrup(digerKart) {
         if (this.joker || digerKart.joker) return true;
@@ -305,9 +371,9 @@ class ElementKarti {
     }
     
     /**
-     * İki kartın aynı periyoda sahip olup olmadığını kontrol eder
-     * @param {ElementKarti} digerKart - Karşılaştırılacak kart
-     * @return {boolean} Aynı periyotta ise true
+     * İki kartın aynı periyotta olup olmadığını kontrol eder
+     * @param {ElementKartiSinifi} digerKart - Karşılaştırılacak kart
+     * @return {boolean} Aynı periyottaysa true
      */
     ayniPeriyot(digerKart) {
         if (this.joker || digerKart.joker) return true;
@@ -316,9 +382,9 @@ class ElementKarti {
     }
     
     /**
-     * İki kartın ardışık gruplarda olup olmadığını kontrol eder
-     * @param {ElementKarti} digerKart - Karşılaştırılacak kart
-     * @return {boolean} Ardışık gruplarda ise true
+     * İki kartın ardışık grupta olup olmadığını kontrol eder
+     * @param {ElementKartiSinifi} digerKart - Karşılaştırılacak kart
+     * @return {boolean} Ardışık gruptaysa true
      */
     ardisikGrup(digerKart) {
         if (this.joker || digerKart.joker) return true;
@@ -326,13 +392,15 @@ class ElementKarti {
         const grup1 = parseInt(this.element.grup);
         const grup2 = parseInt(digerKart.element.grup);
         
+        if (isNaN(grup1) || isNaN(grup2)) return false;
+        
         return Math.abs(grup1 - grup2) === 1;
     }
     
     /**
-     * İki kartın ardışık periyotlarda olup olmadığını kontrol eder
-     * @param {ElementKarti} digerKart - Karşılaştırılacak kart
-     * @return {boolean} Ardışık periyotlarda ise true
+     * İki kartın ardışık periyotta olup olmadığını kontrol eder
+     * @param {ElementKartiSinifi} digerKart - Karşılaştırılacak kart
+     * @return {boolean} Ardışık periyottaysa true
      */
     ardisikPeriyot(digerKart) {
         if (this.joker || digerKart.joker) return true;
@@ -340,46 +408,40 @@ class ElementKarti {
         const periyot1 = parseInt(this.element.periyot);
         const periyot2 = parseInt(digerKart.element.periyot);
         
+        if (isNaN(periyot1) || isNaN(periyot2)) return false;
+        
         return Math.abs(periyot1 - periyot2) === 1;
     }
     
     /**
-     * Belirtilen koordinatın kart üzerinde olup olmadığını kontrol eder
+     * Verilen (x,y) koordinatının kart içinde olup olmadığını kontrol eder
      * @param {number} mouseX - X koordinatı
      * @param {number} mouseY - Y koordinatı
-     * @return {boolean} Kart üzerinde mi
+     * @return {boolean} Koordinat kart içindeyse true
      */
     icerdeMi(mouseX, mouseY) {
-        return mouseX >= this.x && mouseX <= this.x + this.genislik &&
-               mouseY >= this.y && mouseY <= this.y + this.yukseklik;
+        return (
+            mouseX >= this.x &&
+            mouseX <= this.x + this.genislik &&
+            mouseY >= this.y &&
+            mouseY <= this.y + this.yukseklik
+        );
     }
     
     /**
-     * Kartın JSON temsilini döndürür
-     * @return {Object} Kartın JSON temsili
+     * Kart verisini JSON formatına dönüştürür
+     * @return {Object} Kartın JSON gösterimi
      */
     toJSON() {
         return {
-            element: {
-                atom_no: this.element.atom_no,
-                sembol: this.element.sembol,
-                isim: this.element.isim,
-                grup: this.element.grup,
-                periyot: this.element.periyot,
-                element_turu: this.element.element_turu
-            },
+            element: this.element,
             takim: this.takim,
-            joker: this.joker
+            joker: this.joker,
+            secili: this.secili,
+            aktif: this.aktif
         };
     }
 }
 
-// Node.js ortamında modül olarak dışa aktar
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { ElementKarti };
-}
-
-// Tarayıcı ortamında global değişken olarak tanımla
-if (typeof window !== 'undefined') {
-    window.ElementKarti = ElementKarti;
-} 
+// Global namespace'e ElementKartiSinifi sınıfını ekle
+window.ElementKartiSinifi = ElementKartiSinifi; 

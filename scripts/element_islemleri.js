@@ -21,7 +21,7 @@ const ELEMENT_VERILERI = [
 /**
  * CSV verisini parse ederek element verilerini döndürür
  * @param {string} csvVerisi - CSV formatında element verileri
- * @return {Array} İşlenmiş element verileri dizisi
+ * @return {Array} İşlenmiş element verileri dizisi veya varsayılan veriler
  */
 function csvDosyasindanElementleriYukle(csvVerisi) {
     const satirlar = csvVerisi.split('\n');
@@ -108,38 +108,35 @@ function csvDosyasindanElementleriYukle(csvVerisi) {
 
 /**
  * Element verisinin renk kodunu döndürür
- * @param {Object} element - Element verisi
- * @return {string} Element türüne göre renk kodu
+ * @param {Object|null} element - Element verisi
+ * @return {string} Element türüne veya grubuna göre renk kodu, element null ise gri renk döndürür
  */
 function elementRengiGetir(element) {
-    if (!element || !element.element_turu) {
-        // Element türü belirtilmemişse, gruba göre renk döndür
-        return grupRengiGetir(element.grup);
+    // Element null veya undefined ise varsayılan renk döndür
+    if (!element) {
+        return '#CCCCCC'; // Varsayılan gri
     }
     
-    // Element türüne göre renk ata
-    const renkler = {
-        'alkali_metal': '#FF6B6B',
-        'toprak_alkali_metal': '#FFA06B',
-        'gecis_metali': '#FFD06B',
-        'diger_metal': '#FFEE6B',
-        'ametal': '#6BFF6B',
-        'yarimetal': '#6BFFD0',
-        'halojen': '#6BD0FF',
-        'soygazlar': '#6B6BFF',
-        'lantanit': '#D06BFF',
-        'aktinit': '#FF6BD0'
-    };
+    // Element türü varsa, türe göre renk döndür
+    if (element.element_turu) {
+        return elementTuruneGoreRenkGetir(element.element_turu);
+    }
     
-    return renkler[element.element_turu] || '#CCCCCC'; // Varsayılan gri
+    // Element türü belirtilmemişse, gruba göre renk döndür
+    return grupNumarasinaGoreRenkGetir(element.grup);
 }
 
 /**
  * Grup numarasına göre renk kodu döndürür
- * @param {number} grupNo - Element grup numarası
- * @return {string} Grup numarasına göre renk kodu
+ * @param {number|null} grupNo - Element grup numarası
+ * @return {string} Grup numarasına göre renk kodu, grup no geçersizse gri renk döndürür
  */
-function grupRengiGetir(grupNo) {
+function grupNumarasinaGoreRenkGetir(grupNo) {
+    // Grup numarası null, undefined veya geçersiz ise
+    if (!grupNo || isNaN(grupNo)) {
+        return '#CCCCCC'; // Varsayılan gri
+    }
+    
     // Grup numarasına göre renk ata (varsayılan renkler)
     const grupRenkleri = {
         1: '#FF6B6B',   // Grup 1 (Alkali Metaller)
@@ -165,11 +162,14 @@ function grupRengiGetir(grupNo) {
     return grupRenkleri[grupNo] || '#CCCCCC'; // Varsayılan gri
 }
 
+// Eski fonksiyon adını desteklemek için alias oluştur
+const grupRengiGetir = grupNumarasinaGoreRenkGetir;
+
 /**
  * Belirli bir gruba ait elementleri filtreler
  * @param {Array} elementler - Tüm elementlerin listesi
  * @param {number} grupNo - Filtreleme yapılacak grup numarası
- * @return {Array} Filtrelenmiş element listesi
+ * @return {Array} Filtrelenmiş element listesi veya boş dizi
  */
 function grupElementleriniGetir(elementler, grupNo) {
     return elementler.filter(element => element.grup === grupNo);
@@ -179,7 +179,7 @@ function grupElementleriniGetir(elementler, grupNo) {
  * Belirli bir periyoda ait elementleri filtreler
  * @param {Array} elementler - Tüm elementlerin listesi
  * @param {number} periyotNo - Filtreleme yapılacak periyot numarası
- * @return {Array} Filtrelenmiş element listesi
+ * @return {Array} Filtrelenmiş element listesi veya boş dizi
  */
 function periyotElementleriniGetir(elementler, periyotNo) {
     return elementler.filter(element => element.periyot === periyotNo);
@@ -188,8 +188,8 @@ function periyotElementleriniGetir(elementler, periyotNo) {
 /**
  * Element sembolüne göre element verisini döndürür
  * @param {Array} elementler - Tüm elementlerin listesi
- * @param {string} sembol - Aranacak element sembolü
- * @return {Object} Bulunan element verisi veya null
+ * @param {string} sembol - Aranacak element sembolü (büyük/küçük harf duyarsız)
+ * @return {Object|null} Bulunan element verisi veya bulunamazsa null
  */
 function elementBul(elementler, sembol) {
     return elementler.find(element => element.sembol.toLowerCase() === sembol.toLowerCase());
@@ -199,10 +199,38 @@ function elementBul(elementler, sembol) {
  * Element atom numarasına göre element verisini döndürür
  * @param {Array} elementler - Tüm elementlerin listesi
  * @param {number} atomNo - Aranacak atom numarası
- * @return {Object} Bulunan element verisi veya null
+ * @return {Object|null} Bulunan element verisi veya bulunamazsa null
  */
 function atomNoyaGoreElementBul(elementler, atomNo) {
     return elementler.find(element => element.atom_no === atomNo);
+}
+
+/**
+ * Element türüne göre renk kodu döndürür
+ * @param {string|null} elementTuru - Element türü (metal, ametal, yari_metal, vb.)
+ * @return {string} Element türüne göre renk kodu, tür geçersizse gri renk döndürür
+ */
+function elementTuruneGoreRenkGetir(elementTuru) {
+    // Element türü null veya undefined ise
+    if (!elementTuru) {
+        return '#CCCCCC'; // Varsayılan gri
+    }
+    
+    // Element türüne göre renk ata
+    const elementTurleriRenkleri = {
+        'metal': '#6B8EFF',          // Mavi-mor
+        'ametal': '#FF6B6B',         // Kırmızı
+        'yari_metal': '#FFD06B',     // Sarı
+        'soygaz': '#6BD0FF',         // Açık mavi
+        'halojen': '#FF6BA0',        // Pembe
+        'alkali_metal': '#FF8C6B',   // Turuncu
+        'toprak_alkali': '#FFA06B',  // Açık turuncu
+        'gecis_metali': '#A06BFF',   // Mor
+        'lantanit': '#D06BFF',       // Açık mor
+        'aktinit': '#FF6BD0'         // Pembe-mor
+    };
+    
+    return elementTurleriRenkleri[elementTuru] || '#CCCCCC'; // Varsayılan gri
 }
 
 // Tüm fonksiyonları global olarak erişilebilir yap
@@ -210,7 +238,9 @@ window.ELEMENT_VERILERI = ELEMENT_VERILERI;
 window.csvDosyasindanElementleriYukle = csvDosyasindanElementleriYukle;
 window.elementRengiGetir = elementRengiGetir;
 window.grupRengiGetir = grupRengiGetir;
+window.grupNumarasinaGoreRenkGetir = grupNumarasinaGoreRenkGetir;
 window.grupElementleriniGetir = grupElementleriniGetir;
 window.periyotElementleriniGetir = periyotElementleriniGetir;
 window.elementBul = elementBul;
-window.atomNoyaGoreElementBul = atomNoyaGoreElementBul; 
+window.atomNoyaGoreElementBul = atomNoyaGoreElementBul;
+window.elementTuruneGoreRenkGetir = elementTuruneGoreRenkGetir; 

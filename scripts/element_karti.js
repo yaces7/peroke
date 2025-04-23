@@ -436,8 +436,8 @@ class ElementKartiSinifi {
     }
     
     /**
-     * Kart verisini JSON formatına dönüştürür
-     * @return {Object} Kartın JSON gösterimi
+     * Objeyi JSON formatına dönüştürür
+     * @return {Object} JSON formatında kart verileri
      */
     toJSON() {
         return {
@@ -450,10 +450,12 @@ class ElementKartiSinifi {
     }
 }
 
-// Global namespace'e ElementKartiSinifi sınıfını ekle
-window.ElementKartiSinifi = ElementKartiSinifi;
+// Tarayıcı ortamında global nesneye ekle
+if (typeof window !== 'undefined') {
+    window.ElementKartiSinifi = ElementKartiSinifi;
+}
 
-// Node.js ortamı için dışa aktarma (export)
+// Node.js ortamında dışa aktar
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { ElementKartiSinifi };
 } 

@@ -4,7 +4,7 @@
  */
 
 // ElementKartiSinifi sınıfını içe aktar (import)
-const { ElementKartiSinifi } = typeof require !== 'undefined' ? require('./kart_sablonu.js') : {};
+const { ElementKartiSinifi } = typeof require !== 'undefined' ? require('./element_karti.js') : {};
 
 /**
  * Oyun sınıfı

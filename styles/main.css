@@ -1,252 +1,189 @@
-/* Periyodik Okey - Ana CSS Dosyası */
+/* Periyodik Okey Ana CSS Dosyası */
 
 /* Genel Stiller */
-* {
+body {
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f8ff;
+    color: #333;
 }
 
-body {
-    background: linear-gradient(135deg, #f6d365 0%, #7bc86c 100%);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #333;
+#oyun-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Ekran Stilleri */
+.ekran {
     padding: 20px;
 }
 
-h1, h2, h3 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
+.gizli {
+    display: none;
 }
 
+/* Başlık */
 h1 {
-    font-size: 2.5rem;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    color: #1565c0;
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #0d47a1;
+    font-size: 24px;
+    margin-top: 20px;
+    margin-bottom: 15px;
 }
 
 /* Butonlar */
 .btn {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
     padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
     font-size: 16px;
-    margin: 10px 5px;
-    cursor: pointer;
+    border: none;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
+    background-color: #1976d2;
+    color: white;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s;
 }
 
 .btn:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+    background-color: #1565c0;
 }
 
 .btn-mini {
     padding: 5px 10px;
     font-size: 14px;
-    margin: 3px;
 }
 
-.btn-geri {
-    background-color: #f44336;
-}
-
-.btn-geri:hover {
-    background-color: #d32f2f;
-}
-
-.btn-mavi {
-    background-color: #2196F3;
-}
-
-/* Ekranlar */
-.ekran {
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    width: 90%;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.gizli {
-    display: none !important;
-}
-
-/* Menu ve form stilleri */
 .menu-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .menu-buttons .btn {
-    min-width: 200px;
-    margin: 10px 0;
+    width: 250px;
+    margin: 8px 0;
 }
 
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.form-group select,
-.form-group input[type="checkbox"] {
-    padding: 8px;
-    width: 100%;
-    max-width: 300px;
-}
-
-/* Oyun Ekranı */
-#oyun-screen {
-    padding: 15px;
-}
-
+/* Oyun Alanı */
 .oyun-alani {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    gap: 20px;
 }
 
 .ust-panel {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     padding: 10px;
-    background-color: #ebf5f0;
-    border-radius: 8px;
-    border: 2px solid #4CAF50;
+    background-color: #e3f2fd;
+    border-radius: 5px;
 }
 
 .durum-mesaji {
     font-weight: bold;
-    font-size: 18px;
+    color: #0d47a1;
 }
 
+/* Bot Alanları */
 .bot-alanlari {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-bottom: 20px;
 }
 
 .bot-alani {
-    width: 30%;
+    flex: 1;
+    margin: 0 10px;
     padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    border: 2px solid #ccc;
+    background-color: #e8f5e9;
+    border-radius: 5px;
+    text-align: center;
 }
 
 .bot-bilgi {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+}
+
+.bot-isim {
     font-weight: bold;
 }
 
-.bot-kartlar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    min-height: 40px;
-    padding: 5px;
-    background-color: #eee;
-    border-radius: 5px;
-}
-
+/* Orta Alan */
 .orta-alan {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    justify-content: center;
+    gap: 50px;
     margin: 20px 0;
-    padding: 15px;
-    background-color: #f0f9ff;
-    border-radius: 8px;
-    border: 2px dashed #2196F3;
 }
 
 .deste-alani, .acik-kart-alani {
-    min-width: 100px;
-    min-height: 140px;
-    padding: 5px;
-    background-color: #fff;
-    border-radius: 8px;
-    border: 2px solid #333;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    margin: 0 10px;
+    width: 150px;
 }
 
 .kalan-kart {
-    text-align: center;
+    margin-top: 10px;
     font-weight: bold;
-    margin-top: 5px;
 }
 
+/* Kombinasyon alanı */
 .kombinasyon-alani {
-    padding: 15px;
-    margin: 20px 0;
-    background-color: #fff8e1;
-    border-radius: 8px;
-    border: 3px solid #FFC107;
+    background-color: rgba(255, 248, 220, 0.7);
+    border: 2px solid #e9a14f;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .kombinasyon-baslik {
     font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     text-align: center;
+    color: #4d3800;
 }
 
 .kombinasyon-icerik {
-    min-height: 130px;
-    padding: 10px;
-    background-color: #fffde7;
+    background-color: rgba(255, 248, 220, 0.5);
+    min-height: 140px;
     border-radius: 5px;
-    border: 1px dashed #FFB300;
+    border: 1px dashed #e9a14f;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-start;
+    padding: 5px;
+    overflow-x: auto;
 }
 
+/* Oyuncu Alanı */
 .oyuncu-alani {
     padding: 15px;
-    margin-top: 20px;
-    background-color: #e8f5e9;
+    background-color: #e3f2fd;
     border-radius: 8px;
-    border: 3px solid #4CAF50;
+    margin-top: 20px;
 }
 
 .oyuncu-bilgi {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     margin-bottom: 10px;
 }
 
@@ -255,178 +192,180 @@ h1 {
     font-size: 18px;
 }
 
-.oyuncu-puan {
-    font-weight: bold;
-    background-color: #4CAF50;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
+/* Oyuncu kartları için özel stil */
 .oyuncu-kartlari {
+    min-height: 120px;
+    background-color: rgba(230, 255, 230, 0.5);
+    border-radius: 5px;
+    padding: 10px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     align-items: center;
-    min-height: 130px;
-    padding: 10px;
-    background-color: #f1f8e9;
-    border-radius: 5px;
-    border: 1px dashed #81C784;
+    justify-content: flex-start;
 }
 
+/* Kontroller */
 .kontroller {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 10px;
     margin-top: 20px;
 }
 
 /* Element Kartları */
 .element-kart {
-    width: 80px;
-    height: 120px;
-    background: white;
-    border: 2px solid black;
-    border-radius: 8px;
-    position: relative;
-    display: inline-block;
-    padding: 5px;
+    width: 70px;
+    height: 100px;
     margin: 5px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #ffffff;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    position: relative;
     cursor: pointer;
-    user-select: none;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16);
-    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .element-kart:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 .element-kart.secili {
-    border: 3px solid #2196F3;
-    box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
-}
-
-.element-kart.joker {
-    background-color: #fffbeb;
-    border-color: #ff9800;
+    border: 2px solid #ff0000;
+    transform: translateY(-10px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
 }
 
 .element-kart .atom-no {
     position: absolute;
-    top: 3px;
+    top: 5px;
     left: 5px;
     font-size: 12px;
-    font-weight: bold;
 }
 
 .element-kart .sembol {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 30px;
+    font-size: 24px;
     font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
 }
 
 .element-kart .isim {
-    position: absolute;
-    bottom: 25px;
-    width: 100%;
-    left: 0;
+    font-size: 10px;
     text-align: center;
-    font-size: 11px;
-    font-weight: 600;
 }
 
 .element-kart .grup-periyot {
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    width: 100%;
-    text-align: center;
     font-size: 9px;
-    color: #555;
+    margin-bottom: 2px;
 }
 
 .element-kart .takim {
     position: absolute;
-    top: 3px;
+    top: 5px;
     right: 5px;
     font-size: 10px;
     font-weight: bold;
-    color: #333;
-    background-color: rgba(255, 255, 255, 0.7);
-    padding: 2px;
-    border-radius: 3px;
 }
 
 .element-kart.arka-yuz {
-    background: repeating-linear-gradient(
-        45deg,
-        #f2f2f2,
-        #f2f2f2 10px,
-        #e6e6e6 10px,
-        #e6e6e6 20px
-    );
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.element-kart.arka-yuz::after {
+    content: "PO";
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Joker kartı */
+.element-kart.joker {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
 }
 
 /* Sürükleme Stilleri */
 .surukle-hedef {
-    min-height: 130px;
+    transition: all 0.2s ease;
 }
 
 .surukle-uzerinde {
-    background-color: rgba(76, 175, 80, 0.1);
-    border: 2px dashed #4CAF50 !important;
+    background-color: rgba(255, 230, 190, 0.8);
+    border: 2px dashed #ff9900;
 }
 
-/* Mobil için Düzenlemeler */
+/* İstatistikler */
+.istatistik-kutusu {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.istatistik-grup {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 0 10px;
+    background-color: #f5f5f5;
+}
+
+.istatistik-satir {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Ayarlar */
+.ayarlar-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Oyun Sonu */
+.sonuc-kutusu {
+    text-align: center;
+    padding: 20px;
+    background-color: #e8f5e9;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.sonuc-detay {
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+/* Duyarlı Tasarım */
 @media (max-width: 768px) {
-    .ekran {
-        width: 95%;
-        padding: 15px;
-    }
-    
-    #oyun-screen {
-        padding: 10px;
-    }
-    
-    .element-kart {
-        width: 70px;
-        height: 100px;
-    }
-    
-    .element-kart .sembol {
-        font-size: 24px;
-    }
-    
-    .element-kart .isim {
-        font-size: 10px;
-    }
-    
     .bot-alanlari {
         flex-direction: column;
     }
     
     .bot-alani {
-        width: 100%;
-        margin-bottom: 10px;
+        margin: 10px 0;
     }
     
     .orta-alan {
-        flex-direction: column;
-    }
-    
-    .deste-alani, .acik-kart-alani {
-        margin-bottom: 10px;
-        width: 80%;
+        gap: 20px;
     }
     
     .kontroller {
-        flex-direction: column;
+        flex-wrap: wrap;
     }
-} 
+}

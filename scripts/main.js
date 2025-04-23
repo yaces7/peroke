@@ -299,9 +299,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     }
     
-    // Kombinasyon alanını sürükleme hedefi yap
+    // Kart çekme durumu
+    let kartCekildi = false;
+    
+    // Tur başlangıcında kart çekme durumunu sıfırla
+    function turBaslat() {
+        kartCekildi = false;
+        document.getElementById('durum-mesaji').textContent = 'Sıra sizde! Kart çekiniz veya açık kartı alınız.';
+    }
+    
+    // Sürükleme hedeflerini ayarla
     function surukleHedefleriniAyarla() {
-        const kombinasyonIcerik = document.getElementById('kombinasyon-canvas');
+        const kombinasyonIcerik = document.getElementById('kombinasyon-icerik');
         if (kombinasyonIcerik) {
             kombinasyonIcerik.classList.add('surukle-hedef');
             kombinasyonIcerik.addEventListener('dragover', handleDragOver);
@@ -353,13 +362,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         oyuncuAlani.appendChild(oyuncuKartlariDiv);
         
-        // HTML'de var olan kombinasyon alanını bul ve sürükleme hedefi olarak işaretle
-        const kombinasyonAlani = document.getElementById('kombinasyon-alani');
-        if (kombinasyonAlani) {
-            const kombinasyonIcerik = kombinasyonAlani.querySelector('.kombinasyon-icerik');
-            if (kombinasyonIcerik) {
-                kombinasyonIcerik.classList.add('surukle-hedef');
-            }
+        // Kombinasyon alanı oluştur ve sürükleme hedefi olarak işaretle
+        const kombinasyonIcerik = document.getElementById('kombinasyon-icerik');
+        if (kombinasyonIcerik) {
+            kombinasyonIcerik.innerHTML = ''; // İçeriği temizle
+            kombinasyonIcerik.classList.add('surukle-hedef');
         }
         
         // Bot kartlarını göster (kapalı olarak)
@@ -378,6 +385,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Sürükleme hedeflerini ayarla
         surukleHedefleriniAyarla();
+        
+        // İlk tur başlat
+        turBaslat();
     }
     
     // Oyuna başla butonu
@@ -512,6 +522,54 @@ document.addEventListener('DOMContentLoaded', () => {
         // TODO: Kombinasyon kontrolü eklenecek
     });
     
+    // Desteden kart çekme butonu
+    document.getElementById('btn-desteyi-ac').addEventListener('click', () => {
+        if (kartCekildi) {
+            alert("Her tur sadece bir kart çekebilirsiniz!");
+            return;
+        }
+        
+        console.log("Desteden kart çekiliyor...");
+        // Oyuncu kartlarına yeni bir kart ekle
+        const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+        if (oyuncuKartlari) {
+            // Rastgele bir element al
+            const randomIndex = Math.floor(Math.random() * ELEMENT_VERILERI.length);
+            const yeniKart = elementKartiOlustur(ELEMENT_VERILERI[randomIndex], 1);
+            oyuncuKartlari.appendChild(yeniKart);
+            
+            // Kart çekme durumunu güncelle
+            kartCekildi = true;
+            document.getElementById('durum-mesaji').textContent = 'Kart çektiniz. Şimdi bir kartı atın veya kombinasyon yapın.';
+        }
+    });
+    
+    // Açık kartı alma butonu
+    document.getElementById('btn-acik-karti-al').addEventListener('click', () => {
+        if (kartCekildi) {
+            alert("Her tur sadece bir kart çekebilirsiniz!");
+            return;
+        }
+        
+        console.log("Açık kart alınıyor...");
+        const acikKartAlani = document.querySelector('.acik-kart-alani');
+        const acikKart = acikKartAlani.querySelector('.element-kart');
+        
+        if (acikKart) {
+            const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+            if (oyuncuKartlari) {
+                oyuncuKartlari.appendChild(acikKart);
+                
+                // Kart çekme durumunu güncelle
+                kartCekildi = true;
+                document.getElementById('durum-mesaji').textContent = 'Açık kartı aldınız. Şimdi bir kartı atın veya kombinasyon yapın.';
+            }
+        } else {
+            alert("Açık kart bulunmuyor!");
+        }
+    });
+    
+    // Kart verme (elden atma) butonu
     document.getElementById('btn-kart-ver').addEventListener('click', () => {
         console.log("Kart veriliyor...");
         // Seçili kart var mı kontrol et
@@ -522,20 +580,13 @@ document.addEventListener('DOMContentLoaded', () => {
             acikKartAlani.innerHTML = ''; // Önceki kartı temizle
             acikKartAlani.appendChild(seciliKart);
             seciliKart.classList.remove('secili');
+            
+            // Kart çekme durumunu sıfırla - sonraki tur için hazır
+            setTimeout(() => {
+                turBaslat();
+            }, 500);
         } else {
             alert("Lütfen önce bir kart seçin!");
-        }
-    });
-    
-    document.getElementById('btn-desteyi-ac').addEventListener('click', () => {
-        console.log("Desteden kart çekiliyor...");
-        // Oyuncu kartlarına yeni bir kart ekle (test için)
-        const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
-        if (oyuncuKartlari) {
-            // Rastgele bir element al
-            const randomIndex = Math.floor(Math.random() * ELEMENT_VERILERI.length);
-            const yeniKart = elementKartiOlustur(ELEMENT_VERILERI[randomIndex], 1);
-            oyuncuKartlari.appendChild(yeniKart);
         }
     });
     

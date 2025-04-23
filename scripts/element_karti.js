@@ -226,8 +226,8 @@ class ElementKartiSinifi {
             logo.style.top = '50%';
             logo.style.left = '50%';
             logo.style.transform = 'translate(-50%, -50%)';
-            logo.style.width = '35px'; // Daha küçük logo
-            logo.style.height = '35px'; // Daha küçük logo
+            logo.style.width = '20px'; // Daha küçük logo
+            logo.style.height = '20px'; // Daha küçük logo
             logo.style.borderRadius = '50%';
             logo.style.backgroundColor = 'rgba(255,255,255,0.8)';
             logo.style.display = 'flex';

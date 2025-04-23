@@ -111,6 +111,8 @@ h2 {
     background-color: #1f4068;
     border-radius: 5px;
     text-align: center;
+    position: relative;
+    padding-top: 40px; /* Konuşma balonu için yeterli alan */
 }
 
 .bot-bilgi {
@@ -296,8 +298,9 @@ h2 {
 
 .element-kart.arka-yuz::after {
     content: "PO";
-    font-size: 24px;
+    font-size: 16px;
     font-weight: bold;
+    color: #4cc9f0;
 }
 
 /* Joker kartı */
@@ -474,4 +477,105 @@ h2 {
 .bot-puan {
     font-size: 16px;
     color: #ff9900; /* Turuncu */
+}
+
+/* Bot Kartları Stilleri */
+.bot-kart {
+    width: 20px;
+    height: 30px;
+    margin: 2px;
+    display: inline-block;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.bot-kart:hover {
+    transform: scale(1.05);
+}
+
+.arka-yuz.bot-kart::after {
+    content: "PO";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+    font-weight: bold;
+    color: #0f3460;
+}
+
+.po-kart {
+    width: 40px;
+    height: 60px;
+    background-color: #0f3460;
+    color: #4cc9f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.po-kart::after {
+    content: "PO";
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Konuşma Balonu Stilleri */
+.konusma-balonu {
+    position: absolute;
+    background-color: #f9fafb;
+    color: #111827;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    max-width: 150px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: balon-goster 0.3s ease-in-out forwards;
+    border: 1px solid #e5e7eb;
+}
+
+.konusma-balonu::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #f9fafb transparent transparent;
+}
+
+.konusma-balonu.kaybol {
+    animation: balon-kaybol 0.5s ease-in-out forwards;
+}
+
+@keyframes balon-goster {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes balon-kaybol {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
 }

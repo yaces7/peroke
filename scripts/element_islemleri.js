@@ -46,7 +46,7 @@ function csvDosyasindanElementleriYukle(csvData) {
     const grupIndeksi = basliklar.findIndex(b => b === 'GrupNumarasi');
     const periyotIndeksi = basliklar.findIndex(b => b === 'PeriyotNumarasi');
     const atomKutlesiIndeksi = basliklar.findIndex(b => b === 'AtomKutlesi');
-    const elementTuruIndeksi = basliklar.findIndex(b => b === 'ElementTuru');
+    const elementTuruIndeksi = basliklar.findIndex(b => b === 'GrupTuru');
     const renkIndeksi = basliklar.findIndex(b => b === 'Renk');
     
     // Gerekli başlıkların var olup olmadığını kontrol et
@@ -148,7 +148,9 @@ function elementTuruneGoreRenkGetir(elementTuru) {
         'Alkali Metal': '#f48fb1',  // Pembe
         'Toprak Alkali Metal': '#ffe082', // Sarı
         'Lantanit': '#ce93d8',      // Açık mor
-        'Aktinit': '#9fa8da'        // Açık mavi
+        'Aktinit': '#9fa8da',       // Açık mavi
+        'Geçiş Metali': '#a1887f',  // Kahverengi
+        'Bilinmiyor': '#e0e0e0'     // Gri
     };
     
     return renkHaritasi[elementTuru] || '#CCCCCC'; // Varsayılan gri

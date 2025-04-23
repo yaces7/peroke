@@ -228,7 +228,7 @@ h2 {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: #e6e6e6;
+    color: #000000;
 }
 
 .element-kart:hover {
@@ -247,6 +247,7 @@ h2 {
     top: 5px;
     left: 5px;
     font-size: 12px;
+    color: #000000;
 }
 
 .element-kart .sembol {
@@ -254,23 +255,26 @@ h2 {
     font-weight: bold;
     text-align: center;
     margin-top: 10px;
+    color: #000000;
 }
 
 .element-kart .isim {
     font-size: 10px;
     text-align: center;
+    color: #000000;
 }
 
 /* Element kartlarındaki grup-periyot bilgileri */
 .element-kart .grup-periyot {
     font-size: 11px;
     font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.5);
     border-radius: 3px;
     padding: 2px 4px;
     margin: 2px auto;
     text-align: center;
     width: 80%;
+    color: #000000;
 }
 
 .element-kart .takim {
@@ -279,6 +283,7 @@ h2 {
     right: 5px;
     font-size: 10px;
     font-weight: bold;
+    color: #000000;
 }
 
 .element-kart.arka-yuz {

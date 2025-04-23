@@ -490,10 +490,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Ayarlar ekranını gizle ve oyun ekranını göster
                 document.getElementById('ayarlar-screen').classList.add('gizli');
-                document.getElementById('oyun-screen').classList.remove('gizli');
-                
-                // Test kartlarını oluştur
-                testKartlariOlustur();
+        document.getElementById('oyun-screen').classList.remove('gizli');
+        
+        // Test kartlarını oluştur
+        testKartlariOlustur();
             } catch (error) {
                 console.error("Ayarlar kaydedilirken hata oluştu:", error);
             }
@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bildirimGoster("Kombinasyon için en az 3 kart gereklidir!", "error");
             return;
         }
-
+        
         // Kartların özelliklerini al
         const kartBilgileri = Array.from(kombinasyonKartlari).map(kart => {
             return {
@@ -1031,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Sonuç mesajını ayarla
         const oyuncuPuan = parseInt(document.getElementById('oyuncu-puan').textContent);
-        const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+            const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
         const kartlarBitti = oyuncuKartlari.children.length === 0;
         
         // Kazanma sebebine göre mesaj
@@ -1084,16 +1084,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const acikKartAlani = document.querySelector('.acik-kart-alani');
             acikKartAlani.innerHTML = ''; // Önceki kartı temizle
             
-            // Kartı küçült ve PO olarak göster (bot kartı gibi)
-            const acikKart = document.createElement('div');
-            acikKart.className = 'element-kart acik-kart po-kart';
-            acikKart.dataset.atomNo = seciliKart.dataset.atomNo;
-            acikKart.dataset.sembol = seciliKart.dataset.sembol;
-            acikKart.dataset.grup = seciliKart.dataset.grup;
-            acikKart.dataset.periyot = seciliKart.dataset.periyot;
-            acikKart.dataset.takim = seciliKart.dataset.takim;
-            acikKart.dataset.joker = seciliKart.dataset.joker;
-            
+            // Kartı kopyala ve açık kart alanına yerleştir
+            // (Kartı küçültüp PO olarak değil, olduğu gibi göster)
+            const acikKart = seciliKart.cloneNode(true);
+            acikKart.classList.add('acik-kart');
             acikKartAlani.appendChild(acikKart);
             
             // Orijinal kartı kaldır
@@ -1115,6 +1109,107 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Desteden kart çekme butonu
+    document.getElementById('btn-desteyi-ac').addEventListener('click', () => {
+        if (kartCekildi) {
+            bildirimGoster("Her tur sadece bir kart çekebilirsiniz!", "error");
+            return;
+        }
+        
+        // Elementleri asenkron olarak yükle ve sonra kullan
+        elementVerileriniYukle().then(yuklenenElementler => {
+            console.log("Desteden kart çekiliyor...");
+            
+            // Kullanılmamış elementlerden filtreleme yap
+            const kullanilabilirElementler = yuklenenElementler.filter(element => 
+                !oynanmisKartlar.some(kullanilmisKart => 
+                    kullanilmisKart.atom_no === element.atom_no && 
+                    kullanilmisKart.sembol === element.sembol
+                )
+            );
+            
+            // Kullanılabilir element yoksa tüm elementleri kullan
+            const elementler = kullanilabilirElementler.length > 10 ? 
+                              kullanilabilirElementler : yuklenenElementler;
+            
+            // Oyuncu kartlarına yeni bir kart ekle
+            const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+            if (oyuncuKartlari) {
+                // Rastgele bir element al
+                const randomIndex = Math.floor(Math.random() * elementler.length);
+                const yeniKart = elementKartiOlusturDOM(elementler[randomIndex], 1);
+                oyuncuKartlari.appendChild(yeniKart);
+                
+                // Kart çekme durumunu güncelle
+                kartCekildi = true;
+                document.getElementById('durum-mesaji').textContent = 'Kart çektiniz. Şimdi bir kartı atın veya kombinasyon yapın.';
+                
+                // Kalan kart sayısını güncelle
+                kalanKartSayisiniGuncelle();
+                
+                // Çekilen kartı bildir
+                bildirimGoster(`Desteden çekilen kart: ${elementler[randomIndex].sembol}`, "info");
+            }
+        }).catch(error => {
+            console.error("Desteden kart çekerken hata oluştu:", error);
+            bildirimGoster("Kart çekilirken bir hata oluştu. Lütfen tekrar deneyin.", "error");
+        });
+    });
+    
+    // Açık kartı alma butonu
+    document.getElementById('btn-acik-karti-al').addEventListener('click', () => {
+        if (kartCekildi) {
+            bildirimGoster("Her tur sadece bir kart çekebilirsiniz!", "error");
+            return;
+        }
+        
+        console.log("Açık kart alınıyor...");
+        const acikKartAlani = document.querySelector('.acik-kart-alani');
+        const acikKart = acikKartAlani.querySelector('.element-kart');
+        
+        if (acikKart) {
+            const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+            if (oyuncuKartlari) {
+                // Açık kartı oyuncuya ekle
+                oyuncuKartlari.appendChild(acikKart);
+                
+                // Yeni açık kartı yerleştir (rastgele)
+                elementVerileriniYukle().then(yuklenenElementler => {
+                    // Kullanılmamış elementlerden filtreleme yap
+                    const kullanilabilirElementler = yuklenenElementler.filter(element => 
+                        !oynanmisKartlar.some(kullanilmisKart => 
+                            kullanilmisKart.atom_no === element.atom_no && 
+                            kullanilmisKart.sembol === element.sembol
+                        )
+                    );
+                    
+                    // Kullanılabilir element yoksa tüm elementleri kullan
+                    const elementler = kullanilabilirElementler.length > 10 ? 
+                                      kullanilabilirElementler : yuklenenElementler;
+                    
+                    // Rastgele bir element seç
+                    const randomIndex = Math.floor(Math.random() * elementler.length);
+                    const yeniAcikKart = elementKartiOlusturDOM(elementler[randomIndex], 1);
+                    
+                    // Kısa bir süre bekleyerek yeni açık kartı göster
+                    setTimeout(() => {
+                        acikKartAlani.appendChild(yeniAcikKart);
+                        bildirimGoster(`Yeni açık kart yerleştirildi: ${elementler[randomIndex].sembol}`, "info");
+                    }, 500);
+                });
+                
+                // Kart çekme durumunu güncelle
+                kartCekildi = true;
+                document.getElementById('durum-mesaji').textContent = 'Açık kartı aldınız. Şimdi bir kartı atın veya kombinasyon yapın.';
+                
+                // Kalan kart sayısını güncelle
+                kalanKartSayisiniGuncelle();
+            }
+        } else {
+            bildirimGoster("Açık kart bulunmuyor!", "error");
+        }
+    });
+    
     /**
      * Botun hamlesini yapmasını sağlar
      */
@@ -1123,11 +1218,11 @@ document.addEventListener('DOMContentLoaded', () => {
         durumMesaji.textContent = 'Bot oynuyor...';
         
         // Açık kartı al
-        const acikKartAlani = document.querySelector('.acik-kart-alani');
+            const acikKartAlani = document.querySelector('.acik-kart-alani');
         const acikKart = acikKartAlani.querySelector('.element-kart');
         if (!acikKart) {
             bildirimGoster("Açık kart bulunamadı!", "error");
-            turBaslat();
+                turBaslat();
             return;
         }
         
@@ -1216,10 +1311,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             // 100 puana ulaştıysa kazandı
                             if (yeniPuan >= 100) {
                                 botKonustur(aktifBot, 'kazanma');
-                                setTimeout(() => {
+            setTimeout(() => {
                                     bildirimGoster(`Bot ${aktifBot} 100 puana ulaştı! Oyunu kazandı!`, "error");
                                     setTimeout(() => botKazandi(aktifBot), 1000);
-                                }, 500);
+            }, 500);
                                 return;
                             }
                             
@@ -1270,7 +1365,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 durumMesaji.textContent = 'Sizin sıranız. Kart çekin veya açık kartı alın.';
                                 turBaslat();
                             }, 1000);
-                        } else {
+        } else {
                             // Normal hamlesine devam et - kart ver
                             if (botKartlari && botKartlari.children.length > 0) {
                                 // Botun bir kartını azalt

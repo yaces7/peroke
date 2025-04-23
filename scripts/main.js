@@ -994,16 +994,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 100 puan veya üzeri ise yıldız kazandır
         if (yeniPuan >= 100) {
-            bildirimGoster("Tebrikler! 100 puana ulaştınız ve bir yıldız kazandınız!", "success");
-            
-            // Puanı sıfırla
-            setTimeout(() => {
+            // Yıldız kazanma bildirimi göster
+            yildizKazanmaBildirimiGoster("Tebrikler! 100 puana ulaştınız ve bir yıldız kazandınız!", "oyuncu").then(() => {
+                // Puanı sıfırla
                 oyuncuPuanElementi.textContent = "0";
                 if (sabitPuanDeger) sabitPuanDeger.textContent = "0";
                 
-                // Yıldız kazandır
+                // Yıldız kazandır ve yeni tur başlat
                 yildizKazandir('oyuncu');
-            }, 1000);
+            });
         }
         
         return yeniPuan;
@@ -1036,15 +1035,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 100 puan veya üzeri ise yıldız kazandır
         if (yeniPuan >= 100) {
-            bildirimGoster(`Bot ${botNo} 100 puana ulaştı ve bir yıldız kazandı!`, "warning");
-            
-            // Puanı sıfırla
-            setTimeout(() => {
+            // Yıldız kazanma bildirimi göster
+            yildizKazanmaBildirimiGoster(`Bot ${botNo} 100 puana ulaştı ve bir yıldız kazandı!`, `bot${botNo}`).then(() => {
+                // Puanı sıfırla
                 botPuanElementi.textContent = "0";
                 
-                // Yıldız kazandır
+                // Yıldız kazandır ve yeni tur başlat
                 yildizKazandir(`bot${botNo}`);
-            }, 1000);
+            });
         }
         
         return yeniPuan;
@@ -1706,7 +1704,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (id === 'oyuncu') {
             oyuncuYildizSayisi++;
             if (oyuncuYildizSayisi >= 5) {
-                oyunuKazan();
+                // 5 yıldıza ulaşıldığında oyun kazanılır
+                bildirimGoster("Tebrikler! 5 yıldız toplayarak oyunu kazandınız!", "success");
+                setTimeout(() => oyunuKazan(), 1500);
                 return;
             }
         } 
@@ -1714,21 +1714,27 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (id === 'bot1') {
             bot1YildizSayisi++;
             if (bot1YildizSayisi >= 5) {
-                botKazandi(1);
+                // 5 yıldıza ulaşıldığında bot oyunu kazanır
+                bildirimGoster(`Bot 1 beş yıldız toplayarak oyunu kazandı!`, "warning");
+                setTimeout(() => botKazandi(1), 1500);
                 return;
             }
         } 
         else if (id === 'bot2') {
             bot2YildizSayisi++;
             if (bot2YildizSayisi >= 5) {
-                botKazandi(2);
+                // 5 yıldıza ulaşıldığında bot oyunu kazanır
+                bildirimGoster(`Bot 2 beş yıldız toplayarak oyunu kazandı!`, "warning");
+                setTimeout(() => botKazandi(2), 1500);
                 return;
             }
         } 
         else if (id === 'bot3') {
             bot3YildizSayisi++;
             if (bot3YildizSayisi >= 5) {
-                botKazandi(3);
+                // 5 yıldıza ulaşıldığında bot oyunu kazanır
+                bildirimGoster(`Bot 3 beş yıldız toplayarak oyunu kazandı!`, "warning");
+                setTimeout(() => botKazandi(3), 1500);
                 return;
             }
         }
@@ -1744,8 +1750,48 @@ document.addEventListener('DOMContentLoaded', () => {
      * Yeni tur başlatır - kart dağıtım animasyonu gösterir ve sonra yeni kartları dağıtır
      */
     function yeniTurBaslat() {
+        bildirimGoster("Yeni tur başlıyor...", "info");
+        
+        // Animasyon ekranını göster
         kartDagitimAnimasyonu().then(() => {
+            // Oyun verilerini sıfırla (kartlar hariç puanları sıfırlama)
+            
+            // Deste ve açık kart alanını temizle
+            const desteAlani = document.querySelector('.deste-alani');
+            const acikKartAlani = document.querySelector('.acik-kart-alani');
+            
+            if (desteAlani) desteAlani.innerHTML = '';
+            if (acikKartAlani) acikKartAlani.innerHTML = '';
+            
+            // Oyuncu ve bot kart alanlarını temizle
+            const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+            if (oyuncuKartlari) oyuncuKartlari.innerHTML = '';
+            
+            // Bot alanlarını temizle
+            const botSayisi = parseInt(document.getElementById('bot-sayisi')?.value) || 3;
+            for (let i = 1; i <= botSayisi; i++) {
+                const botKartlari = document.querySelector(`#bot${i}-alani .bot-kartlar`);
+                if (botKartlari) botKartlari.innerHTML = '';
+            }
+            
+            // Kombinasyon alanını temizle
+            const kombinasyonIcerik = document.getElementById('kombinasyon-icerik');
+            if (kombinasyonIcerik) kombinasyonIcerik.innerHTML = '';
+            
+            // Oyun sırası durumunu sıfırla
+            kartCekildi = false;
+            
+            // Yeni kartları oluştur
             testKartlariOlustur();
+            
+            // Yeni turu başlat
+            turBaslat();
+            
+            // Durum mesajını güncelle
+            const durumMesaji = document.getElementById('durum-mesaji');
+            if (durumMesaji) {
+                durumMesaji.textContent = 'Yeni tur başladı! Kart çekiniz veya açık kartı alınız.';
+            }
         });
     }
 
@@ -1985,6 +2031,62 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Ana menüyü göster
             document.getElementById('main-menu-screen').classList.remove('gizli');
+        });
+    }
+
+    /**
+     * Yıldız kazanma bildirimi gösterir
+     * @param {string} mesaj - Gösterilecek mesaj
+     * @param {string} oyuncu - Yıldız kazanan oyuncu ('oyuncu', 'bot1', 'bot2', 'bot3')
+     * @returns {Promise} - Bildirim kapandığında çözülen promise
+     */
+    function yildizKazanmaBildirimiGoster(mesaj, oyuncu) {
+        return new Promise((resolve) => {
+            // Bildirim konteynerini oluştur
+            const bildirimKonteyner = document.createElement('div');
+            bildirimKonteyner.className = 'yildiz-bildirimi';
+            
+            // Büyük yıldız oluştur
+            const buyukYildiz = document.createElement('div');
+            buyukYildiz.className = 'buyuk-yildiz';
+            buyukYildiz.innerHTML = '★';
+            
+            // Mesaj oluştur
+            const bildirimMesaj = document.createElement('div');
+            bildirimMesaj.className = 'bildirim-mesaj';
+            bildirimMesaj.textContent = mesaj;
+            
+            // Kaç yıldız olduğunu göster
+            let yildizSayisi = 0;
+            if (oyuncu === 'oyuncu') yildizSayisi = oyuncuYildizSayisi + 1;
+            else if (oyuncu === 'bot1') yildizSayisi = bot1YildizSayisi + 1;
+            else if (oyuncu === 'bot2') yildizSayisi = bot2YildizSayisi + 1;
+            else if (oyuncu === 'bot3') yildizSayisi = bot3YildizSayisi + 1;
+            
+            const bildirimYildizSayisi = document.createElement('div');
+            bildirimYildizSayisi.className = 'bildirim-yildiz-sayisi';
+            bildirimYildizSayisi.textContent = `Toplam Yıldız: ${yildizSayisi}`;
+            
+            // Elementleri konteyner'a ekle
+            bildirimKonteyner.appendChild(bildirimMesaj);
+            bildirimKonteyner.appendChild(buyukYildiz);
+            bildirimKonteyner.appendChild(bildirimYildizSayisi);
+            
+            // Sayfaya ekle
+            document.body.appendChild(bildirimKonteyner);
+            
+            // 3 saniye sonra kapat
+            setTimeout(() => {
+                // Kapanma animasyonu
+                bildirimKonteyner.style.opacity = '0';
+                bildirimKonteyner.style.transform = 'translate(-50%, -70%)';
+                
+                // Animasyon bittikten sonra elementi kaldır
+                setTimeout(() => {
+                    document.body.removeChild(bildirimKonteyner);
+                    resolve();
+                }, 500);
+            }, 3000);
         });
     }
 }); 

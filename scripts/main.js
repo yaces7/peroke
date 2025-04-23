@@ -1075,10 +1075,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Element verilerini yükle
         elementVerileriniYukle().then(yuklenenElementler => {
             // Tüm botlar için hamle yap
-            const botSayisi = 3; // Varsayılan bot sayısı
+            const botSayisi = parseInt(document.getElementById('bot-sayisi')?.value) || 3; // Ayarlardan bot sayısı
             let aktifBot = 1;
             
-            // Açık kartı gizle
+            // Açık kartı gizle - önce temizle
             acikKartAlani.innerHTML = ''; 
             
             function birSonrakiBotaGec() {
@@ -1120,7 +1120,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Rastgele bir şansla bot kombinasyon yapabilir (zorluk seviyesine göre)
                         if (kombinasyonSansi > zorlukKombinasyonEsigi) {
                             // Kombinasyon kartlarının sayısı (2-5 arası)
-                            const kombinasyonKartSayisi = Math.floor(Math.random() * 3) + 2;
+                            const kombinasyonKartSayisi = Math.min(Math.floor(Math.random() * 3) + 2, botKartlari.children.length);
+                            
+                            // Eğer bot kartı yoksa, kombinasyon yapamaz
+                            if (botKartlari.children.length === 0 || kombinasyonKartSayisi <= 1) {
+                                // Sonraki bota geç
+                                aktifBot++;
+                                setTimeout(birSonrakiBotaGec, 300);
+                                return;
+                            }
                             
                             // Kombinasyon türü (grup veya periyot)
                             const kombinasyonTuru = Math.random() > 0.5 ? "Grup" : "Periyot";
@@ -1137,9 +1145,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             bildirimGoster(`Bot ${aktifBot} ${kombinasyonTuru} kombinasyonu yaptı! +${kazanilanPuan} puan`, "warning");
                             
                             // Bot kartlarından kombinasyon miktarı kadar kart düş
-                            const botKartlari = document.querySelector(`#bot${aktifBot}-alani .bot-kartlar`);
                             for (let i = 0; i < Math.min(kombinasyonKartSayisi, botKartlari.children.length); i++) {
-                                if (botKartlari.children.length > 0) {
+                                if (botKartlari.lastChild) {
                                     botKartlari.removeChild(botKartlari.lastChild);
                                 }
                             }
@@ -1193,7 +1200,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 bildirimGoster(`Bot ${botSayisi}'den kart aldınız: ${kartTipi}`, "info");
                             }
                             
-                            // Açık kart oluştur
+                            // Açık kart oluştur - birden fazla kart oluşmaması için önce temizle
+                            acikKartAlani.innerHTML = '';
                             const acikKart = document.createElement('div');
                             acikKart.className = 'element-kart acik-kart po-kart';
                             acikKartAlani.appendChild(acikKart);
@@ -1209,7 +1217,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 // Botun bir kartını azalt
                                 botKartSayisiGuncelle(aktifBot, 0);
                                 
-                                // Yeni açık kartı oluştur
+                                // Yeni açık kartı oluştur - birden fazla kart oluşmaması için önce temizle
+                                acikKartAlani.innerHTML = '';
                                 const acikKart = document.createElement('div');
                                 acikKart.className = 'element-kart acik-kart po-kart';
                                 acikKartAlani.appendChild(acikKart);
@@ -1250,6 +1259,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (veren > 0) {
             const verenBotKartlari = document.querySelector(`#bot${veren}-alani .bot-kartlar`);
             if (verenBotKartlari && verenBotKartlari.children.length > 0) {
+                // En fazla 7 kart olabilir - daha fazlaysa siliyoruz
+                if (verenBotKartlari.children.length > 7) {
+                    while (verenBotKartlari.children.length > 7) {
+                        verenBotKartlari.removeChild(verenBotKartlari.lastChild);
+                    }
+                }
                 verenBotKartlari.removeChild(verenBotKartlari.lastChild);
             }
         }
@@ -1258,9 +1273,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (alan > 0) {
             const alanBotKartlari = document.querySelector(`#bot${alan}-alani .bot-kartlar`);
             if (alanBotKartlari) {
-                const yeniKart = document.createElement('div');
-                yeniKart.className = 'element-kart arka-yuz bot-kart';
-                alanBotKartlari.appendChild(yeniKart);
+                // En fazla 7 kart olabilir - daha fazlaysa eklemeyi durdur
+                if (alanBotKartlari.children.length < 7) {
+                    const yeniKart = document.createElement('div');
+                    yeniKart.className = 'element-kart arka-yuz bot-kart';
+                    alanBotKartlari.appendChild(yeniKart);
+                }
             }
         }
         

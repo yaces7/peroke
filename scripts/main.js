@@ -1149,64 +1149,132 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Tüm botlar için hamle yap
-        const botSayisi = 3; // Varsayılan bot sayısı
-        let aktifBot = 1;
-        
-        // Açık kartı gizle
-        acikKartAlani.innerHTML = ''; 
-        
-        function birSonrakiBotaGec() {
-            if (aktifBot <= botSayisi) {
-                durumMesaji.textContent = `Bot ${aktifBot} oynuyor...`;
-                
-                // Bot kartları
-                const botKartlari = document.querySelector(`#bot${aktifBot}-alani .bot-kartlar`);
-                
-                // Bir önceki bottan veya oyuncudan gelen kartı bota ekle
-                if (aktifBot === 1) {
-                    // İlk bot - oyuncunun verdiği kartı al
-                    botKartSayisiGuncelle(0, 1);
+        // Element verilerini yükle
+        elementVerileriniYukle().then(yuklenenElementler => {
+            // Tüm botlar için hamle yap
+            const botSayisi = 3; // Varsayılan bot sayısı
+            let aktifBot = 1;
+            
+            // Açık kartı gizle
+            acikKartAlani.innerHTML = ''; 
+            
+            function birSonrakiBotaGec() {
+                if (aktifBot <= botSayisi) {
+                    durumMesaji.textContent = `Bot ${aktifBot} oynuyor...`;
                     
-                    // Bot konuşsun
-                    const ruhHali = Math.random() > 0.5 ? 'umutlu' : 'korkutucu';
-                    botKonustur(aktifBot, ruhHali);
-                } else {
-                    // Diğer botlar - önceki botun kartını al
-                    botKartSayisiGuncelle(aktifBot - 1, aktifBot);
+                    // Bot kartları
+                    const botKartlari = document.querySelector(`#bot${aktifBot}-alani .bot-kartlar`);
                     
-                    // Bot konuşsun
-                    const ruhHali = ['umutlu', 'umutsuz', 'korkutucu'][Math.floor(Math.random() * 3)];
-                    botKonustur(aktifBot, ruhHali);
-                }
-                
-                // Bot kendi kartını oynuyor gibi görünecek
-                setTimeout(() => {
-                    // Bot kartı ver
-                    if (botKartlari && botKartlari.children.length > 0) {
-                        // Botun bir kartını azalt
-                        botKartSayisiGuncelle(aktifBot, 0);
+                    // Bir önceki bottan veya oyuncudan gelen kartı bota ekle
+                    if (aktifBot === 1) {
+                        // İlk bot - oyuncunun verdiği kartı al
+                        botKartSayisiGuncelle(0, 1);
                         
-                        // Yeni açık kartı oluştur
-                        const randomIndex = Math.floor(Math.random() * yuklenenElementler.length);
-                        const acikKart = document.createElement('div');
-                        acikKart.className = 'element-kart acik-kart po-kart';
-                        acikKartAlani.appendChild(acikKart);
+                        // Bot konuşsun
+                        const ruhHali = Math.random() > 0.5 ? 'umutlu' : 'korkutucu';
+                        botKonustur(aktifBot, ruhHali);
                         
-                        // Sonraki bota geç
-                        aktifBot++;
-                        setTimeout(birSonrakiBotaGec, 1500);
+                        // Kısa düşünme süresi
+                        setTimeout(() => botHamlesiniYap(), 800);
+                    } else {
+                        // Diğer botlar - önceki botun kartını al
+                        botKartSayisiGuncelle(aktifBot - 1, aktifBot);
+                        
+                        // Bot konuşsun
+                        const ruhHali = ['umutlu', 'umutsuz', 'korkutucu'][Math.floor(Math.random() * 3)];
+                        botKonustur(aktifBot, ruhHali);
+                        
+                        // Kısa düşünme süresi
+                        setTimeout(() => botHamlesiniYap(), 800);
                     }
-                }, 2000);
-            } else {
-                // Tüm botlar oynadı, oyuncunun sırası
-                durumMesaji.textContent = 'Sizin sıranız. Desteden bir kart çekin veya açık kartı alın.';
-                turBaslat();
+                    
+                    // Bot hamlesini tamamlama işlevi
+                    function botHamlesiniYap() {
+                        // Kombinasyon yapma şansı
+                        const kombinasyonSansi = Math.random();
+                        
+                        // Rastgele bir şansla bot kombinasyon yapabilir (%30 şans)
+                        if (kombinasyonSansi > 0.7) {
+                            // Kombinasyon kartlarının sayısı (2-5 arası)
+                            const kombinasyonKartSayisi = Math.floor(Math.random() * 3) + 2;
+                            
+                            // Kombinasyon türü (grup veya periyot)
+                            const kombinasyonTuru = Math.random() > 0.5 ? "Grup" : "Periyot";
+                            
+                            // Puanlama (grup: her kart 5 puan, periyot: her kart 4 puan)
+                            const kartBasinaPuan = kombinasyonTuru === "Grup" ? 5 : 4;
+                            const kazanilanPuan = kombinasyonKartSayisi * kartBasinaPuan;
+                            
+                            // Bot konuşsun - kombinasyon yaptığında
+                            botKonustur(aktifBot, 'umutlu');
+                            
+                            // Puan güncellemesi ve bildirim
+                            const yeniPuan = botPuanGuncelle(aktifBot, kazanilanPuan);
+                            bildirimGoster(`Bot ${aktifBot} ${kombinasyonTuru} kombinasyonu yaptı! +${kazanilanPuan} puan`, "warning");
+                            
+                            // Bot kartlarından kombinasyon miktarı kadar kart düş
+                            const botKartlari = document.querySelector(`#bot${aktifBot}-alani .bot-kartlar`);
+                            for (let i = 0; i < Math.min(kombinasyonKartSayisi, botKartlari.children.length); i++) {
+                                if (botKartlari.children.length > 0) {
+                                    botKartlari.removeChild(botKartlari.lastChild);
+                                }
+                            }
+                            
+                            // 100 puana ulaştıysa kazandı
+                            if (yeniPuan >= 100) {
+                                botKonustur(aktifBot, 'kazanma');
+                                setTimeout(() => {
+                                    bildirimGoster(`Bot ${aktifBot} 100 puana ulaştı! Oyunu kazandı!`, "error");
+                                    setTimeout(() => botKazandi(aktifBot), 1000);
+                                }, 500);
+                                return;
+                            }
+                            
+                            // Kartları bittiyse kazandı
+                            if (botKartlari.children.length === 0) {
+                                botKonustur(aktifBot, 'kazanma');
+                                setTimeout(() => {
+                                    bildirimGoster(`Bot ${aktifBot} tüm kartlarını bitirdi! Oyunu kazandı!`, "error");
+                                    setTimeout(() => botKazandi(aktifBot), 1000);
+                                }, 500);
+                                return;
+                            }
+                        }
+                        
+                        // Normal hamlesine devam et - kart ver
+                        if (botKartlari && botKartlari.children.length > 0) {
+                            // Botun bir kartını azalt
+                            botKartSayisiGuncelle(aktifBot, 0);
+                            
+                            // Yeni açık kartı oluştur
+                            const randomIndex = Math.floor(Math.random() * yuklenenElementler.length);
+                            const acikKart = document.createElement('div');
+                            acikKart.className = 'element-kart acik-kart po-kart';
+                            acikKartAlani.appendChild(acikKart);
+                            
+                            // Sonraki bota geç
+                            aktifBot++;
+                            setTimeout(birSonrakiBotaGec, 500); // Sonraki bota daha hızlı geç
+                        } else {
+                            // Kart kalmadıysa sonraki bota geç
+                            aktifBot++;
+                            setTimeout(birSonrakiBotaGec, 300);
+                        }
+                    }
+                } else {
+                    // Tüm botlar oynadı, oyuncunun sırası
+                    durumMesaji.textContent = 'Sizin sıranız. Desteden bir kart çekin veya açık kartı alın.';
+                    turBaslat();
+                }
             }
-        }
-        
-        // İlk bottan başla
-        birSonrakiBotaGec();
+            
+            // İlk bottan başla
+            birSonrakiBotaGec();
+        }).catch(error => {
+            console.error("Bot hamlesi sırasında hata:", error);
+            bildirimGoster("Bot hamlesinde bir sorun oluştu", "error");
+            turBaslat(); // Sorun olursa oyuncuya geç
+        });
     }
     
     /**
@@ -1235,6 +1303,49 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Kalan kart sayısını güncelle
         kalanKartSayisiniGuncelle();
+    }
+    
+    /**
+     * Bot kazandığında çağrılır
+     * @param {number} botNo - Kazanan botun numarası 
+     */
+    function botKazandi(botNo) {
+        // Oyun sonu ekranını göster
+        document.getElementById('oyun-screen').classList.add('gizli');
+        document.getElementById('oyun-sonu-screen').classList.remove('gizli');
+        
+        // Sonuç mesajını ayarla
+        const botPuan = parseInt(document.getElementById(`bot${botNo}-puan`).textContent);
+        const botKartlari = document.querySelector(`#bot${botNo}-alani .bot-kartlar`);
+        const kartlarBitti = botKartlari.children.length === 0;
+        
+        // Kazanma sebebine göre mesaj
+        let yenilgiMesaji = "";
+        if (botPuan >= 100) {
+            yenilgiMesaji = `Bot ${botNo} 100 puana ulaşarak oyunu kazandı!`;
+        } else if (kartlarBitti) {
+            yenilgiMesaji = `Bot ${botNo} tüm kartlarını bitirerek oyunu kazandı!`;
+        } else {
+            yenilgiMesaji = `Bot ${botNo} oyunu kazandı!`;
+        }
+        
+        document.getElementById('sonuc-mesaji').textContent = yenilgiMesaji;
+        document.getElementById('sonuc-puan').textContent = document.getElementById('oyuncu-puan').textContent;
+        
+        // İstatistikleri güncelle
+        try {
+            // Mevcut istatistikleri al
+            const istatistikler = JSON.parse(localStorage.getItem('periyodikOkey_istatistikler') || '{}');
+            
+            // İstatistikleri güncelle
+            istatistikler.oyunSayisi = (istatistikler.oyunSayisi || 0) + 1;
+            istatistikler.kaybetmeSayisi = (istatistikler.kaybetmeSayisi || 0) + 1;
+            
+            // Güncellenmiş istatistikleri kaydet
+            localStorage.setItem('periyodikOkey_istatistikler', JSON.stringify(istatistikler));
+        } catch (error) {
+            console.error("İstatistikler güncellenirken hata oluştu:", error);
+        }
     }
     
     console.log("Periyodik Okey oyunu hazır!");

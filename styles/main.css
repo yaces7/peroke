@@ -480,14 +480,22 @@ h2 {
 }
 
 /* Bot Kartları Stilleri */
+.bot-kartlar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
 .bot-kart {
     width: 20px;
     height: 30px;
     margin: 2px;
     display: inline-block;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 2px;
+    background-color: #0f3460;
+    border: 1px solid #4cc9f0;
+    border-radius: 3px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -505,7 +513,7 @@ h2 {
     transform: translate(-50%, -50%);
     font-size: 8px;
     font-weight: bold;
-    color: #0f3460;
+    color: #4cc9f0;
 }
 
 .po-kart {

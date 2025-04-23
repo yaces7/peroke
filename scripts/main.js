@@ -486,28 +486,37 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Bu tarayıcı yerel depolama desteklemiyor! Ayarlar ve istatistikler kaydedilemeyecek.");
     }
     
-    // Oyun için gerekli CSV dosyasını yükle
+    /**
+     * Elementleri asenkron olarak yükler (CSV veya varsayılan veriler)
+     * @returns {Promise<Array>} Element verileri promisi
+     */
     async function elementVerileriniYukle() {
         try {
+            // Önce ELEMENT_VERILERI_OKEY değişkenini kontrol et (element_verileri.js'den geliyor)
+            if (typeof ELEMENT_VERILERI_OKEY !== 'undefined' && ELEMENT_VERILERI_OKEY.length > 0) {
+                console.log("Element verileri hazır kullanılıyor...");
+                return ELEMENT_VERILERI_OKEY;
+            }
+            
+            // CSV dosyasını yüklemeyi dene
             const response = await fetch('elementler.csv');
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error('CSV dosyası yüklenemedi');
             }
-            const csvVerisi = await response.text();
-            const elementler = csvDosyasindanElementleriYukle(csvVerisi);
-            console.log(`${elementler.length} element verisi yüklendi.`);
-            return elementler;
+            
+            const csvData = await response.text();
+            return csvDosyasindanElementleriYukle(csvData);
         } catch (error) {
             console.error("Element verileri yüklenirken hata oluştu:", error);
             // Hata durumunda varsayılan element verilerini kullan
-            return ELEMENT_VERILERI;
+            return ELEMENT_VERILERI_OKEY;
         }
     }
     
     // Gerekli dosyaların yüklenip yüklenmediğini kontrol et
     function tanimlariKontrolEt() {
         // ElementKarti sınıfı yüklendi mi
-        if (typeof ElementKarti === 'undefined') {
+        if (typeof ElementKartiSinifi === 'undefined') {
             console.error("ElementKarti sınıfı yüklenemedi!");
             alert("Oyun dosyaları eksik! Lütfen sayfayı yenileyin.");
             return false;
@@ -521,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Element verileri yüklendi mi
-        if (typeof ELEMENT_VERILERI === 'undefined') {
+        if (typeof ELEMENT_VERILERI_OKEY === 'undefined') {
             console.error("Element verileri yüklenemedi!");
             alert("Element verileri yüklenemedi! Lütfen sayfayı yenileyin.");
             return false;

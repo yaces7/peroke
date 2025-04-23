@@ -4,7 +4,7 @@
  */
 
 // Varsayılan element verileri (CSV dosyası yüklenemezse kullanılacak)
-const ELEMENT_VERILERI = [
+const ELEMENT_VERILERI_ISLEMLER = [
     { atom_no: 1, sembol: "H", isim: "Hidrojen", grup: 1, periyot: 1 },
     { atom_no: 2, sembol: "He", isim: "Helyum", grup: 18, periyot: 1 },
     { atom_no: 3, sembol: "Li", isim: "Lityum", grup: 1, periyot: 2 },
@@ -27,110 +27,118 @@ function csvDosyasindanElementleriYukle(csvData) {
     // CSV boş ise varsayılan verileri döndür
     if (!csvData || csvData.trim() === '') {
         console.warn('CSV verisi boş veya tanımsız. Varsayılan veriler kullanılıyor.');
-        return ELEMENT_VERILERI;
+        return ELEMENT_VERILERI_ISLEMLER;
     }
 
     const satirlar = csvData.trim().split('\n');
     if (satirlar.length <= 1) {
         console.warn('CSV verileri yetersiz. Varsayılan veriler kullanılıyor.');
-        return ELEMENT_VERILERI;
+        return ELEMENT_VERILERI_ISLEMLER;
     }
 
-    // İlk satır başlıkları içerir
-    const basliklar = satirlar[0].split(',').map(baslik => baslik.trim());
-    
-    // Başlıkların doğruluğunu kontrol et
-    const atomNoIndeksi = basliklar.findIndex(b => b === 'AtomNumarasi');
-    const sembolIndeksi = basliklar.findIndex(b => b === 'Sembol');
-    const isimIndeksi = basliklar.findIndex(b => b === 'Isim');
-    const grupIndeksi = basliklar.findIndex(b => b === 'GrupNumarasi');
-    const periyotIndeksi = basliklar.findIndex(b => b === 'PeriyotNumarasi');
-    const atomKutlesiIndeksi = basliklar.findIndex(b => b === 'AtomKutlesi');
-    const elementTuruIndeksi = basliklar.findIndex(b => b === 'GrupTuru');
-    const renkIndeksi = basliklar.findIndex(b => b === 'Renk');
-    
-    // Gerekli başlıkların var olup olmadığını kontrol et
-    if (atomNoIndeksi === -1 || sembolIndeksi === -1 || isimIndeksi === -1 || 
-        grupIndeksi === -1 || periyotIndeksi === -1) {
-        console.warn('CSV dosyasında gerekli başlıklar eksik. Varsayılan veriler kullanılıyor.');
-        return ELEMENT_VERILERI;
-    }
-    
-    const elementler = [];
-    
-    // İlk satırı atla (başlıklar)
-    for (let i = 1; i < satirlar.length; i++) {
-        if (!satirlar[i].trim()) continue; // Boş satırları atla
+    try {
+        // İlk satır başlıkları içerir
+        const basliklar = satirlar[0].split(',').map(baslik => baslik.trim());
         
-        const veri = satirlar[i].split(',').map(deger => deger.trim());
+        // Başlıkların doğruluğunu kontrol et
+        const atomNoIndeksi = basliklar.findIndex(b => b === 'AtomNumarasi');
+        const sembolIndeksi = basliklar.findIndex(b => b === 'Sembol');
+        const isimIndeksi = basliklar.findIndex(b => b === 'Isim');
+        const grupIndeksi = basliklar.findIndex(b => b === 'GrupNumarasi');
+        const periyotIndeksi = basliklar.findIndex(b => b === 'PeriyotNumarasi');
+        const elementTuruIndeksi = basliklar.findIndex(b => b === 'GrupTuru');
         
-        // Minimum veri uzunluğunu kontrol et
-        if (veri.length < Math.max(atomNoIndeksi, sembolIndeksi, isimIndeksi, grupIndeksi, periyotIndeksi) + 1) {
-            console.warn(`Satır ${i+1}'de yetersiz veri. Bu satır atlanıyor.`);
-            continue;
+        // Gerekli başlıkların var olup olmadığını kontrol et
+        if (atomNoIndeksi === -1 || sembolIndeksi === -1 || isimIndeksi === -1 || 
+            grupIndeksi === -1 || periyotIndeksi === -1) {
+            console.warn('CSV dosyasında gerekli başlıklar eksik. Varsayılan veriler kullanılıyor.');
+            return ELEMENT_VERILERI_ISLEMLER;
         }
         
-        // Grup ve periyot verilerini doğru şekilde işle
-        let grupNumarasi = veri[grupIndeksi];
-        // Eğer grup A/B formatındaysa (örn: 1A, 8B), sayısal değere dönüştür
-        if (typeof grupNumarasi === 'string' && grupNumarasi.match(/^\d+[AB]$/)) {
-            const grupHarfi = grupNumarasi.slice(-1);
-            const grupRakam = parseInt(grupNumarasi.slice(0, -1));
+        const elementler = [];
+        
+        // İlk satırı atla (başlıklar)
+        for (let i = 1; i < satirlar.length; i++) {
+            if (!satirlar[i].trim()) continue; // Boş satırları atla
             
-            if (grupHarfi === 'A') {
-                // A grupları: 1A-8A doğrudan sayıya dönüştürülür
-                grupNumarasi = grupRakam;
-            } else if (grupHarfi === 'B') {
-                // B grupları: 1B-8B --> 3-12 arasında eşleştirilir
-                const bGrupHaritasi = {1: 3, 2: 4, 3: 5, 4: 6, 5: 7, 6: 8, 7: 9, 8: 10, 9: 11, 10: 12};
-                grupNumarasi = bGrupHaritasi[grupRakam] || grupRakam;
+            const veri = satirlar[i].split(',').map(deger => deger.trim());
+            
+            // Minimum veri uzunluğunu kontrol et
+            if (veri.length < Math.max(atomNoIndeksi, sembolIndeksi, isimIndeksi, grupIndeksi, periyotIndeksi) + 1) {
+                console.warn(`Satır ${i+1}'de yetersiz veri. Bu satır atlanıyor.`);
+                continue;
             }
-        } else {
-            // Sayısal değer ise parseInt ile dönüştür
-            grupNumarasi = parseInt(grupNumarasi);
+            
+            // Grup ve periyot verilerini doğru şekilde işle
+            let grupNumarasi = veri[grupIndeksi];
+            let grupSayisi = 0;
+            
+            // Eğer grup A/B formatındaysa (örn: 1A, 8B), sayısal değere dönüştür
+            if (typeof grupNumarasi === 'string' && grupNumarasi.match(/^\d+[AB]$/)) {
+                const grupHarfi = grupNumarasi.slice(-1);
+                const grupRakam = parseInt(grupNumarasi.slice(0, -1));
+                
+                if (grupHarfi === 'A') {
+                    // A grupları: 1A=1, 2A=2, 3A=13, 4A=14, 5A=15, 6A=16, 7A=17, 8A=18
+                    if (grupRakam <= 2) {
+                        grupSayisi = grupRakam;
+                    } else {
+                        grupSayisi = grupRakam + 10; // 3A → 13
+                    }
+                } else if (grupHarfi === 'B') {
+                    // B grupları: 3B=3, 4B=4, 5B=5, 6B=6, 7B=7, 8B=8-10, 1B=11, 2B=12
+                    if (grupRakam >= 3 && grupRakam <= 7) {
+                        grupSayisi = grupRakam; // 3B-7B
+                    } else if (grupRakam === 8) {
+                        grupSayisi = 8; // 8B (Fe, Co, Ni üçlüsü için)
+                    } else if (grupRakam === 1) {
+                        grupSayisi = 11; // 1B → 11
+                    } else if (grupRakam === 2) {
+                        grupSayisi = 12; // 2B → 12
+                    }
+                }
+            } else {
+                // Sayısal değer ise doğrudan al
+                grupSayisi = parseInt(grupNumarasi);
+            }
+            
+            // Periyot numarasını al
+            let periyotNumarasi = parseInt(veri[periyotIndeksi]);
+            
+            // Atom numarası ve diğer sayısal değerleri kontrol et
+            const atomNo = parseInt(veri[atomNoIndeksi]);
+            if (isNaN(atomNo) || isNaN(grupSayisi) || isNaN(periyotNumarasi)) {
+                console.warn(`Satır ${i+1}'de geçersiz sayısal değer. Bu satır atlanıyor.`);
+                continue;
+            }
+            
+            // Element türü
+            const elementTuru = (elementTuruIndeksi !== -1) ? veri[elementTuruIndeksi] : "";
+            
+            // Yeni element nesnesi oluştur - ELEMENT_VERILERI_OKEY ile uyumlu olacak şekilde
+            const element = {
+                atom_no: atomNo,
+                sembol: veri[sembolIndeksi],
+                isim: veri[isimIndeksi],
+                grup: grupSayisi,
+                periyot: periyotNumarasi,
+                element_turu: elementTuru
+            };
+            
+            elementler.push(element);
         }
         
-        let periyotNumarasi = parseInt(veri[periyotIndeksi]);
-        
-        // Atom numarası ve diğer sayısal değerleri kontrol et
-        const atomNo = parseInt(veri[atomNoIndeksi]);
-        if (isNaN(atomNo) || isNaN(grupNumarasi) || isNaN(periyotNumarasi)) {
-            console.warn(`Satır ${i+1}'de geçersiz sayısal değer. Bu satır atlanıyor.`);
-            continue;
+        if (elementler.length === 0) {
+            console.warn('CSV dosyasında geçerli element verisi bulunamadı. Varsayılan veriler kullanılıyor.');
+            return ELEMENT_VERILERI_ISLEMLER;
         }
         
-        // Yeni element nesnesi oluştur
-        const element = {
-            atom_no: atomNo,
-            sembol: veri[sembolIndeksi],
-            isim: veri[isimIndeksi],
-            grup: grupNumarasi,
-            periyot: periyotNumarasi
-        };
-        
-        // İsteğe bağlı alanları ekle
-        if (atomKutlesiIndeksi !== -1 && veri[atomKutlesiIndeksi]) {
-            element.atom_kutlesi = parseFloat(veri[atomKutlesiIndeksi]);
-        }
-        
-        if (elementTuruIndeksi !== -1 && veri[elementTuruIndeksi]) {
-            element.element_turu = veri[elementTuruIndeksi];
-        }
-        
-        if (renkIndeksi !== -1 && veri[renkIndeksi]) {
-            element.renk = veri[renkIndeksi];
-        }
-        
-        elementler.push(element);
+        console.log(`CSV'den ${elementler.length} element başarıyla yüklendi.`);
+        return elementler;
+    } catch (error) {
+        console.error("CSV dosyası işlenirken hata oluştu:", error);
+        return ELEMENT_VERILERI_ISLEMLER;
     }
-    
-    if (elementler.length === 0) {
-        console.warn('CSV dosyasında geçerli element verisi bulunamadı. Varsayılan veriler kullanılıyor.');
-        return ELEMENT_VERILERI;
-    }
-    
-    console.log(`${elementler.length} element başarıyla yüklendi.`);
-    return elementler;
 }
 
 /**
@@ -256,7 +264,7 @@ function atomNoyaGoreElementBul(elementler, atomNo) {
 }
 
 // Tüm fonksiyonları global olarak erişilebilir yap
-window.ELEMENT_VERILERI = ELEMENT_VERILERI;
+window.ELEMENT_VERILERI_ISLEMLER = ELEMENT_VERILERI_ISLEMLER;
 window.csvDosyasindanElementleriYukle = csvDosyasindanElementleriYukle;
 window.elementRengiGetir = elementRengiGetir;
 window.grupNumarasinaGoreRenkGetir = grupNumarasinaGoreRenkGetir;

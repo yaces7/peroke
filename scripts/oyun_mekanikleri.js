@@ -749,7 +749,7 @@ class PeriyodikOkey {
                 // Joker kartları atla
                 if (element.joker) return;
                 
-                this.deste.push(new ElementKarti(element, takim));
+                this.deste.push(new ElementKartiSinifi(element, takim));
             });
         }
         
@@ -763,8 +763,8 @@ class PeriyodikOkey {
             element_turu: "Joker"
         };
         
-        this.deste.push(new ElementKarti(jokerElement, 1, true));
-        this.deste.push(new ElementKarti(jokerElement, 2, true));
+        this.deste.push(new ElementKartiSinifi(jokerElement, 1, true));
+        this.deste.push(new ElementKartiSinifi(jokerElement, 2, true));
     }
     
     /**

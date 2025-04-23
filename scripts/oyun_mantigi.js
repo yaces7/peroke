@@ -3,8 +3,8 @@
  * Oyun akışı ve kurallarını yöneten ana sınıf
  */
 
-// ElementKarti sınıfını içe aktar (import)
-const { ElementKarti } = typeof require !== 'undefined' ? require('./kart_sablonu.js') : {};
+// ElementKartiSinifi sınıfını içe aktar (import)
+const { ElementKartiSinifi } = typeof require !== 'undefined' ? require('./kart_sablonu.js') : {};
 
 /**
  * Oyun sınıfı
@@ -90,12 +90,12 @@ class PeriyodikOkey {
     kartlariOlustur(elementVerileri) {
         // Elementleri kartlara dönüştür
         elementVerileri.forEach(element => {
-            const kart = new ElementKarti(element);
+            const kart = new ElementKartiSinifi(element);
             this.kartlar.push(kart);
         });
         
         // Joker kartları ekle
-        this.jokerler.push(new ElementKarti({
+        this.jokerler.push(new ElementKartiSinifi({
             id: 119,
             sembol: "SE1",
             isim: "Süper Element 1",
@@ -103,7 +103,7 @@ class PeriyodikOkey {
             joker: true
         }));
         
-        this.jokerler.push(new ElementKarti({
+        this.jokerler.push(new ElementKartiSinifi({
             id: 120,
             sembol: "SE2",
             isim: "Süper Element 2",

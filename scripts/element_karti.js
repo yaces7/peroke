@@ -444,4 +444,9 @@ class ElementKartiSinifi {
 }
 
 // Global namespace'e ElementKartiSinifi sınıfını ekle
-window.ElementKartiSinifi = ElementKartiSinifi; 
+window.ElementKartiSinifi = ElementKartiSinifi;
+
+// Node.js ortamı için dışa aktarma (export)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { ElementKartiSinifi };
+} 

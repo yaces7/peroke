@@ -226,19 +226,19 @@ class ElementKartiSinifi {
             logo.style.top = '50%';
             logo.style.left = '50%';
             logo.style.transform = 'translate(-50%, -50%)';
-            logo.style.width = '70px';
-            logo.style.height = '70px';
+            logo.style.width = '50px'; // Daha küçük logo
+            logo.style.height = '50px'; // Daha küçük logo
             logo.style.borderRadius = '50%';
             logo.style.backgroundColor = 'rgba(255,255,255,0.8)';
             logo.style.display = 'flex';
             logo.style.alignItems = 'center';
             logo.style.justifyContent = 'center';
             
-            // Logo içeriği
+            // Logo içeriği - Daha küçük yazılar
             logo.innerHTML = `
                 <div style="text-align: center;">
-                    <div style="font-size: 24px; font-weight: bold; color: ${this.sablonAyarlari.arkaYuzRengi};">PO</div>
-                    <div style="font-size: 14px; color: ${this.sablonAyarlari.arkaYuzRengi};">Takım ${this.takim}</div>
+                    <div style="font-size: 18px; font-weight: bold; color: ${this.sablonAyarlari.arkaYuzRengi};">PO</div>
+                    <div style="font-size: 10px; color: ${this.sablonAyarlari.arkaYuzRengi};">Takım ${this.takim}</div>
                 </div>
             `;
             
@@ -259,6 +259,7 @@ class ElementKartiSinifi {
                 jokerSembol.style.fontWeight = 'bold';
                 jokerSembol.style.textAlign = 'center';
                 jokerSembol.style.marginTop = '40px';
+                jokerSembol.style.color = '#000000'; // Siyah yazı
                 jokerSembol.textContent = 'J';
                 
                 // Joker yazısı
@@ -268,6 +269,7 @@ class ElementKartiSinifi {
                 jokerYazi.style.fontWeight = 'bold';
                 jokerYazi.style.textAlign = 'center';
                 jokerYazi.style.marginTop = '20px';
+                jokerYazi.style.color = '#000000'; // Siyah yazı
                 jokerYazi.textContent = 'JOKER';
                 
                 kartDiv.appendChild(jokerSembol);
@@ -282,6 +284,7 @@ class ElementKartiSinifi {
                 atomNo.style.top = '5px';
                 atomNo.style.left = '5px';
                 atomNo.style.fontSize = '12px';
+                atomNo.style.color = '#000000'; // Siyah yazı
                 atomNo.textContent = this.element.atom_no;
                 
                 // Element sembolü
@@ -291,6 +294,7 @@ class ElementKartiSinifi {
                 sembol.style.fontWeight = 'bold';
                 sembol.style.textAlign = 'center';
                 sembol.style.marginTop = '30px';
+                sembol.style.color = '#000000'; // Siyah yazı
                 sembol.textContent = this.element.sembol;
                 
                 // Element ismi
@@ -299,6 +303,7 @@ class ElementKartiSinifi {
                 isim.style.fontSize = '14px';
                 isim.style.textAlign = 'center';
                 isim.style.marginTop = '10px';
+                isim.style.color = '#000000'; // Siyah yazı
                 isim.textContent = this.element.isim;
                 
                 // Grup ve periyot bilgisi
@@ -308,10 +313,11 @@ class ElementKartiSinifi {
                 grupPeriyot.style.textAlign = 'center';
                 grupPeriyot.style.marginTop = '15px';
                 grupPeriyot.style.padding = '2px 5px';
-                grupPeriyot.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                grupPeriyot.style.backgroundColor = 'rgba(255, 255, 255, 0.5)'; // Daha belirgin arka plan
                 grupPeriyot.style.borderRadius = '3px';
                 grupPeriyot.style.width = '80%';
                 grupPeriyot.style.margin = '15px auto 0';
+                grupPeriyot.style.color = '#000000'; // Siyah yazı
                 
                 // Grup ve periyot değerlerini kontrol et
                 const grupDegeri = this.element.grup ? this.element.grup : "-";
@@ -327,6 +333,7 @@ class ElementKartiSinifi {
                 takimBilgisi.style.right = '5px';
                 takimBilgisi.style.fontSize = '12px';
                 takimBilgisi.style.fontWeight = 'bold';
+                takimBilgisi.style.color = '#000000'; // Siyah yazı
                 takimBilgisi.textContent = `T${this.takim}`;
                 
                 kartDiv.appendChild(atomNo);

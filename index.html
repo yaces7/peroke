@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periyodik Okey</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div id="oyun-container">
+        <div id="menu-screen" class="ekran">
+            <h1>Periyodik Okey</h1>
+            <div class="menu-buttons">
+                <button id="btn-oyuna-basla">Oyuna Başla</button>
+                <button id="btn-nasil-oynanir">Nasıl Oynanır</button>
+                <button id="btn-istatistikler">İstatistikler</button>
+                <button id="btn-ayarlar">Ayarlar</button>
+                <button id="btn-cikis">Çıkış</button>
+            </div>
+        </div>
+
+        <div id="ayarlar-screen" class="ekran gizli">
+            <h1>Ayarlar</h1>
+            <div class="ayarlar-form">
+                <div class="ayar-grup">
+                    <label for="bot-sayisi">Bot Sayısı:</label>
+                    <select id="bot-sayisi">
+                        <option value="1">1 Bot</option>
+                        <option value="2">2 Bot</option>
+                        <option value="3" selected>3 Bot</option>
+                    </select>
+                </div>
+                <div class="ayar-grup">
+                    <label for="zorluk-seviyesi">Zorluk Seviyesi:</label>
+                    <select id="zorluk-seviyesi">
+                        <option value="Kolay">Kolay</option>
+                        <option value="Normal" selected>Normal</option>
+                        <option value="Zor">Zor</option>
+                    </select>
+                </div>
+                <div class="ayar-grup">
+                    <label for="ses-efektleri">Ses Efektleri:</label>
+                    <input type="checkbox" id="ses-efektleri" checked>
+                </div>
+                <div class="ayar-grup">
+                    <label for="muzik">Müzik:</label>
+                    <input type="checkbox" id="muzik" checked>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button id="btn-ayarlar-kaydet">Kaydet</button>
+                <button id="btn-ayarlar-iptal">İptal</button>
+            </div>
+        </div>
+
+        <div id="nasil-oynanir-screen" class="ekran gizli">
+            <h1>Nasıl Oynanır</h1>
+            <div class="kurallar">
+                <h2>Oyun Kuralları</h2>
+                <ul>
+                    <li>Oyun tek kişi olarak botlarla oynanır.</li>
+                    <li>Oyunda 118 elementi temsil eden kartlar ve 2 adet süper element yazılı joker kart vardır.</li>
+                    <li>Amacınız, aynı grup veya aynı periyotta bulunan elementleri bir araya getirmektir.</li>
+                    <li>Aynı grupta en az 3, aynı periyotta en az 4 kart olmalıdır.</li>
+                    <li>Süper element kartları joker olarak kullanılabilir.</li>
+                    <li>Her grup için 10 puan, her periyot için 5 puan kazanırsınız.</li>
+                    <li>Son kartınız joker olursa puanınız 2 katına çıkar.</li>
+                </ul>
+                <h2>Kontroller</h2>
+                <ul>
+                    <li><strong>Sol Tıklama:</strong> Kart seçme</li>
+                    <li><strong>Sürükle-Bırak:</strong> Kartları kombinasyon alanına taşıma</li>
+                    <li><strong>Kontrol Tuşu:</strong> Kombinasyonu kontrol etme</li>
+                </ul>
+            </div>
+            <div class="menu-buttons">
+                <button id="btn-geri-don">Geri Dön</button>
+            </div>
+        </div>
+
+        <div id="istatistikler-screen" class="ekran gizli">
+            <h1>İstatistikler</h1>
+            <div class="istatistik-kutusu">
+                <div class="istatistik-grup">
+                    <h3>Oyun İstatistikleri</h3>
+                    <p>Toplam Oyun: <span id="toplam-oyun">0</span></p>
+                    <p>Kazanılan Oyun: <span id="kazanilan-oyun">0</span></p>
+                    <p>Kaybedilen Oyun: <span id="kaybedilen-oyun">0</span></p>
+                    <p>Kazanma Oranı: <span id="kazanma-orani">0%</span></p>
+                </div>
+                <div class="istatistik-grup">
+                    <h3>Puan İstatistikleri</h3>
+                    <p>En Yüksek Puan: <span id="en-yuksek-puan">0</span></p>
+                    <p>Ortalama Puan: <span id="ortalama-puan">0</span></p>
+                    <p>Toplam Puan: <span id="toplam-puan">0</span></p>
+                </div>
+                <div class="istatistik-grup">
+                    <h3>Element İstatistikleri</h3>
+                    <p>En Çok Kullanılan Element: <span id="en-cok-element">-</span></p>
+                    <p>En Çok Kullanılan Grup: <span id="en-cok-grup">-</span></p>
+                    <p>En Çok Kullanılan Periyot: <span id="en-cok-periyot">-</span></p>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button id="btn-istatistik-sifirla">Sıfırla</button>
+                <button id="btn-istatistik-geri">Geri Dön</button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="ekran gizli">
+            <div class="ust-bilgi">
+                <div class="skor-tablosu">
+                    <h3>Puanlar</h3>
+                    <p>Siz: <span id="oyuncu-puan">0</span></p>
+                    <p>Bot 1: <span id="bot1-puan">0</span></p>
+                    <p>Bot 2: <span id="bot2-puan">0</span></p>
+                    <p>Bot 3: <span id="bot3-puan">0</span></p>
+                </div>
+                <div class="oyun-durumu">
+                    <p id="durum-mesaji">Oyun başlıyor...</p>
+                </div>
+                <div class="oyun-butonlari">
+                    <button id="btn-oyun-menu">Menü</button>
+                    <button id="btn-oyun-yardim">Yardım</button>
+                </div>
+            </div>
+
+            <div class="oyun-alani">
+                <div class="bot-alani" id="bot1-alani">
+                    <!-- Bot 1 kartları buraya gelecek -->
+                </div>
+                <div class="bot-alani" id="bot2-alani">
+                    <!-- Bot 2 kartları buraya gelecek -->
+                </div>
+                <div class="bot-alani" id="bot3-alani">
+                    <!-- Bot 3 kartları buraya gelecek -->
+                </div>
+
+                <div class="orta-alan">
+                    <div class="deste">
+                        <canvas id="deste-canvas" width="80" height="120"></canvas>
+                        <p>Kalan: <span id="kalan-kart">0</span></p>
+                    </div>
+                    <div class="acik-kart">
+                        <canvas id="acik-kart-canvas" width="80" height="120"></canvas>
+                    </div>
+                </div>
+
+                <div class="kombinasyon-alani">
+                    <canvas id="kombinasyon-canvas" width="600" height="150"></canvas>
+                </div>
+
+                <div class="oyuncu-alani">
+                    <canvas id="oyuncu-canvas" width="800" height="150"></canvas>
+                </div>
+
+                <div class="kontroller">
+                    <button id="btn-kontrol-et">Kontrol Et</button>
+                    <button id="btn-kart-ver">Kart Ver</button>
+                    <button id="btn-desteyi-ac">Desteden Çek</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="oyun-sonu-screen" class="ekran gizli">
+            <h1>Oyun Sona Erdi</h1>
+            <div class="sonuc-kutusu">
+                <h2 id="sonuc-mesaji">Tebrikler! Kazandınız!</h2>
+                <div class="sonuc-detay">
+                    <p>Puanınız: <span id="sonuc-puan">0</span></p>
+                    <p>Grup Kombinasyonları: <span id="sonuc-grup">0</span></p>
+                    <p>Periyot Kombinasyonları: <span id="sonuc-periyot">0</span></p>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button id="btn-yeni-oyun">Yeni Oyun</button>
+                <button id="btn-ana-menu">Ana Menü</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/element_verileri.js"></script>
+    <script src="scripts/element_karti.js"></script>
+    <script src="scripts/element_islemleri.js"></script>
+    <script src="scripts/oyun_mekanikleri.js"></script>
+    <script src="scripts/arayuz_kontrolu.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html> 

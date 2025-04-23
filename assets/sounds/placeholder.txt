@@ -1,0 +1,10 @@
+Bu klasör, oyun içi ses efektleri için kullanılacaktır:
+
+- kart_al.mp3
+- kart_ver.mp3
+- kombinasyon_gecerli.mp3
+- kombinasyon_gecersiz.mp3
+- oyun_basla.mp3
+- oyun_bitir.mp3
+
+Ses dosyaları daha sonra eklenecektir. 

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periyodik Okey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2c3e50;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: #1a2533;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .game-board {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .player-area {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        .bot-area-left {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .bot-area-right {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .bot-area-top {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .card {
+            width: 70px;
+            height: 100px;
+            background-color: #3498db;
+            border-radius: 5px;
+            margin: 0 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .card .symbol {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .card .name {
+            font-size: 10px;
+            margin-top: 5px;
+        }
+        
+        .card .number {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 10px;
+        }
+        
+        .card .group {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 10px;
+        }
+        
+        .card .period {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            font-size: 10px;
+        }
+        
+        .center-area {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .deck {
+            width: 80px;
+            height: 120px;
+            background-color: #2980b9;
+            border-radius: 5px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .discard-pile {
+            width: 80px;
+            height: 120px;
+            background-color: #3498db;
+            border-radius: 5px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .combination-area {
+            position: absolute;
+            bottom: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            height: 120px;
+            background-color: rgba(52, 152, 219, 0.2);
+            border: 2px dashed #3498db;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .score-board {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(26, 37, 51, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            width: 150px;
+        }
+        
+        .bot-card {
+            width: 70px;
+            height: 100px;
+            background-color: #e74c3c;
+            border-radius: 5px;
+            margin: 0 2px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>Periyodik Okey</h1>
+        </div>
+        
+        <div class="game-board">
+            <div class="bot-area-top">
+                <!-- Bot 2 kartları -->
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+            </div>
+            
+            <div class="bot-area-left">
+                <!-- Bot 1 kartları -->
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+            </div>
+            
+            <div class="bot-area-right">
+                <!-- Bot 3 kartları -->
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+                <div class="bot-card"></div>
+            </div>
+            
+            <div class="center-area">
+                <div style="display: flex;">
+                    <div class="deck">
+                        <p style="text-align: center; margin-top: 50px;">Kapalı Deste</p>
+                    </div>
+                    <div class="discard-pile">
+                        <div class="card" style="width: 100%; height: 100%; margin: 0;">
+                            <div class="number">18</div>
+                            <div class="group">8A</div>
+                            <div class="symbol">Ar</div>
+                            <div class="name">Argon</div>
+                            <div class="period">P3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="combination-area">
+                <p>Kombinasyon Alanı</p>
+            </div>
+            
+            <div class="player-area">
+                <!-- Oyuncu kartları -->
+                <div class="card">
+                    <div class="number">1</div>
+                    <div class="group">1A</div>
+                    <div class="symbol">H</div>
+                    <div class="name">Hidrojen</div>
+                    <div class="period">P1</div>
+                </div>
+                <div class="card">
+                    <div class="number">26</div>
+                    <div class="group">8B</div>
+                    <div class="symbol">Fe</div>
+                    <div class="name">Demir</div>
+                    <div class="period">P4</div>
+                </div>
+                <div class="card">
+                    <div class="number">47</div>
+                    <div class="group">5B</div>
+                    <div class="symbol">Ag</div>
+                    <div class="name">Gümüş</div>
+                    <div class="period">P5</div>
+                </div>
+                <div class="card">
+                    <div class="number">79</div>
+                    <div class="group">1B</div>
+                    <div class="symbol">Au</div>
+                    <div class="name">Altın</div>
+                    <div class="period">P6</div>
+                </div>
+                <div class="card">
+                    <div class="number">29</div>
+                    <div class="group">1B</div>
+                    <div class="symbol">Cu</div>
+                    <div class="name">Bakır</div>
+                    <div class="period">P4</div>
+                </div>
+                <div class="card">
+                    <div class="number">11</div>
+                    <div class="group">1A</div>
+                    <div class="symbol">Na</div>
+                    <div class="name">Sodyum</div>
+                    <div class="period">P3</div>
+                </div>
+                <div class="card">
+                    <div class="number">17</div>
+                    <div class="group">7A</div>
+                    <div class="symbol">Cl</div>
+                    <div class="name">Klor</div>
+                    <div class="period">P3</div>
+                </div>
+                <div class="card" style="background-color: #ffd700;">
+                    <div class="symbol">SE1</div>
+                    <div class="name">Süper Element</div>
+                    <div style="position: absolute; bottom: 5px; font-size: 10px;">Joker</div>
+                </div>
+            </div>
+            
+            <div class="score-board">
+                <h3>Puanlar</h3>
+                <p>Siz: 0</p>
+                <p>Bot 1: 0</p>
+                <p>Bot 2: 0</p>
+                <p>Bot 3: 0</p>
+            </div>
+            
+            <div class="controls">
+                <button>Kontrol Et</button>
+                <button>Kart Ver</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

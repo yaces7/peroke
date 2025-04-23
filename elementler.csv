@@ -1,0 +1,119 @@
+AtomNumarasi,Sembol,Isim,GrupNumarasi,PeriyotNumarasi,GrupTuru
+1,H,Hidrojen,1A,1,Ametal
+2,He,Helyum,8A,1,Soy Gaz
+3,Li,Lityum,1A,2,Alkali Metal
+4,Be,Berilyum,2A,2,Toprak Alkali Metal
+5,B,Bor,3A,2,Yarı Metal
+6,C,Karbon,4A,2,Ametal
+7,N,Azot,5A,2,Ametal
+8,O,Oksijen,6A,2,Ametal
+9,F,Flor,7A,2,Halojen
+10,Ne,Neon,8A,2,Soy Gaz
+11,Na,Sodyum,1A,3,Alkali Metal
+12,Mg,Magnezyum,2A,3,Toprak Alkali Metal
+13,Al,Alüminyum,3A,3,Metal
+14,Si,Silisyum,4A,3,Yarı Metal
+15,P,Fosfor,5A,3,Ametal
+16,S,Kükürt,6A,3,Ametal
+17,Cl,Klor,7A,3,Halojen
+18,Ar,Argon,8A,3,Soy Gaz
+19,K,Potasyum,1A,4,Alkali Metal
+20,Ca,Kalsiyum,2A,4,Toprak Alkali Metal
+21,Sc,Skandiyum,3B,4,Geçiş Metali
+22,Ti,Titanyum,4B,4,Geçiş Metali
+23,V,Vanadyum,5B,4,Geçiş Metali
+24,Cr,Krom,6B,4,Geçiş Metali
+25,Mn,Mangan,7B,4,Geçiş Metali
+26,Fe,Demir,8B,4,Geçiş Metali
+27,Co,Kobalt,8B,4,Geçiş Metali
+28,Ni,Nikel,8B,4,Geçiş Metali
+29,Cu,Bakır,1B,4,Geçiş Metali
+30,Zn,Çinko,2B,4,Geçiş Metali
+31,Ga,Galyum,3A,4,Metal
+32,Ge,Germanyum,4A,4,Yarı Metal
+33,As,Arsenik,5A,4,Yarı Metal
+34,Se,Selenyum,6A,4,Ametal
+35,Br,Brom,7A,4,Halojen
+36,Kr,Kripton,8A,4,Soy Gaz
+37,Rb,Rubidyum,1A,5,Alkali Metal
+38,Sr,Stronsiyum,2A,5,Toprak Alkali Metal
+39,Y,İtriyum,3B,5,Geçiş Metali
+40,Zr,Zirkonyum,4B,5,Geçiş Metali
+41,Nb,Niyobyum,5B,5,Geçiş Metali
+42,Mo,Molibden,6B,5,Geçiş Metali
+43,Tc,Teknesyum,7B,5,Geçiş Metali
+44,Ru,Rutenyum,8B,5,Geçiş Metali
+45,Rh,Rodyum,8B,5,Geçiş Metali
+46,Pd,Paladyum,8B,5,Geçiş Metali
+47,Ag,Gümüş,1B,5,Geçiş Metali
+48,Cd,Kadmiyum,2B,5,Geçiş Metali
+49,In,İndiyum,3A,5,Metal
+50,Sn,Kalay,4A,5,Metal
+51,Sb,Antimon,5A,5,Yarı Metal
+52,Te,Tellür,6A,5,Yarı Metal
+53,I,İyot,7A,5,Halojen
+54,Xe,Ksenon,8A,5,Soy Gaz
+55,Cs,Sezyum,1A,6,Alkali Metal
+56,Ba,Baryum,2A,6,Toprak Alkali Metal
+57,La,Lantan,3B,6,Lantanit
+58,Ce,Seryum,LN,6,Lantanit
+59,Pr,Praseodim,LN,6,Lantanit
+60,Nd,Neodim,LN,6,Lantanit
+61,Pm,Prometyum,LN,6,Lantanit
+62,Sm,Samaryum,LN,6,Lantanit
+63,Eu,Evropiyum,LN,6,Lantanit
+64,Gd,Gadolinyum,LN,6,Lantanit
+65,Tb,Terbiyum,LN,6,Lantanit
+66,Dy,Disprosyum,LN,6,Lantanit
+67,Ho,Holmiyum,LN,6,Lantanit
+68,Er,Erbiyum,LN,6,Lantanit
+69,Tm,Tulyum,LN,6,Lantanit
+70,Yb,İterbiyum,LN,6,Lantanit
+71,Lu,Lutesyum,LN,6,Lantanit
+72,Hf,Hafniyum,4B,6,Geçiş Metali
+73,Ta,Tantal,5B,6,Geçiş Metali
+74,W,Tungsten,6B,6,Geçiş Metali
+75,Re,Renyum,7B,6,Geçiş Metali
+76,Os,Osmiyum,8B,6,Geçiş Metali
+77,Ir,İridyum,8B,6,Geçiş Metali
+78,Pt,Platin,8B,6,Geçiş Metali
+79,Au,Altın,1B,6,Geçiş Metali
+80,Hg,Cıva,2B,6,Geçiş Metali
+81,Tl,Talyum,3A,6,Metal
+82,Pb,Kurşun,4A,6,Metal
+83,Bi,Bizmut,5A,6,Metal
+84,Po,Polonyum,6A,6,Yarı Metal
+85,At,Astatin,7A,6,Halojen
+86,Rn,Radon,8A,6,Soy Gaz
+87,Fr,Fransiyum,1A,7,Alkali Metal
+88,Ra,Radyum,2A,7,Toprak Alkali Metal
+89,Ac,Aktinyum,3B,7,Aktinit
+90,Th,Toryum,AN,7,Aktinit
+91,Pa,Protaktinyum,AN,7,Aktinit
+92,U,Uranyum,AN,7,Aktinit
+93,Np,Neptunyum,AN,7,Aktinit
+94,Pu,Plutonyum,AN,7,Aktinit
+95,Am,Amerikyum,AN,7,Aktinit
+96,Cm,Küriyum,AN,7,Aktinit
+97,Bk,Berkelyum,AN,7,Aktinit
+98,Cf,Kaliforniyum,AN,7,Aktinit
+99,Es,Aynştaynyum,AN,7,Aktinit
+100,Fm,Fermiyum,AN,7,Aktinit
+101,Md,Mendelevyum,AN,7,Aktinit
+102,No,Nobelyum,AN,7,Aktinit
+103,Lr,Lavrensiyum,AN,7,Aktinit
+104,Rf,Rutherfordiyum,4B,7,Geçiş Metali
+105,Db,Dubniyum,5B,7,Geçiş Metali
+106,Sg,Seaborgiyum,6B,7,Geçiş Metali
+107,Bh,Bohriyum,7B,7,Geçiş Metali
+108,Hs,Hassiyum,8B,7,Geçiş Metali
+109,Mt,Meitneriyum,8B,7,Geçiş Metali
+110,Ds,Darmstadtiyum,8B,7,Geçiş Metali
+111,Rg,Röntgenyum,1B,7,Geçiş Metali
+112,Cn,Kopernikyum,2B,7,Geçiş Metali
+113,Nh,Nihonyum,3A,7,Bilinmiyor
+114,Fl,Flerovyum,4A,7,Bilinmiyor
+115,Mc,Moskovyum,5A,7,Bilinmiyor
+116,Lv,Livermoryum,6A,7,Bilinmiyor
+117,Ts,Tennessine,7A,7,Bilinmiyor
+118,Og,Oganesson,8A,7,Bilinmiyor 

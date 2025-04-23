@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "sembol": "H",
+    "isim": "Hidrojen",
+    "atomNumarasi": 1,
+    "grupNumarasi": "1A",
+    "periyotNumarasi": 1,
+    "renkKodu": "#FFFF00",
+    "grupTuru": "Reaktif Qaz"
+  },
+  {
+    "id": 18,
+    "sembol": "Ar",
+    "isim": "Argon",
+    "atomNumarasi": 18,
+    "grupNumarasi": "8A",
+    "periyotNumarasi": 3,
+    "renkKodu": "#80FFFF",
+    "grupTuru": "Soy Gaz"
+  },
+  {
+    "id": 26,
+    "sembol": "Fe",
+    "isim": "Demir",
+    "atomNumarasi": 26,
+    "grupNumarasi": "8B",
+    "periyotNumarasi": 4,
+    "renkKodu": "#FF9999",
+    "grupTuru": "Geçiş Metali"
+  },
+  {
+    "id": 79,
+    "sembol": "Au",
+    "isim": "Altın",
+    "atomNumarasi": 79,
+    "grupNumarasi": "1B",
+    "periyotNumarasi": 6,
+    "renkKodu": "#FF9999",
+    "grupTuru": "Geçiş Metali"
+  },
+  {
+    "id": 119,
+    "sembol": "SE1",
+    "isim": "Süper Element 1",
+    "atomNumarasi": null,
+    "grupNumarasi": null,
+    "periyotNumarasi": null,
+    "renkKodu": "#FFFFFF",
+    "grupTuru": "Joker",
+    "joker": true
+  }
+] 

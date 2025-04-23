@@ -176,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function elementKartiOlustur(element, takim = 1, joker = false) {
         const kart = document.createElement('div');
         kart.className = 'element-kart';
+        kart.setAttribute('draggable', 'true');
         if (joker) kart.classList.add('joker');
         
         // Atom Numarası
@@ -218,7 +219,84 @@ document.addEventListener('DOMContentLoaded', () => {
         kart.dataset.takim = takim;
         kart.dataset.joker = joker;
         
+        // Sürükleme olayları
+        kart.addEventListener('dragstart', handleDragStart);
+        kart.addEventListener('dragend', handleDragEnd);
+        kart.addEventListener('click', function() {
+            // Tüm kartlardan 'secili' sınıfını kaldır
+            document.querySelectorAll('.element-kart').forEach(k => {
+                k.classList.remove('secili');
+            });
+            
+            // Bu karta 'secili' sınıfını ekle
+            this.classList.add('secili');
+        });
+        
         return kart;
+    }
+    
+    // Sürükleme ile ilgili değişkenler
+    let suruklenenKart = null;
+    
+    // Sürükleme olayları
+    function handleDragStart(e) {
+        this.style.opacity = '0.4';
+        suruklenenKart = this;
+        
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+    }
+    
+    function handleDragEnd(e) {
+        this.style.opacity = '1';
+        
+        document.querySelectorAll('.surukle-hedef').forEach(item => {
+            item.classList.remove('surukle-uzerinde');
+        });
+    }
+    
+    function handleDragOver(e) {
+        e.preventDefault();
+        return false;
+    }
+    
+    function handleDragEnter(e) {
+        this.classList.add('surukle-uzerinde');
+    }
+    
+    function handleDragLeave(e) {
+        this.classList.remove('surukle-uzerinde');
+    }
+    
+    function handleDrop(e) {
+        e.stopPropagation();
+        
+        if (suruklenenKart !== this && this.classList.contains('surukle-hedef')) {
+            this.appendChild(suruklenenKart);
+        }
+        
+        return false;
+    }
+    
+    // Kombinasyon alanını sürükleme hedefi yap
+    function surukleHedefleriniAyarla() {
+        const kombinasyonAlani = document.getElementById('kombinasyon-alani');
+        if (kombinasyonAlani) {
+            kombinasyonAlani.classList.add('surukle-hedef');
+            kombinasyonAlani.addEventListener('dragover', handleDragOver);
+            kombinasyonAlani.addEventListener('dragenter', handleDragEnter);
+            kombinasyonAlani.addEventListener('dragleave', handleDragLeave);
+            kombinasyonAlani.addEventListener('drop', handleDrop);
+        }
+        
+        const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+        if (oyuncuKartlari) {
+            oyuncuKartlari.classList.add('surukle-hedef');
+            oyuncuKartlari.addEventListener('dragover', handleDragOver);
+            oyuncuKartlari.addEventListener('dragenter', handleDragEnter);
+            oyuncuKartlari.addEventListener('dragleave', handleDragLeave);
+            oyuncuKartlari.addEventListener('drop', handleDrop);
+        }
     }
     
     // Örnek kart oluşturma (test için)
@@ -237,10 +315,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const acikKart = elementKartiOlustur(elementler[0], 1);
         acikKartAlani.appendChild(acikKart);
         
-        // Oyuncu kartları
+        // Oyuncu kartları - Container oluştur
         const oyuncuAlani = document.querySelector('.oyuncu-alani');
         const oyuncuKartlariDiv = document.createElement('div');
         oyuncuKartlariDiv.className = 'oyuncu-kartlari';
+        oyuncuKartlariDiv.id = 'oyuncu-kartlari';
         
         elementler.forEach((element, index) => {
             const kart = elementKartiOlustur(element, 1, index === 5); // 5. kart joker
@@ -248,6 +327,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         oyuncuAlani.appendChild(oyuncuKartlariDiv);
+        
+        // Kombinasyon alanı - Container oluştur
+        const kombinasyonDiv = document.createElement('div');
+        kombinasyonDiv.id = 'kombinasyon-alani';
+        kombinasyonDiv.className = 'kombinasyon-alani';
+        
+        const kombinasyonBaslik = document.createElement('div');
+        kombinasyonBaslik.className = 'kombinasyon-baslik';
+        kombinasyonBaslik.textContent = 'Kombinasyon Alanı';
+        
+        const kombinasyonIcerik = document.createElement('div');
+        kombinasyonIcerik.className = 'kombinasyon-icerik';
+        
+        kombinasyonDiv.appendChild(kombinasyonBaslik);
+        kombinasyonDiv.appendChild(kombinasyonIcerik);
+        
+        // Kombinasyon alanını ekle
+        const oyunAlani = document.querySelector('.oyun-alani');
+        oyunAlani.insertBefore(kombinasyonDiv, oyuncuAlani);
         
         // Bot kartlarını göster (kapalı olarak)
         document.querySelectorAll('.bot-kartlar').forEach(botAlani => {
@@ -261,6 +359,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 botAlani.appendChild(kapalıKart);
             }
         });
+        
+        // Sürükleme hedeflerini ayarla
+        surukleHedefleriniAyarla();
     }
     
     // Oyuna başla butonu
@@ -397,12 +498,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('btn-kart-ver').addEventListener('click', () => {
         console.log("Kart veriliyor...");
-        // TODO: Kart verme işlemi eklenecek
+        // Seçili kart var mı kontrol et
+        const seciliKart = document.querySelector('.element-kart.secili');
+        if (seciliKart) {
+            // Seçili kartı açık kart alanına taşı
+            const acikKartAlani = document.querySelector('.acik-kart-alani');
+            acikKartAlani.innerHTML = ''; // Önceki kartı temizle
+            acikKartAlani.appendChild(seciliKart);
+            seciliKart.classList.remove('secili');
+        } else {
+            alert("Lütfen önce bir kart seçin!");
+        }
     });
     
     document.getElementById('btn-desteyi-ac').addEventListener('click', () => {
         console.log("Desteden kart çekiliyor...");
-        // TODO: Desteden kart çekme işlemi eklenecek
+        // Oyuncu kartlarına yeni bir kart ekle (test için)
+        const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+        if (oyuncuKartlari) {
+            // Rastgele bir element al
+            const randomIndex = Math.floor(Math.random() * ELEMENT_VERILERI.length);
+            const yeniKart = elementKartiOlustur(ELEMENT_VERILERI[randomIndex], 1);
+            oyuncuKartlari.appendChild(yeniKart);
+        }
     });
     
     console.log("Periyodik Okey oyunu hazır!");

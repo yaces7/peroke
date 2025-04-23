@@ -1,83 +1,98 @@
 /**
  * Periyodik Okey - Ses Yöneticisi
- * Oyun içi ses efektlerini yönetmek için kullanılan sınıf
+ * Oyun seslerini yönetmek için kullanılan sınıf
  */
 
 class SesYoneticisi {
     /**
-     * SesYoneticisi yapıcı metodu
-     * @param {Object} ayarlar - Ses ayarları
+     * Ses yöneticisi yapıcı metodu
      */
-    constructor(ayarlar = {}) {
-        // Ses yolunu ayarla (varsayılan: assets/sounds/)
-        this.sesYolu = ayarlar.sesYolu || 'assets/sounds/';
+    constructor() {
+        // Ses açık/kapalı durumu
+        this.sesEfektleriAcik = false;
+        this.muzikAcik = false;
         
-        // Ses açık mı?
-        this.sesAcik = false; // Varsayılan olarak ses kapalı
+        // Ses efektleri
+        this.sesEfektleri = {
+            kartAl: null,
+            kartKoy: null,
+            okey: null,
+            hata: null,
+            basari: null,
+            tur: null
+        };
         
-        // Ses seviyesi (0-1 arası)
-        this.sesSeviyesi = ayarlar.sesSeviyesi !== undefined ? ayarlar.sesSeviyesi : 0.5;
+        // Arka plan müziği
+        this.muzik = null;
         
-        // Ses efektleri nesnesi - boş bırakılacak
-        this.sesEfektleri = {};
-        
-        // Ses dosyaları erişilebilir değil
-        this.seslerErisilebilir = false;
-        
-        console.info("Ses sistemi devre dışı bırakıldı. Ses dosyaları daha sonra eklenecek.");
+        console.log("Ses yöneticisi oluşturuldu");
     }
     
     /**
-     * Belirtilen ses efektini çalar - şu an çalışmayacak
+     * Ses efektlerini yükler
+     */
+    sesleriYukle() {
+        try {
+            // Burada normalde ses dosyaları yüklenirdi
+            // Şu an sadece log mesajı yazdırıyoruz
+            console.log("Ses dosyaları yükleniyor");
+            return true;
+        } catch (error) {
+            console.error("Ses dosyaları yüklenirken hata oluştu:", error);
+            return false;
+        }
+    }
+    
+    /**
+     * Ses efektlerini açar/kapatır
+     * @param {boolean} durum - Açık/kapalı durumu
+     */
+    sesEfektleriniAyarla(durum) {
+        this.sesEfektleriAcik = durum;
+        console.log("Ses efektleri " + (durum ? "açıldı" : "kapatıldı"));
+    }
+    
+    /**
+     * Müziği açar/kapatır
+     * @param {boolean} durum - Açık/kapalı durumu
+     */
+    muzigiAyarla(durum) {
+        this.muzikAcik = durum;
+        console.log("Müzik " + (durum ? "açıldı" : "kapatıldı"));
+    }
+    
+    /**
+     * Ses efekti çalar
      * @param {string} sesAdi - Çalınacak ses efektinin adı
-     * @return {boolean} Ses efekti çalındı mı?
      */
     sesEfektiCal(sesAdi) {
-        // Ses devre dışı olduğundan hiçbir şey yapma
-        return false;
+        if (!this.sesEfektleriAcik) return;
+        
+        console.log(`Ses efekti çalınıyor: ${sesAdi}`);
+        // Burada normalde ses efekti çalınırdı
     }
     
     /**
-     * Tüm ses efektlerini durduruyor - şu an çalışmayacak
+     * Arka plan müziğini çalar
      */
-    tumSesleriDurdur() {
-        // Ses devre dışı olduğundan hiçbir şey yapma
-        return;
+    muzigiCal() {
+        if (!this.muzikAcik) return;
+        
+        console.log("Arka plan müziği çalınıyor");
+        // Burada normalde müzik çalınırdı
     }
     
     /**
-     * Ses açık/kapalı durumunu değiştirir - şu an etkisiz
-     * @param {boolean} durum - Yeni ses durumu (true: açık, false: kapalı)
+     * Arka plan müziğini durdurur
      */
-    sesAcikKapali(durum) {
-        // Ses devre dışı olduğundan hiçbir şey yapma
-        return;
-    }
-    
-    /**
-     * Ses seviyesini ayarlar - şu an etkisiz
-     * @param {number} seviye - Yeni ses seviyesi (0-1 arası)
-     */
-    sesSeviyesiniAyarla(seviye) {
-        // Ses devre dışı olduğundan hiçbir şey yapma
-        return;
-    }
-    
-    /**
-     * Daha sonra kullanılmak üzere ses sistemini etkinleştirir
-     * @param {boolean} deger - Ses sistemini etkinleştirme durumu
-     */
-    sesiEtkinlestir(deger = false) {
-        console.info(`Ses sistemi ${deger ? 'etkinleştirildi' : 'devre dışı bırakıldı'}.`);
-        this.sesAcik = deger;
-        this.seslerErisilebilir = deger;
+    muzigiDurdur() {
+        console.log("Arka plan müziği durduruldu");
+        // Burada normalde müzik durdurulurdu
     }
 }
 
-// Tarayıcı ortamında global değişken olarak tanımla
-if (typeof window !== 'undefined') {
-    window.SesYoneticisi = SesYoneticisi;
-}
+// Global olarak erişime izin ver
+window.SesYoneticisi = SesYoneticisi;
 
 // Node.js ortamında modül olarak dışa aktar
 if (typeof module !== 'undefined' && module.exports) {

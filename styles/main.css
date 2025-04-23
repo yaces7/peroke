@@ -1,6 +1,6 @@
 /* Periyodik Okey - Ana CSS Dosyası */
 
-/* Genel Stil Ayarları */
+/* Genel Stiller */
 * {
     margin: 0;
     padding: 0;
@@ -19,19 +19,6 @@ body {
     padding: 20px;
 }
 
-#oyun-container {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    padding: 20px;
-    width: 100%;
-    max-width: 1000px;
-    height: 90vh;
-    max-height: 800px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
 h1, h2, h3 {
     text-align: center;
     margin-bottom: 20px;
@@ -43,6 +30,7 @@ h1 {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
+/* Butonlar */
 .btn {
     background-color: #4CAF50;
     border: none;
@@ -70,11 +58,10 @@ h1 {
     box-shadow: 0 2px 3px rgba(0,0,0,0.2);
 }
 
-.btn-menu {
-    width: 80%;
-    max-width: 300px;
-    margin: 10px auto;
-    display: block;
+.btn-mini {
+    padding: 5px 10px;
+    font-size: 14px;
+    margin: 3px;
 }
 
 .btn-geri {
@@ -85,243 +72,296 @@ h1 {
     background-color: #d32f2f;
 }
 
-.btn-yesil {
-    background-color: #4CAF50;
-}
-
 .btn-mavi {
     background-color: #2196F3;
 }
 
-.btn-sari {
-    background-color: #FFC107;
-    color: #333;
-}
-
-.gizli {
-    display: none !important;
-}
-
-/* Ekran Stilleri */
+/* Ekranlar */
 .ekran {
     background-color: rgba(255, 255, 255, 0.9);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     width: 90%;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
-/* Menü Ekranı */
-.menu-container {
-    text-align: center;
+.gizli {
+    display: none !important;
 }
 
-.logo {
-    max-width: 300px;
-    margin: 0 auto 20px auto;
-}
-
-/* Ayarlar Ekranı */
-.ayarlar-form {
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.form-grup {
-    margin-bottom: 15px;
-}
-
-.form-grup label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.form-grup select, .form-grup input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-/* Nasıl Oynanır Ekranı */
-.nasil-oynanir-icerik {
-    line-height: 1.6;
-}
-
-.nasil-oynanir-icerik h3 {
+/* Menu ve form stilleri */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 20px;
-    margin-bottom: 10px;
 }
 
-.nasil-oynanir-icerik ol, .nasil-oynanir-icerik ul {
-    margin-left: 20px;
-    margin-bottom: 15px;
+.menu-buttons .btn {
+    min-width: 200px;
+    margin: 10px 0;
 }
 
-/* İstatistikler Ekranı */
-.istatistik-tablo {
-    width: 100%;
-    border-collapse: collapse;
+.form-group {
     margin-bottom: 20px;
 }
 
-.istatistik-tablo th, .istatistik-tablo td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-.istatistik-tablo th {
-    background-color: #f2f2f2;
+.form-group select,
+.form-group input[type="checkbox"] {
+    padding: 8px;
+    width: 100%;
+    max-width: 300px;
+}
+
+/* Oyun Ekranı */
+#oyun-screen {
+    padding: 15px;
+}
+
+.oyun-alani {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .ust-panel {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #ebf5f0;
+    border-radius: 8px;
+    border: 2px solid #4CAF50;
 }
 
-.alt-panel {
-    margin-top: auto;
+.durum-mesaji {
+    font-weight: bold;
+    font-size: 18px;
 }
 
-.botlar-alani {
+.bot-alanlari {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
 }
 
-.bot-kart-kutusu {
-    text-align: center;
-    border: 1px dashed #ccc;
-    border-radius: 5px;
+.bot-alani {
+    width: 30%;
     padding: 10px;
-    min-width: 120px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 2px solid #ccc;
 }
 
-.bot-isim {
-    margin-bottom: 5px;
+.bot-bilgi {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
     font-weight: bold;
 }
 
 .bot-kartlar {
-    min-height: 40px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    min-height: 40px;
+    padding: 5px;
+    background-color: #eee;
+    border-radius: 5px;
 }
 
 .orta-alan {
     display: flex;
     justify-content: space-around;
+    align-items: center;
     margin: 20px 0;
-    border: 1px solid #eee;
     padding: 15px;
-    border-radius: 5px;
+    background-color: #f0f9ff;
+    border-radius: 8px;
+    border: 2px dashed #2196F3;
 }
 
 .deste-alani, .acik-kart-alani {
-    width: 80px;
-    height: 120px;
-    border: 1px dashed #ccc;
-    border-radius: 5px;
+    min-width: 100px;
+    min-height: 140px;
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 2px solid #333;
     display: flex;
     justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.kalan-kart {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.kombinasyon-alani {
+    padding: 15px;
+    margin: 20px 0;
+    background-color: #fff8e1;
+    border-radius: 8px;
+    border: 3px solid #FFC107;
+}
+
+.kombinasyon-baslik {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.kombinasyon-icerik {
+    min-height: 130px;
+    padding: 10px;
+    background-color: #fffde7;
+    border-radius: 5px;
+    border: 1px dashed #FFB300;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
 }
 
 .oyuncu-alani {
-    margin-top: auto;
-    padding: 10px;
-    border-top: 1px solid #eee;
+    padding: 15px;
+    margin-top: 20px;
+    background-color: #e8f5e9;
+    border-radius: 8px;
+    border: 3px solid #4CAF50;
+}
+
+.oyuncu-bilgi {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.oyuncu-isim {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.oyuncu-puan {
+    font-weight: bold;
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 
 .oyuncu-kartlari {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    min-height: 120px;
+    align-items: center;
+    min-height: 130px;
+    padding: 10px;
+    background-color: #f1f8e9;
+    border-radius: 5px;
+    border: 1px dashed #81C784;
 }
 
-.kontrol-butonlari {
+.kontroller {
     display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-/* Kartların temel stilleri */
+/* Element Kartları */
 .element-kart {
-    width: 70px;
-    height: 100px;
+    width: 80px;
+    height: 120px;
     background: white;
     border: 2px solid black;
-    border-radius: 5px;
+    border-radius: 8px;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
+    display: inline-block;
     padding: 5px;
     margin: 5px;
     cursor: pointer;
     user-select: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: transform 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+    transition: all 0.2s ease;
 }
 
 .element-kart:hover {
     transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
 .element-kart.secili {
-    border-color: #2196F3;
-    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+    border: 3px solid #2196F3;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
 }
 
 .element-kart.joker {
-    background-color: #f2f2f2;
+    background-color: #fffbeb;
     border-color: #ff9800;
 }
 
 .element-kart .atom-no {
     position: absolute;
-    top: 2px;
+    top: 3px;
     left: 5px;
     font-size: 12px;
     font-weight: bold;
 }
 
 .element-kart .sembol {
-    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
     font-weight: bold;
-    text-align: center;
-    margin-top: 15px;
 }
 
 .element-kart .isim {
-    font-size: 10px;
+    position: absolute;
+    bottom: 25px;
+    width: 100%;
+    left: 0;
     text-align: center;
-    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 600;
 }
 
 .element-kart .grup-periyot {
-    font-size: 9px;
     position: absolute;
-    bottom: 2px;
-    left: 5px;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 9px;
+    color: #555;
 }
 
 .element-kart .takim {
     position: absolute;
-    top: 2px;
+    top: 3px;
     right: 5px;
     font-size: 10px;
     font-weight: bold;
-    color: #666;
+    color: #333;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 2px;
+    border-radius: 3px;
 }
 
 .element-kart.arka-yuz {
@@ -334,6 +374,16 @@ h1 {
     );
 }
 
+/* Sürükleme Stilleri */
+.surukle-hedef {
+    min-height: 130px;
+}
+
+.surukle-uzerinde {
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 2px dashed #4CAF50 !important;
+}
+
 /* Mobil için Düzenlemeler */
 @media (max-width: 768px) {
     .ekran {
@@ -341,30 +391,42 @@ h1 {
         padding: 15px;
     }
     
-    .btn-menu {
-        width: 90%;
-    }
-    
-    #oyun-container {
-        height: auto;
-        min-height: 85vh;
+    #oyun-screen {
+        padding: 10px;
     }
     
     .element-kart {
-        width: 60px;
-        height: 85px;
+        width: 70px;
+        height: 100px;
     }
     
     .element-kart .sembol {
-        font-size: 16px;
+        font-size: 24px;
     }
     
     .element-kart .isim {
-        font-size: 8px;
+        font-size: 10px;
     }
     
-    .bot-kart-kutusu {
-        min-width: 90px;
-        padding: 5px;
+    .bot-alanlari {
+        flex-direction: column;
+    }
+    
+    .bot-alani {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .orta-alan {
+        flex-direction: column;
+    }
+    
+    .deste-alani, .acik-kart-alani {
+        margin-bottom: 10px;
+        width: 80%;
+    }
+    
+    .kontroller {
+        flex-direction: column;
     }
 } 

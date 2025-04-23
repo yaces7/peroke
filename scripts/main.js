@@ -38,6 +38,40 @@ document.addEventListener('DOMContentLoaded', () => {
         muzik: false
     };
     
+    // Oyun sonu ekranındaki butonlara olay dinleyicileri ekle
+    const btnYeniOyun = document.getElementById('btn-yeni-oyun');
+    if (btnYeniOyun) {
+        btnYeniOyun.addEventListener('click', () => {
+            // Oyun sonu ekranını gizle, oyun ekranını göster
+            document.getElementById('oyun-sonu-screen').classList.add('gizli');
+            document.getElementById('oyun-screen').classList.remove('gizli');
+            
+            // Yeni oyun başlat (puanları sıfırla ve kartları oluştur)
+            testKartlariOlustur();
+        });
+    }
+    
+    const btnAnaMenu = document.getElementById('btn-ana-menu');
+    if (btnAnaMenu) {
+        btnAnaMenu.addEventListener('click', () => {
+            // Oyun sonu ekranını gizle, ana menüyü göster
+            document.getElementById('oyun-sonu-screen').classList.add('gizli');
+            document.getElementById('menu-screen').classList.remove('gizli');
+            
+            // Puanları sıfırla (sonraki oyun için)
+            document.getElementById('oyuncu-puan').textContent = '0';
+            document.getElementById('bot1-puan').textContent = '0';
+            document.getElementById('bot2-puan').textContent = '0';
+            document.getElementById('bot3-puan').textContent = '0';
+            
+            // Sabit puanı da sıfırla
+            const sabitPuan = document.querySelector('.sabit-puan-deger');
+            if (sabitPuan) {
+                sabitPuan.textContent = '0';
+            }
+        });
+    }
+    
     // Oyun başlamadan önce ayarları uygula
     function oyunAyarlariniUygula() {
         // Kayıtlı ayarları yükle
@@ -90,37 +124,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Botların kart sayısını dengele (oyuncu ile aynı sayıda kart olacak şekilde)
     function botKartSayisiniDengele() {
-        const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
-        if (!oyuncuKartlari) return;
-        
-        const oyuncuKartSayisi = oyuncuKartlari.children.length;
-        const ayarlar = oyunAyarlariniUygula();
-        
-        // Tüm botlar için kart sayısını kontrol et
-        for (let i = 1; i <= ayarlar.botSayisi; i++) {
+        // Bot alanları
+        for (let i = 1; i <= 3; i++) {
             const botKartlari = document.querySelector(`#bot${i}-alani .bot-kartlar`);
+            
+            // Bot kart alanı boşsa, bot kartlarını gösterme
             if (!botKartlari) continue;
             
-            const botKartSayisi = botKartlari.children.length;
-            
-            // Bot'un kart sayısı oyuncununkinden azsa, ekle
-            if (botKartSayisi < oyuncuKartSayisi) {
-                const eklenecekKartSayisi = oyuncuKartSayisi - botKartSayisi;
-                
-                for (let j = 0; j < eklenecekKartSayisi; j++) {
-                    const yeniKart = document.createElement('div');
-                    yeniKart.className = 'element-kart arka-yuz bot-kart';
-                    botKartlari.appendChild(yeniKart);
-                }
-            }
-            // Bot'un kart sayısı oyuncununkinden fazlaysa, çıkar
-            else if (botKartSayisi > oyuncuKartSayisi) {
-                const cikarilacakKartSayisi = botKartSayisi - oyuncuKartSayisi;
-                
-                for (let j = 0; j < cikarilacakKartSayisi; j++) {
-                    if (botKartlari.lastChild) {
-                        botKartlari.removeChild(botKartlari.lastChild);
-                    }
+            // Her botun görünen kart sayısını kontrol et
+            // Maksimum 7, minimum 1 kart göster (oyun devam ederken kartları sıfırdan gösterme)
+            if (botKartlari.children.length > 7) {
+                // Fazla kartları kaldır
+                while (botKartlari.children.length > 7) {
+                    botKartlari.removeChild(botKartlari.lastChild);
                 }
             }
         }
@@ -279,6 +295,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Örnek kart oluşturma (test için) fonksiyonunu güncelle
     function testKartlariOlustur() {
+        console.log("Yeni oyun başlatılıyor, kartlar oluşturuluyor...");
+        
+        // Puanları sıfırla
+        document.getElementById('oyuncu-puan').textContent = '0';
+        document.getElementById('bot1-puan').textContent = '0';
+        document.getElementById('bot2-puan').textContent = '0';
+        document.getElementById('bot3-puan').textContent = '0';
+        
+        // Sabit puanı temizle/kaldır (gereksiz gösterge)
+        const sabitPuan = document.getElementById('sabit-oyuncu-puan');
+        if (sabitPuan) {
+            sabitPuan.remove(); // Tamamen kaldır
+        }
+        
         // Oyun ayarlarını uygula
         const ayarlar = oyunAyarlariniUygula();
         
@@ -1091,7 +1121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Bir önceki bottan veya oyuncudan gelen kartı bota ekle
                     if (aktifBot === 1) {
                         // İlk bot - oyuncunun verdiği kartı al
-                        botKartSayisiGuncelle(0, 1);
+                        botKartEkle(aktifBot);
                         
                         // Bot konuşsun
                         const ruhHali = Math.random() > 0.5 ? 'umutlu' : 'korkutucu';
@@ -1101,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         setTimeout(() => botHamlesiniYap(), 800);
                     } else {
                         // Diğer botlar - önceki botun kartını al
-                        botKartSayisiGuncelle(aktifBot - 1, aktifBot);
+                        botKartEkle(aktifBot);
                         
                         // Bot konuşsun
                         const ruhHali = ['umutlu', 'umutsuz', 'korkutucu'][Math.floor(Math.random() * 3)];
@@ -1178,7 +1208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Son bot ise ve oyuncuya kart verecekse
                         if (aktifBot === botSayisi) {
                             // Botun bir kartını azalt
-                            botKartSayisiGuncelle(aktifBot, 0);
+                            botKartCikar(aktifBot);
                             
                             // Rastgele bir element seç ve oyuncuya ver 
                             const randomIndex = Math.floor(Math.random() * yuklenenElementler.length);
@@ -1215,7 +1245,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             // Normal hamlesine devam et - kart ver
                             if (botKartlari && botKartlari.children.length > 0) {
                                 // Botun bir kartını azalt
-                                botKartSayisiGuncelle(aktifBot, 0);
+                                botKartCikar(aktifBot);
                                 
                                 // Yeni açık kartı oluştur - birden fazla kart oluşmaması için önce temizle
                                 acikKartAlani.innerHTML = '';
@@ -1250,40 +1280,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     /**
-     * Bot kart sayılarını günceller
-     * @param {number} veren - Veren botun numarası (0 = oyuncu)
-     * @param {number} alan - Alan botun numarası (0 = oyuncu)
+     * Bota bir kart ekler
+     * @param {number} botNo - Kartın ekleneceği botun numarası
      */
-    function botKartSayisiGuncelle(veren, alan) {
-        // Veren oyuncu değilse, verenin kart sayısını azalt
-        if (veren > 0) {
-            const verenBotKartlari = document.querySelector(`#bot${veren}-alani .bot-kartlar`);
-            if (verenBotKartlari && verenBotKartlari.children.length > 0) {
-                // En fazla 7 kart olabilir - daha fazlaysa siliyoruz
-                if (verenBotKartlari.children.length > 7) {
-                    while (verenBotKartlari.children.length > 7) {
-                        verenBotKartlari.removeChild(verenBotKartlari.lastChild);
-                    }
-                }
-                verenBotKartlari.removeChild(verenBotKartlari.lastChild);
-            }
+    function botKartEkle(botNo) {
+        const botKartlari = document.querySelector(`#bot${botNo}-alani .bot-kartlar`);
+        if (botKartlari && botKartlari.children.length < 7) {
+            const yeniKart = document.createElement('div');
+            yeniKart.className = 'element-kart arka-yuz bot-kart';
+            botKartlari.appendChild(yeniKart);
         }
-        
-        // Alan oyuncu değilse, alanın kart sayısını artır
-        if (alan > 0) {
-            const alanBotKartlari = document.querySelector(`#bot${alan}-alani .bot-kartlar`);
-            if (alanBotKartlari) {
-                // En fazla 7 kart olabilir - daha fazlaysa eklemeyi durdur
-                if (alanBotKartlari.children.length < 7) {
-                    const yeniKart = document.createElement('div');
-                    yeniKart.className = 'element-kart arka-yuz bot-kart';
-                    alanBotKartlari.appendChild(yeniKart);
-                }
-            }
+    }
+    
+    /**
+     * Bottan bir kart çıkarır
+     * @param {number} botNo - Kartın çıkarılacağı botun numarası
+     */
+    function botKartCikar(botNo) {
+        const botKartlari = document.querySelector(`#bot${botNo}-alani .bot-kartlar`);
+        if (botKartlari && botKartlari.children.length > 0) {
+            botKartlari.removeChild(botKartlari.lastChild);
         }
-        
-        // Kalan kart sayısını güncelle
-        kalanKartSayisiniGuncelle();
     }
     
     /**
@@ -1331,25 +1348,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Oyuncu puanını sağ üst köşeye sabitleyen fonksiyon
     function oyuncuPuaniniSabitle() {
-        const ustPanel = document.querySelector('.ust-panel');
-        if (!ustPanel) return;
-        
-        // Oyuncu puanı göstergesi var mı kontrol et
-        let oyuncuPuanGosterge = document.getElementById('sabit-oyuncu-puan');
-        
-        if (!oyuncuPuanGosterge) {
-            // Yoksa oluştur
-            oyuncuPuanGosterge = document.createElement('div');
-            oyuncuPuanGosterge.id = 'sabit-oyuncu-puan';
-            oyuncuPuanGosterge.className = 'sabit-puan';
-            
-            // Puanı al ve gösterge metni oluştur
-            const oyuncuPuan = document.getElementById('oyuncu-puan').textContent;
-            oyuncuPuanGosterge.innerHTML = `<span>Puanınız: </span><span class="sabit-puan-deger">${oyuncuPuan}</span>`;
-            
-            // Üst panele ekle
-            ustPanel.appendChild(oyuncuPuanGosterge);
-        }
+        // Bu fonksiyon artık hiçbir şey yapmıyor
+        // Oyuncu puanı zaten oyuncu kartları alanının üzerinde görünüyor
     }
     
     // Element kartını DOM elementi olarak oluşturur

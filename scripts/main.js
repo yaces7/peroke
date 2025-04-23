@@ -41,75 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         muzik: false
     };
     
-    // Oyun sonu ekranındaki butonlara olay dinleyicileri ekle
-    const btnYeniOyun = document.getElementById('btn-yeni-oyun');
-    if (btnYeniOyun) {
-        btnYeniOyun.addEventListener('click', () => {
-            // Oyun sonu ekranını gizle, oyun ekranını göster
-            document.getElementById('oyun-sonu-screen').classList.add('gizli');
-            document.getElementById('oyun-screen').classList.remove('gizli');
-            
-            // Yeni oyun başlat (puanları sıfırla ve kartları oluştur)
-            // Puanları sıfırla
-            document.getElementById('oyuncu-puan').textContent = '0';
-            document.getElementById('bot1-puan').textContent = '0';
-            document.getElementById('bot2-puan').textContent = '0';
-            document.getElementById('bot3-puan').textContent = '0';
-            
-            // Sabit puanı temizle/kaldır (gereksiz gösterge)
-            const sabitPuan = document.getElementById('sabit-oyuncu-puan');
-            if (sabitPuan) {
-                sabitPuan.remove(); // Tamamen kaldır
-            }
-            
-            // Yıldızları da sıfırla
-            oyuncuYildizSayisi = 0;
-            bot1YildizSayisi = 0;
-            bot2YildizSayisi = 0;
-            bot3YildizSayisi = 0;
-            
-            // Yıldız göstergelerini güncelle
-            yildizlariGuncelle();
-            
-            // Kartları oluştur
-            testKartlariOlustur();
-            
-            console.log("Yeni oyun başlatıldı, puanlar sıfırlandı.");
-        });
-    }
-    
-    const btnAnaMenu = document.getElementById('btn-ana-menu');
-    if (btnAnaMenu) {
-        btnAnaMenu.addEventListener('click', () => {
-            // Oyun sonu ekranını gizle, ana menüyü göster
-            document.getElementById('oyun-sonu-screen').classList.add('gizli');
-            document.getElementById('menu-screen').classList.remove('gizli');
-            
-            // Puanları sıfırla (sonraki oyun için)
-            document.getElementById('oyuncu-puan').textContent = '0';
-            document.getElementById('bot1-puan').textContent = '0';
-            document.getElementById('bot2-puan').textContent = '0';
-            document.getElementById('bot3-puan').textContent = '0';
-            
-            // Sabit puanı temizle/kaldır (gereksiz gösterge)
-            const sabitPuan = document.getElementById('sabit-oyuncu-puan');
-            if (sabitPuan) {
-                sabitPuan.remove(); // Tamamen kaldır
-            }
-            
-            // Yıldızları da sıfırla
-            oyuncuYildizSayisi = 0;
-            bot1YildizSayisi = 0;
-            bot2YildizSayisi = 0;
-            bot3YildizSayisi = 0;
-            
-            // Yıldız göstergelerini güncelle
-            yildizlariGuncelle();
-            
-            console.log("Ana menüye dönüldü, puanlar sıfırlandı.");
-        });
-    }
-    
     // Oyun başlamadan önce ayarları uygula
     function oyunAyarlariniUygula() {
         // Kayıtlı ayarları yükle
@@ -2030,7 +1961,7 @@ document.addEventListener('DOMContentLoaded', () => {
             yildizlariGuncelle();
             
             // Ana menüyü göster
-            document.getElementById('main-menu-screen').classList.remove('gizli');
+            document.getElementById('menu-screen').classList.remove('gizli');
         });
     }
 

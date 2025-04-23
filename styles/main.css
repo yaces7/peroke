@@ -712,12 +712,9 @@ select, input[type="range"] {
 }
 
 /* Yıldız Sistemi */
-.oyuncu-yildizlar, .bot-yildizlar {
+.oyuncu-yildizlar, .bot1-yildizlar, .bot2-yildizlar, .bot3-yildizlar {
     display: flex;
     margin: 0 5px;
-    align-items: center;
-    justify-content: flex-start;
-    min-width: 80px;
 }
 
 .yildiz {
@@ -758,54 +755,4 @@ select, input[type="range"] {
     border-radius: 5px;
     padding: 5px;
     margin-bottom: 10px;
-}
-
-/* Yıldız Kazanma Bildirimi */
-.yildiz-bildirimi {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    z-index: 9999;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-    animation: yildiz-bildirimi-parlama 2s infinite alternate;
-}
-
-.yildiz-bildirimi .buyuk-yildiz {
-    color: gold;
-    font-size: 60px;
-    display: block;
-    margin: 20px 0;
-    animation: buyuk-yildiz-spin 2s ease-in-out;
-}
-
-.yildiz-bildirimi .bildirim-mesaj {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-@keyframes yildiz-bildirimi-parlama {
-    from {
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-    }
-    to {
-        box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
-    }
-}
-
-@keyframes buyuk-yildiz-spin {
-    0% {
-        transform: scale(0) rotate(0deg);
-    }
-    50% {
-        transform: scale(1.5) rotate(180deg);
-    }
-    100% {
-        transform: scale(1) rotate(360deg);
-    }
 }

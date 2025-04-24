@@ -450,12 +450,10 @@ class ElementKartiSinifi {
     }
 }
 
-// Tarayıcı ortamında global nesneye ekle
-if (typeof window !== 'undefined') {
-    window.ElementKartiSinifi = ElementKartiSinifi;
-}
-
-// Node.js ortamında dışa aktar
+// Browser ve Node.js ortamlarında kullanılabilmesi için export
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { ElementKartiSinifi };
+} else {
+    // Browser ortamında global değişken olarak tanımla
+    window.ElementKartiSinifi = ElementKartiSinifi;
 } 

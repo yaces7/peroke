@@ -4,7 +4,8 @@
  */
 
 // ElementKartiSinifi sınıfını içe aktar (import)
-const { ElementKartiSinifi } = typeof require !== 'undefined' ? require('./element_karti.js') : {};
+// Browser ortamında window global değişkeninden alınacak
+// Not: Import için require kullanılmayacak
 
 /**
  * Oyun sınıfı
@@ -940,6 +941,59 @@ class PeriyodikOkey {
         }
         
         return puan;
+    }
+
+    /**
+     * Desteden kart alır ve oyuncuya verir
+     * @returns {Object|null} Alınan kart veya işlem başarısız ise null
+     */
+    kartAl() {
+        if (!this.oyuncu.sirada || this.deste.length === 0) {
+            return null;
+        }
+        
+        // Desteden kart çek
+        const cekilen = this.deste.pop();
+        
+        // Oyuncuya ver
+        this.oyuncu.kartlar.push(cekilen);
+        
+        // Sırayı değiştir
+        this.oyuncu.sirada = false;
+        this.botlar[0].sirada = true;
+        this.aktifOyuncuIndeksi = 1;
+        
+        return cekilen;
+    }
+    
+    /**
+     * Oyuncunun elindeki kartı atar
+     * @param {number} kartIndeks Atılacak kartın indeksi
+     * @returns {boolean} İşlem başarılı mı
+     */
+    kartAt(kartIndeks) {
+        if (!this.oyuncu.sirada || kartIndeks < 0 || kartIndeks >= this.oyuncu.kartlar.length) {
+            return false;
+        }
+        
+        // Seçilen kartı oyuncudan çıkar
+        const secilenKart = this.oyuncu.kartlar.splice(kartIndeks, 1)[0];
+        
+        // Açık kart alanına koy
+        this.acikKart = secilenKart;
+        
+        // Sırayı değiştir
+        this.oyuncu.sirada = false;
+        this.botlar[0].sirada = true;
+        this.aktifOyuncuIndeksi = 1;
+        
+        // Oyunu kazanma durumunu kontrol et
+        if (this.oyuncuEliniKontrolEt()) {
+            this.mevcutDurum = this.durumlar.OYUN_SONU;
+            return true;
+        }
+        
+        return true;
     }
 }
 

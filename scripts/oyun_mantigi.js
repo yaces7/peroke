@@ -26,7 +26,8 @@ class PeriyodikOkey {
             KART_SECME: 'kart_secme',
             KOMBINASYON_KONTROL: 'kombinasyon_kontrol',
             BOT_HAMLE: 'bot_hamle',
-            OYUN_SONU: 'oyun_sonu'
+            OYUN_SONU: 'oyun_sonu',
+            KART_ATMA: 'kart_atma'
         };
         
         this.mevcutDurum = this.durumlar.BEKLEME;
@@ -150,13 +151,13 @@ class PeriyodikOkey {
      * Blokları oluşturur ve kartları dağıtır
      */
     bloklariOlusturVeDagit() {
-        // Bloklar (7'şer kart)
+        // Bloklar (14'er kart)
         const bloklar = [];
-        const blokSayisi = 17; // 7*17 = 119 kart (1 kart fazla kalacak)
+        const blokSayisi = 9; // 14*8 + kalan kartlar için (destede 120+ kart var)
         
         for (let i = 0; i < blokSayisi; i++) {
             const blok = [];
-            for (let j = 0; j < 7; j++) {
+            for (let j = 0; j < 14; j++) {
                 if (this.deste.length > 0) {
                     blok.push(this.deste.pop());
                 }
@@ -167,39 +168,29 @@ class PeriyodikOkey {
         // Zar at (1-6 arası rastgele sayı)
         const zar = Math.floor(Math.random() * 6) + 1;
         
-        // İlk blok + fazla kalan kart ilk oyuncuya
+        // İlk blok ilk oyuncuya (insan oyuncuya)
         const ilkBlokIndeks = zar - 1;
-        
-        // Fazladan kalan kartı ilk oyuncuya ver
-        if (this.deste.length > 0) {
-            this.oyuncu.kartlar.push(this.deste.pop());
-        }
         
         // İlk bloğu ilk oyuncuya ver
         this.oyuncu.kartlar.push(...bloklar[ilkBlokIndeks]);
         bloklar.splice(ilkBlokIndeks, 1);
         
-        // Kalan blokları dağıt (saat yönünde, 2 tur)
-        const tumOyuncular = [this.oyuncu, ...this.botlar];
-        
-        // İlk tur dağıtım
-        for (let i = 0; i < tumOyuncular.length; i++) {
-            if (bloklar.length > 0) {
-                tumOyuncular[i].kartlar.push(...bloklar.shift());
-            }
+        // Fazladan kalan kartı ilk oyuncuya ver (toplam 15 kart)
+        if (this.deste.length > 0) {
+            this.oyuncu.kartlar.push(this.deste.pop());
         }
         
-        // İkinci tur dağıtım
-        for (let i = 0; i < tumOyuncular.length; i++) {
-            if (bloklar.length > 0) {
-                tumOyuncular[i].kartlar.push(...bloklar.shift());
+        // Botlara 14'er kart dağıt
+        for (let i = 0; i < this.botlar.length; i++) {
+            if (i < bloklar.length) {
+                this.botlar[i].kartlar.push(...bloklar[i]);
             }
         }
         
         // Kalan blokları desteye ekle
-        bloklar.forEach(blok => {
-            this.deste.push(...blok);
-        });
+        for (let i = this.botlar.length; i < bloklar.length; i++) {
+            this.deste.push(...bloklar[i]);
+        }
     }
     
     /**
@@ -225,31 +216,18 @@ class PeriyodikOkey {
             this.mevcutDurum = this.durumlar.BOT_HAMLE;
             this.botHamlesiYap();
         }
-    }
-    
-    /**
-     * Oyuncunun kart seçmesi
-     * @param {number} kartIndeks Seçilen kartın indeksi
-     */
-    kartSec(kartIndeks) {
-        if (!this.oyuncu.sirada || this.mevcutDurum !== this.durumlar.KART_SECME) {
-            return false;
+        
+        // Durum mesajını güncelle
+        if (typeof document !== 'undefined') {
+            const durumMesaji = document.getElementById('durum-mesaji');
+            if (durumMesaji) {
+                if (this.aktifOyuncuIndeksi === 0) {
+                    durumMesaji.textContent = 'Sizin sıranız. Desteden veya önceki oyuncudan bir kart çekin.';
+                } else {
+                    durumMesaji.textContent = `Bot ${this.aktifOyuncuIndeksi} sırası. Düşünüyor...`;
+                }
+            }
         }
-        
-        // Seçilen kartı al
-        const secilenKart = this.oyuncu.kartlar[kartIndeks];
-        
-        // Kartı açık kart olarak belirle
-        const eskiAcikKart = this.acikKart;
-        this.acikKart = secilenKart;
-        
-        // Kartı oyuncudan çıkar
-        this.oyuncu.kartlar.splice(kartIndeks, 1);
-        
-        // Eski açık kartı desteden kart almaları için botlara ver
-        this.siradakiOyuncu();
-        
-        return true;
     }
     
     /**
@@ -260,14 +238,31 @@ class PeriyodikOkey {
             return false;
         }
         
+        // Açık kart yoksa işlem yapma
+        if (!this.acikKart) {
+            if (typeof document !== 'undefined') {
+                const durumMesaji = document.getElementById('durum-mesaji');
+                if (durumMesaji) {
+                    durumMesaji.textContent = 'Önceki oyuncudan alınacak kart yok! Desteden çekin.';
+                }
+            }
+            return false;
+        }
+        
         // Açık kartı oyuncuya ver
         this.oyuncu.kartlar.push(this.acikKart);
-        
-        // Yeni açık kart belirle (boş)
         this.acikKart = null;
         
-        // Oyuncunun elini kontrol et
-        this.kombinasyonlariKontrolEt();
+        // Durum mesajını güncelle
+        if (typeof document !== 'undefined') {
+            const durumMesaji = document.getElementById('durum-mesaji');
+            if (durumMesaji) {
+                durumMesaji.textContent = 'Kart aldınız. Şimdi bir kart atın.';
+            }
+        }
+        
+        // Mekanizmayı kart atma durumuna geçir
+        this.mevcutDurum = this.durumlar.KART_ATMA;
         
         return true;
     }
@@ -282,7 +277,12 @@ class PeriyodikOkey {
         
         // Deste boşsa, açık kartlar (kullanılmış kartlar) karıştırılır
         if (this.deste.length === 0) {
-            // TODO: Kullanılmış kartları karıştır
+            if (typeof document !== 'undefined') {
+                const durumMesaji = document.getElementById('durum-mesaji');
+                if (durumMesaji) {
+                    durumMesaji.textContent = 'Destede kart kalmadı!';
+                }
+            }
             return false;
         }
         
@@ -292,10 +292,124 @@ class PeriyodikOkey {
         // Kartı oyuncuya ver
         this.oyuncu.kartlar.push(yeniKart);
         
-        // Oyuncunun elini kontrol et
-        this.kombinasyonlariKontrolEt();
+        // Durum mesajını güncelle
+        if (typeof document !== 'undefined') {
+            const durumMesaji = document.getElementById('durum-mesaji');
+            if (durumMesaji) {
+                durumMesaji.textContent = 'Desteden kart çektiniz. Şimdi bir kart atın.';
+            }
+        }
+        
+        // Mekanizmayı kart atma durumuna geçir
+        this.mevcutDurum = this.durumlar.KART_ATMA;
         
         return true;
+    }
+    
+    /**
+     * Oyuncunun kart seçmesi/atması
+     * @param {number} kartIndeks Seçilen kartın indeksi
+     */
+    kartSec(kartIndeks) {
+        // Kart seçme ve atma durumunu kontrol et
+        if (!this.oyuncu.sirada) {
+            return false;
+        }
+        
+        if (this.mevcutDurum === this.durumlar.KART_ATMA) {
+            // Kart atma işlemi
+            if (kartIndeks < 0 || kartIndeks >= this.oyuncu.kartlar.length) {
+                return false;
+            }
+            
+            // Seçilen kartı al
+            const secilenKart = this.oyuncu.kartlar.splice(kartIndeks, 1)[0];
+            
+            // Kartı açık kart olarak belirle
+            this.acikKart = secilenKart;
+            
+            // Kazanma durumunu kontrol et
+            if (this.oyuncuEliniKontrolEt()) {
+                // Oyun bitti, oyuncu kazandı
+                this.mevcutDurum = this.durumlar.OYUN_SONU;
+                
+                if (typeof document !== 'undefined') {
+                    const durumMesaji = document.getElementById('durum-mesaji');
+                    if (durumMesaji) {
+                        durumMesaji.textContent = 'Tebrikler! Oyunu kazandınız!';
+                    }
+                }
+                
+                return true;
+            }
+            
+            // Durum mesajını güncelle
+            if (typeof document !== 'undefined') {
+                const durumMesaji = document.getElementById('durum-mesaji');
+                if (durumMesaji) {
+                    durumMesaji.textContent = 'Kart attınız. Sıra diğer oyuncuya geçti.';
+                }
+            }
+            
+            // Sıradaki oyuncuya geç
+            this.siradakiOyuncu();
+            
+            return true;
+        } else if (this.mevcutDurum === this.durumlar.KART_SECME) {
+            // Kart seçme durumundayken kartlara tıklamak onları vurgulamak içindir
+            // Desteden çekme veya açık kartı alma için ayrı butonlar kullanılmalı
+            return false;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Oyuncu elini kontrol eder ve kazanıp kazanamadığını belirler
+     * @returns {boolean} Oyuncu kazandı mı
+     */
+    oyuncuEliniKontrolEt() {
+        const kartlar = this.oyuncu.kartlar;
+        
+        // Sadece 1 kart kaldıysa ve diğer kartlar belirli gruplara ayrılabiliyorsa kazanır
+        if (kartlar.length === 1) {
+            return true;
+        }
+        
+        // Grup ve periyotları kontrol et
+        const gruplar = {};
+        const periyotlar = {};
+        let jokerSayisi = 0;
+        
+        // Kartları sınıflandır
+        kartlar.forEach(kart => {
+            if (kart.joker) {
+                jokerSayisi++;
+                return;
+            }
+            
+            const grup = kart.element.grup;
+            const periyot = kart.element.periyot;
+            
+            if (!gruplar[grup]) gruplar[grup] = [];
+            if (!periyotlar[periyot]) periyotlar[periyot] = [];
+            
+            gruplar[grup].push(kart);
+            periyotlar[periyot].push(kart);
+        });
+        
+        // Bot tüm kartları grupladıysa ve bir kart kaldıysa kazanır
+        const toplamGecerliKart = Object.values(gruplar)
+            .filter(grup => grup.length >= 3)
+            .reduce((toplam, grup) => toplam + grup.length, 0);
+        
+        const toplamGecerliKartPeriyot = Object.values(periyotlar)
+            .filter(periyot => periyot.length >= 4)
+            .reduce((toplam, periyot) => toplam + periyot.length, 0);
+        
+        // Tüm kartlar gruplanmışsa ve bir kart kaldıysa kazanır
+        return (toplamGecerliKart + jokerSayisi >= kartlar.length - 1) || 
+               (toplamGecerliKartPeriyot + jokerSayisi >= kartlar.length - 1);
     }
     
     /**
@@ -414,44 +528,318 @@ class PeriyodikOkey {
     botHamlesiYap() {
         // Aktif bot
         const bot = this.botlar[this.aktifOyuncuIndeksi - 1];
+        const botNo = this.aktifOyuncuIndeksi;
+        
+        // Botun düşünme süresi (zorluk seviyesine göre değişir)
+        let dusunmeSuresi = 2000; // Normal zorluk
+        
+        if (this.zorlikSeviyesi === 'Kolay') {
+            dusunmeSuresi = 1000;
+        } else if (this.zorlikSeviyesi === 'Zor') {
+            dusunmeSuresi = 3000;
+        }
+        
+        // Durum mesajını güncelle
+        if (typeof document !== 'undefined') {
+            const durumMesaji = document.getElementById('durum-mesaji');
+            if (durumMesaji) {
+                durumMesaji.textContent = `Bot ${botNo} düşünüyor...`;
+            }
+        }
         
         setTimeout(() => {
-            // Botun zorluk seviyesine göre karar verme mekanizması
-            // Basit bir örnek: Rastgele kart seçimi
-            const rastgeleIndeks = Math.floor(Math.random() * bot.kartlar.length);
-            const secilenKart = bot.kartlar[rastgeleIndeks];
+            // Önceki oyuncudan kart alma veya desteden kart çekme kararı
+            const oncekiOyuncuIndeks = (this.aktifOyuncuIndeksi - 1 + (this.botSayisi + 1)) % (this.botSayisi + 1);
+            let oncekiOyuncudanKartAl = Math.random() > 0.3; // %70 ihtimalle önceki oyuncudan kart al
             
-            // Kartı bottan çıkar
-            bot.kartlar.splice(rastgeleIndeks, 1);
+            // Kartın gruplara ve periyotlara göre değerlendirilmesi
+            const kartDegerlendirmesi = this.botKartlariDegerlendir(bot.kartlar);
             
-            // Eski açık kartı sakla
-            const eskiAcikKart = this.acikKart;
+            // Açık kart varsa ve işe yarar bir kartsa öncelikle onu al
+            if (this.acikKart && this.botKartYararlimi(this.acikKart, bot.kartlar)) {
+                oncekiOyuncudanKartAl = true;
+            }
             
-            // Yeni açık kartı belirle
-            this.acikKart = secilenKart;
-            
-            // Eski açık kartı bota ver
-            if (eskiAcikKart) {
-                bot.kartlar.push(eskiAcikKart);
+            if (oncekiOyuncudanKartAl && this.acikKart) {
+                // Önceki oyuncunun attığı kartı al
+                bot.kartlar.push(this.acikKart);
+                this.acikKart = null;
+                
+                if (typeof document !== 'undefined') {
+                    const durumMesaji = document.getElementById('durum-mesaji');
+                    if (durumMesaji) {
+                        durumMesaji.textContent = `Bot ${botNo} önceki oyuncunun kartını aldı.`;
+                    }
+                }
             } else {
-                // Açık kart yoksa desteden çek
+                // Desteden kart çek
                 if (this.deste.length > 0) {
-                    bot.kartlar.push(this.deste.pop());
+                    const yeniKart = this.deste.pop();
+                    bot.kartlar.push(yeniKart);
+                    
+                    if (typeof document !== 'undefined') {
+                        const durumMesaji = document.getElementById('durum-mesaji');
+                        if (durumMesaji) {
+                            durumMesaji.textContent = `Bot ${botNo} desteden kart çekti.`;
+                        }
+                    }
                 }
             }
             
-            // Botun elini kontrol et
-            const kombinasyonlar = this.kombinasyonlariKontrolEt(bot.kartlar);
+            // Hangi kartı atacağına karar ver
+            let atilacakKartIndeks = this.botEnKotuyuBul(bot.kartlar);
+            
+            // Kartı at
+            if (atilacakKartIndeks >= 0) {
+                const atilacakKart = bot.kartlar.splice(atilacakKartIndeks, 1)[0];
+                this.acikKart = atilacakKart;
+                
+                if (typeof document !== 'undefined') {
+                    const durumMesaji = document.getElementById('durum-mesaji');
+                    if (durumMesaji) {
+                        durumMesaji.textContent = `Bot ${botNo} bir kart attı.`;
+                    }
+                }
+            }
+            
+            // Botun kartlarını grupla ve periyotlara göre sırala
+            this.botKartlariniSirala(bot.kartlar);
             
             // Bot kazandı mı kontrolü
-            if (bot.kartlar.length === 0) {
+            if (this.botEliniKontrolEt(bot.kartlar)) {
+                // Oyunu bitir
                 this.mevcutDurum = this.durumlar.OYUN_SONU;
+                
+                if (typeof document !== 'undefined') {
+                    const durumMesaji = document.getElementById('durum-mesaji');
+                    if (durumMesaji) {
+                        durumMesaji.textContent = `Bot ${botNo} oyunu kazandı!`;
+                    }
+                }
+                
                 return;
             }
             
+            // Bot kartlarını güncelle
+            this.botKartlariGuncelle(botNo);
+            
             // Sıradaki oyuncuya geç
-            this.siradakiOyuncu();
-        }, 1000); // 1 saniye beklet (animasyon gibi)
+            setTimeout(() => {
+                this.siradakiOyuncu();
+            }, 500);
+        }, dusunmeSuresi);
+    }
+    
+    /**
+     * Bot kartlarını değerlendiren fonksiyon
+     * @param {Array} kartlar Bot kartları
+     * @returns {Object} Değerlendirme sonucu
+     */
+    botKartlariDegerlendir(kartlar) {
+        const gruplar = {};
+        const periyotlar = {};
+        
+        // Kartları gruplar ve periyotlara göre sınıflandır
+        kartlar.forEach(kart => {
+            if (kart.joker) return;
+            
+            const grup = kart.element.grup;
+            const periyot = kart.element.periyot;
+            
+            if (!gruplar[grup]) gruplar[grup] = [];
+            if (!periyotlar[periyot]) periyotlar[periyot] = [];
+            
+            gruplar[grup].push(kart);
+            periyotlar[periyot].push(kart);
+        });
+        
+        return { gruplar, periyotlar };
+    }
+    
+    /**
+     * Bot için bir kartın yararlı olup olmadığını değerlendirir
+     * @param {Object} kart Değerlendirilecek kart
+     * @param {Array} mevcutKartlar Mevcut kartlar
+     * @returns {boolean} Kart yararlı mı
+     */
+    botKartYararlimi(kart, mevcutKartlar) {
+        if (kart.joker) return true; // Joker her zaman yararlıdır
+        
+        const degerlendirme = this.botKartlariDegerlendir(mevcutKartlar);
+        const grup = kart.element.grup;
+        const periyot = kart.element.periyot;
+        
+        // Grup için yararlı mı kontrol et
+        if (degerlendirme.gruplar[grup] && degerlendirme.gruplar[grup].length >= 2) {
+            return true;
+        }
+        
+        // Periyot için yararlı mı kontrol et
+        if (degerlendirme.periyotlar[periyot] && degerlendirme.periyotlar[periyot].length >= 3) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Bot kartları arasında en kötü kartı bulur
+     * @param {Array} kartlar Bot kartları
+     * @returns {number} En kötü kartın indeksi
+     */
+    botEnKotuyuBul(kartlar) {
+        const degerlendirme = this.botKartlariDegerlendir(kartlar);
+        let enKotuIndeks = 0;
+        let enKotuSkor = Number.MAX_SAFE_INTEGER;
+        
+        kartlar.forEach((kart, indeks) => {
+            if (kart.joker) return; // Jokerleri atma
+            
+            const grup = kart.element.grup;
+            const periyot = kart.element.periyot;
+            
+            // Kart skor hesaplama (düşük skor daha kötü)
+            let skor = 0;
+            
+            if (degerlendirme.gruplar[grup]) {
+                skor += degerlendirme.gruplar[grup].length;
+            }
+            
+            if (degerlendirme.periyotlar[periyot]) {
+                skor += degerlendirme.periyotlar[periyot].length;
+            }
+            
+            if (skor < enKotuSkor) {
+                enKotuSkor = skor;
+                enKotuIndeks = indeks;
+            }
+        });
+        
+        return enKotuIndeks;
+    }
+    
+    /**
+     * Bot kartlarını sıralar
+     * @param {Array} kartlar Bot kartları
+     */
+    botKartlariniSirala(kartlar) {
+        // Önce grup sonra periyota göre sırala
+        kartlar.sort((a, b) => {
+            if (!a.element || !b.element) return 0;
+            
+            if (a.element.grup !== b.element.grup) {
+                return a.element.grup - b.element.grup;
+            }
+            
+            return a.element.periyot - b.element.periyot;
+        });
+    }
+    
+    /**
+     * Bot kartlarını arayüzde günceller
+     * @param {number} botNo Bot numarası
+     */
+    botKartlariGuncelle(botNo) {
+        if (typeof document === 'undefined') return;
+        
+        const botKartlariDiv = document.querySelector(`#bot${botNo}-alani .bot-kartlar`);
+        if (!botKartlariDiv) return;
+        
+        // Kartları temizle
+        botKartlariDiv.innerHTML = '';
+        
+        // Yeni kartları ekle
+        const bot = this.botlar[botNo - 1];
+        bot.kartlar.forEach(kart => {
+            const kartDiv = document.createElement('div');
+            kartDiv.className = 'bot-kart';
+            kartDiv.dataset.atomNo = kart.element.atom_no;
+            kartDiv.dataset.sembol = kart.element.sembol;
+            kartDiv.dataset.grup = kart.element.grup;
+            kartDiv.dataset.periyot = kart.element.periyot;
+            kartDiv.dataset.joker = kart.joker;
+            
+            // Sembol ve kimyasal bilgiler eklenir ama arka yüz olarak gösterilir
+            kartDiv.innerHTML = `
+                <div class="kart-bilgi gizli">
+                    <div class="sembol">${kart.element.sembol}</div>
+                    <div class="grup-periyot">G:${kart.element.grup} P:${kart.element.periyot}</div>
+                </div>
+            `;
+            
+            botKartlariDiv.appendChild(kartDiv);
+        });
+    }
+    
+    /**
+     * Bot elini kontrol eder ve kazanıp kazanamadığını belirler
+     * @param {Array} kartlar Bot kartları
+     * @returns {boolean} Bot kazandı mı
+     */
+    botEliniKontrolEt(kartlar) {
+        // Bu fonksiyon, botun elindeki kartların gruplanmış olduğunu ve
+        // sadece bir kart kaldığında oyunun bittiğini kontrol eder
+        
+        if (kartlar.length === 1) {
+            // El gruplanmışsa ve tek kart kaldıysa kazanır
+            return true;
+        }
+        
+        // Grup ve periyotları kontrol et
+        const gruplar = {};
+        const periyotlar = {};
+        let jokerSayisi = 0;
+        
+        // Kartları sınıflandır
+        kartlar.forEach(kart => {
+            if (kart.joker) {
+                jokerSayisi++;
+                return;
+            }
+            
+            const grup = kart.element.grup;
+            const periyot = kart.element.periyot;
+            
+            if (!gruplar[grup]) gruplar[grup] = [];
+            if (!periyotlar[periyot]) periyotlar[periyot] = [];
+            
+            gruplar[grup].push(kart);
+            periyotlar[periyot].push(kart);
+        });
+        
+        // Geçerli grup ve periyot sayısı
+        let gecerliGruplar = 0;
+        let gecerliPeriyotlar = 0;
+        
+        // Grupları kontrol et (en az 3 kart)
+        for (const grup in gruplar) {
+            if (gruplar[grup].length >= 3) {
+                gecerliGruplar++;
+            }
+        }
+        
+        // Periyotları kontrol et (en az 4 kart)
+        for (const periyot in periyotlar) {
+            if (periyotlar[periyot].length >= 4) {
+                gecerliPeriyotlar++;
+            }
+        }
+        
+        // Jokerler ile iyileştirilebilecek durumları kontrol et
+        // Bu basit bir kontrol, gerçek mantık daha karmaşık olabilir
+        
+        // Bot tüm kartları grupladıysa ve bir kart kaldıysa kazanır
+        const toplamGecerliKart = Object.values(gruplar)
+            .filter(grup => grup.length >= 3)
+            .reduce((toplam, grup) => toplam + grup.length, 0);
+        
+        const toplamGecerliKartPeriyot = Object.values(periyotlar)
+            .filter(periyot => periyot.length >= 4)
+            .reduce((toplam, periyot) => toplam + periyot.length, 0);
+        
+        // Tüm kartlar gruplanmışsa ve bir kart kaldıysa kazanır
+        return (toplamGecerliKart + jokerSayisi >= kartlar.length - 1) || 
+               (toplamGecerliKartPeriyot + jokerSayisi >= kartlar.length - 1);
     }
     
     /**

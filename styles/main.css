@@ -171,8 +171,10 @@ h2 {
 .orta-alan {
     display: flex;
     justify-content: center;
-    gap: 50px;
+    align-items: center;
+    gap: 30px;
     margin: 20px 0;
+    position: relative;
 }
 
 .deste-alani, .acik-kart-alani {
@@ -182,47 +184,43 @@ h2 {
     width: 150px;
 }
 
+#acik-kart-baslik {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #4cc9f0;
+    font-weight: bold;
+}
+
 .kalan-kart {
     margin-top: 10px;
     font-weight: bold;
 }
 
-/* Kombinasyon alanı */
-.kombinasyon-alani {
-    background-color: rgba(31, 64, 104, 0.7);
-    border: 2px solid #4895ef;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.kombinasyon-baslik {
-    font-weight: bold;
-    margin-bottom: 5px;
-    text-align: center;
-    color: #4cc9f0;
-}
-
-.kombinasyon-icerik {
-    background-color: rgba(31, 64, 104, 0.5);
-    min-height: 140px;
-    border-radius: 5px;
-    border: 1px dashed #4895ef;
+.oyun-bilgileri {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    padding: 5px;
-    overflow-x: auto;
+    gap: 10px;
+    margin-left: 20px;
+    background-color: rgba(31, 64, 104, 0.7);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #4895ef;
+}
+
+#tur-bilgisi, #siradaki-oyuncu {
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
 }
 
 /* Oyuncu Alanı */
 .oyuncu-alani {
+    background-color: rgba(31, 64, 104, 0.5);
+    border: 2px solid #4cc9f0;
+    border-radius: 10px;
     padding: 15px;
-    background-color: #0f3460;
-    border-radius: 8px;
-    margin-top: 20px;
+    margin: 10px 0;
 }
 
 .oyuncu-bilgi {
@@ -252,7 +250,9 @@ h2 {
 .kontroller {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
 }
 
 /* Element Kartları */
@@ -558,58 +558,66 @@ h2 {
     color: #ff9900; /* Turuncu */
 }
 
-/* Bot Kartları Stilleri */
+/* Bot Kartları */
 .bot-kartlar {
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
+    gap: 5px;
+    min-height: 80px;
+    margin-top: 10px;
     justify-content: center;
-    align-items: center;
 }
 
 .bot-kart {
-    width: 20px;
-    height: 30px;
-    margin: 2px;
-    display: inline-block;
-    background-color: #0f3460;
-    border: 1px solid #4cc9f0;
-    border-radius: 3px;
+    width: 40px;
+    height: 60px;
+    background-color: #e9ecef;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     position: relative;
+    transition: all 0.2s ease;
+    font-size: 10px;
+    color: #333;
     overflow: hidden;
-    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .bot-kart:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
 }
 
-.arka-yuz.bot-kart::after {
-    content: "PO";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 8px;
-    font-weight: bold;
-    color: #4cc9f0;
-}
-
-.po-kart {
-    width: 40px;
-    height: 60px;
-    background-color: #0f3460;
-    color: #4cc9f0;
+.bot-kart:hover .kart-bilgi {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+    opacity: 1;
 }
 
-.po-kart::after {
-    content: "PO";
-    font-size: 16px;
+.kart-bilgi {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.kart-bilgi .sembol {
     font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.kart-bilgi .grup-periyot {
+    font-size: 8px;
 }
 
 /* Konuşma Balonu Stilleri */

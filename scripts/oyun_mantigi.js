@@ -611,7 +611,7 @@ class PeriyodikOkey {
                     }
                 }
             } else {
-                // Desteden kart çek
+                // Ortadan kart çek
                 if (this.deste.length > 0) {
                     const yeniKart = this.deste.pop();
                     bot.kartlar.push(yeniKart);
@@ -619,7 +619,7 @@ class PeriyodikOkey {
                     if (typeof document !== 'undefined') {
                         const durumMesaji = document.getElementById('durum-mesaji');
                         if (durumMesaji) {
-                            durumMesaji.textContent = `Bot ${botNo} desteden kart çekti.`;
+                            durumMesaji.textContent = `Bot ${botNo} ortadan kart çekti.`;
                         }
                     }
                 }

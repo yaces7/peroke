@@ -44,24 +44,24 @@ h2 {
 
 /* Butonlar */
 .btn {
-    background-color: #4361ee;
-    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
     border: none;
-    padding: 10px 15px;
     border-radius: 5px;
+    background-color: #1976d2;
+    color: white;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
+    margin: 5px;
     transition: background-color 0.3s;
 }
 
 .btn:hover {
-    background-color: #3a56d4;
+    background-color: #1565c0;
 }
 
 .btn-mini {
     padding: 5px 10px;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .menu-buttons {
@@ -105,16 +105,13 @@ h2 {
 }
 
 .bot-alani {
-    background-color: rgba(0, 0, 0, 0.4);
+    border: 2px solid #ccc;
     border-radius: 10px;
-    padding: 10px;
-    margin: 0 5px;
-    min-width: 120px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 8px;
+    margin: 10px 0;
+    background-color: rgba(220, 220, 220, 0.8);
     position: relative;
+    transition: all 0.3s ease;
 }
 
 /* Botların zorluk seviyelerine göre renk kodlaması */
@@ -175,58 +172,46 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    margin: 10px 0;
-    padding: 10px;
+    gap: 30px;
+    margin: 20px 0;
     position: relative;
 }
 
-.orta-alani {
+.orta-alani, .acik-kart-alani {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    position: relative;
-    margin: 0 20px;
+    width: 150px;
 }
 
-#acik-kart-baslik, #onceki-kart-baslik {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
+#acik-kart-baslik {
     font-size: 14px;
-    text-align: center;
+    margin-bottom: 5px;
+    color: #4cc9f0;
+    font-weight: bold;
 }
 
 .kalan-kart {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
     margin-top: 10px;
-    text-align: center;
+    font-weight: bold;
 }
 
 .oyun-bilgileri {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    right: 0;
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-left: 20px;
+    background-color: rgba(31, 64, 104, 0.7);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #4895ef;
 }
 
 #tur-bilgisi, #siradaki-oyuncu {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
     font-weight: bold;
+    font-size: 14px;
+    color: #fff;
 }
 
 /* Oyuncu Alanı */
@@ -266,7 +251,7 @@ h2 {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-top: 15px;
+    margin: 15px 0;
     flex-wrap: wrap;
 }
 
@@ -292,13 +277,13 @@ h2 {
 
 .element-kart:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 .element-kart.secili {
     border: 2px solid #ff0000;
     transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
 }
 
 .element-kart .atom-no {
@@ -577,60 +562,57 @@ h2 {
 .bot-kartlar {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    gap: 5px;
+    min-height: 80px;
     margin-top: 10px;
-    overflow-y: hidden;
-    overflow-x: auto;
-    max-height: 100px;
-    padding: 5px;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 5px;
+    justify-content: center;
 }
 
 .bot-kart {
     width: 40px;
     height: 60px;
-    margin: 2px;
-    background-color: #fff;
+    background-color: #e9ecef;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    border: 1px solid #ddd;
     position: relative;
-    display: inline-block;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.2s ease;
     font-size: 10px;
-    cursor: default;
+    color: #333;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .bot-kart:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-    z-index: 2;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
 }
 
 .bot-kart:hover .kart-bilgi {
+    display: flex;
     opacity: 1;
 }
 
 .kart-bilgi {
-    position: absolute;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2px;
-    box-sizing: border-box;
-    opacity: 0.8;
-    transition: opacity 0.2s;
     background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    padding: 2px;
 }
 
 .kart-bilgi .sembol {
-    font-size: 14px;
     font-weight: bold;
+    font-size: 12px;
     margin-bottom: 2px;
 }
 
@@ -641,32 +623,34 @@ h2 {
 /* Konuşma Balonu Stilleri */
 .konusma-balonu {
     position: absolute;
+    background-color: #f9fafb;
+    color: #111827;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    max-width: 150px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     top: -40px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: white;
-    color: black;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 100;
-    animation: balon-goster 0.3s ease-out;
+    animation: balon-goster 0.3s ease-in-out forwards;
+    border: 1px solid #e5e7eb;
 }
 
 .konusma-balonu::after {
-    content: '';
+    content: "";
     position: absolute;
-    bottom: -8px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 8px solid white;
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #f9fafb transparent transparent;
 }
 
 .konusma-balonu.kaybol {
-    animation: balon-kaybol 0.3s ease-in forwards;
+    animation: balon-kaybol 0.5s ease-in-out forwards;
 }
 
 @keyframes balon-goster {

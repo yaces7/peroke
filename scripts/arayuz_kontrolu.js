@@ -38,13 +38,12 @@ class ArayuzKontrol {
             oyunMenu: document.getElementById('btn-oyun-menu'),
             oyunYardim: document.getElementById('btn-oyun-yardim'),
             
-            grubaGoreSirala: document.getElementById('btn-gruba-gore-sirala'),
-            periyodaGoreSirala: document.getElementById('btn-periyoda-gore-sirala'),
+            kontrolEt: document.getElementById('btn-kontrol-et'),
+            kartVer: document.getElementById('btn-kart-ver'),
+            desteyiAc: document.getElementById('btn-desteyi-ac'),
             
             yeniOyun: document.getElementById('btn-yeni-oyun'),
-            anaMenu: document.getElementById('btn-ana-menu'),
-            
-            kartAl: document.getElementById('btn-kart-al')
+            anaMenu: document.getElementById('btn-ana-menu')
         };
         
         this.formElementleri = {
@@ -57,12 +56,9 @@ class ArayuzKontrol {
         this.canvaslar = {
             deste: document.getElementById('deste-canvas'),
             acikKart: document.getElementById('acik-kart-canvas'),
-            oncekiKart: document.getElementById('onceki-kart-canvas'),
+            kombinasyon: document.getElementById('kombinasyon-canvas'),
             oyuncu: document.getElementById('oyuncu-canvas')
         };
-        
-        // Orta alan canvas'ı
-        this.ortaAlanCanvas = document.getElementById('acik-kart-canvas');
         
         this.oyunAlanlari = {
             bot1: document.getElementById('bot1-alani'),
@@ -72,10 +68,10 @@ class ArayuzKontrol {
         
         // Canvas kontekstleri
         this.kontekstler = {
-            deste: this.canvaslar.deste?.getContext('2d'),
-            acikKart: this.canvaslar.acikKart?.getContext('2d'),
-            oncekiKart: this.canvaslar.oncekiKart?.getContext('2d'),
-            oyuncu: this.canvaslar.oyuncu?.getContext('2d')
+            deste: this.canvaslar.deste.getContext('2d'),
+            acikKart: this.canvaslar.acikKart.getContext('2d'),
+            kombinasyon: this.canvaslar.kombinasyon.getContext('2d'),
+            oyuncu: this.canvaslar.oyuncu.getContext('2d')
         };
         
         // Oyun nesnesi
@@ -85,10 +81,6 @@ class ArayuzKontrol {
         this.oyunAktif = false;
         this.suruklenenKart = null;
         this.seciliKart = null;
-        this.suruklenenKartIndeks = -1;
-        
-        // Önceki oyuncudan gelen kart
-        this.oncekiOyuncudanGelenKart = null;
         
         // Ayarlar
         this.ayarlar = {
@@ -164,131 +156,50 @@ class ArayuzKontrol {
      * @private
      */
     _olayDinleyicileriniEkle() {
-        // Ana menü butonları
-        const btnBaslat = document.getElementById('btn-baslat');
-        if (btnBaslat) {
-            btnBaslat.addEventListener('click', () => this.oyunuBaslat());
-        }
-        
-        const btnNasil = document.getElementById('btn-nasil');
-        if (btnNasil) {
-            btnNasil.addEventListener('click', () => this.sayfayiGoster('nasil-oynanir'));
-        }
-        
-        const btnIstatistik = document.getElementById('btn-istatistik');
-        if (btnIstatistik) {
-            btnIstatistik.addEventListener('click', () => this.sayfayiGoster('istatistikler'));
-        }
-        
-        const btnAyarlar = document.getElementById('btn-ayarlar');
-        if (btnAyarlar) {
-            btnAyarlar.addEventListener('click', () => this.sayfayiGoster('ayarlar'));
-        }
-        
-        const btnCikis = document.getElementById('btn-cikis');
-        if (btnCikis) {
-            btnCikis.addEventListener('click', () => this.cikisYap());
-        }
+        // Menü butonları
+        this.butonlar.oyunaBasla.addEventListener('click', () => this.oyunuBaslat());
+        this.butonlar.nasilOynanir.addEventListener('click', () => this.ekraniGoster('nasilOynanir'));
+        this.butonlar.istatistikler.addEventListener('click', () => this.ekraniGoster('istatistikler'));
+        this.butonlar.ayarlar.addEventListener('click', () => this.ekraniGoster('ayarlar'));
+        this.butonlar.cikis.addEventListener('click', () => this.cikisYap());
         
         // Ayarlar butonları
-        const btnAyarlariKaydet = document.getElementById('btn-ayarlari-kaydet');
-        if (btnAyarlariKaydet) {
-            btnAyarlariKaydet.addEventListener('click', () => this.ayarlariKaydet());
-        }
-        
-        const btnAyarlarIptal = document.getElementById('btn-ayarlar-iptal');
-        if (btnAyarlarIptal) {
-            btnAyarlarIptal.addEventListener('click', () => this.sayfayiGoster('ana-menu'));
-        }
+        this.butonlar.ayarlarKaydet.addEventListener('click', () => this.ayarlariKaydet());
+        this.butonlar.ayarlarIptal.addEventListener('click', () => this.ekraniGoster('menu'));
         
         // Nasıl oynanır butonları
-        const btnNasilGeri = document.getElementById('btn-nasil-geri');
-        if (btnNasilGeri) {
-            btnNasilGeri.addEventListener('click', () => this.sayfayiGoster('ana-menu'));
-        }
+        this.butonlar.geriDon.forEach(buton => {
+            buton.addEventListener('click', () => this.ekraniGoster('menu'));
+        });
         
         // İstatistik butonları
-        const btnIstatistikSifirla = document.getElementById('btn-istatistik-sifirla');
-        if (btnIstatistikSifirla) {
-            btnIstatistikSifirla.addEventListener('click', () => this.istatistikleriSifirla());
-        }
-        
-        const btnIstatistikGeri = document.getElementById('btn-istatistik-geri');
-        if (btnIstatistikGeri) {
-            btnIstatistikGeri.addEventListener('click', () => this.sayfayiGoster('ana-menu'));
-        }
+        this.butonlar.istatistikSifirla.addEventListener('click', () => this.istatistikleriSifirla());
+        this.butonlar.istatistikGeri.addEventListener('click', () => this.ekraniGoster('menu'));
         
         // Oyun butonları
-        const btnDuraklat = document.getElementById('btn-duraklat');
-        if (btnDuraklat) {
-            btnDuraklat.addEventListener('click', () => this.oyunuDuraklat());
-        }
+        this.butonlar.oyunMenu.addEventListener('click', () => this.oyunuDurdur());
+        this.butonlar.oyunYardim.addEventListener('click', () => this.ekraniGoster('nasilOynanir'));
         
-        const btnYardim = document.getElementById('btn-yardim');
-        if (btnYardim) {
-            btnYardim.addEventListener('click', () => this.yardimGoster());
-        }
+        this.butonlar.kontrolEt.addEventListener('click', () => this.kombinasyonuKontrolEt());
+        this.butonlar.kartVer.addEventListener('click', () => this.kartVer());
+        this.butonlar.desteyiAc.addEventListener('click', () => this.destedenKartCek());
         
         // Oyun sonu butonları
-        const btnYeniOyun = document.getElementById('btn-yeni-oyun');
-        if (btnYeniOyun) {
-            btnYeniOyun.addEventListener('click', () => this.oyunuBaslat());
-        }
-        
-        const btnAnaMenu = document.getElementById('btn-ana-menu');
-        if (btnAnaMenu) {
-            btnAnaMenu.addEventListener('click', () => this.sayfayiGoster('ana-menu'));
-        }
-        
-        // Kart işlemleri butonları
-        const btnGrubaSirala = document.getElementById('btn-gruba-gore-sirala');
-        if (btnGrubaSirala) {
-            btnGrubaSirala.addEventListener('click', () => {
-                if (this.oyun && this.oyun.oyuncu) {
-                    this.oyun.oyuncu.kartlariGrubaGoreSirala();
-                    this.arayuzuGuncelle();
-                }
-            });
-        }
-        
-        const btnPeriyodaSirala = document.getElementById('btn-periyoda-gore-sirala');
-        if (btnPeriyodaSirala) {
-            btnPeriyodaSirala.addEventListener('click', () => {
-                if (this.oyun && this.oyun.oyuncu) {
-                    this.oyun.oyuncu.kartlariPeriyodaGoreSirala();
-                    this.arayuzuGuncelle();
-                }
-            });
-        }
-        
-        // Kart Al butonu için olay dinleyicisi
-        const btnKartAl = document.getElementById('btn-kart-al');
-        if (btnKartAl) {
-            btnKartAl.addEventListener('click', () => this.kartAl());
-        }
+        this.butonlar.yeniOyun.addEventListener('click', () => this.oyunuBaslat());
+        this.butonlar.anaMenu.addEventListener('click', () => this.ekraniGoster('menu'));
         
         // Canvas olayları
-        if (this.canvaslar.oyuncu) {
-            this.canvaslar.oyuncu.addEventListener('mousedown', (e) => this.oyuncuCanvasMouseDown(e));
-            this.canvaslar.oyuncu.addEventListener('mousemove', (e) => this.oyuncuCanvasMouseMove(e));
-        }
+        this.canvaslar.oyuncu.addEventListener('mousedown', (e) => this.oyuncuMouseDown(e));
+        this.canvaslar.oyuncu.addEventListener('mousemove', (e) => this.oyuncuMouseMove(e));
+        this.canvaslar.oyuncu.addEventListener('mouseup', (e) => this.oyuncuMouseUp(e));
         
-        if (this.canvaslar.deste) {
-            this.canvaslar.deste.addEventListener('mousedown', (e) => this.desteMouseDown(e));
-        }
+        this.canvaslar.kombinasyon.addEventListener('mouseup', (e) => this.kombinasyonMouseUp(e));
         
-        if (this.canvaslar.acikKart) {
-            this.canvaslar.acikKart.addEventListener('mousedown', (e) => this.acikKartMouseDown(e));
-        }
-        
-        if (this.canvaslar.oncekiKart) {
-            this.canvaslar.oncekiKart.addEventListener('mousedown', (e) => this.oncekiKartMouseDown(e));
-        }
+        this.canvaslar.acikKart.addEventListener('click', (e) => this.acikKartClick(e));
+        this.canvaslar.deste.addEventListener('click', (e) => this.desteClick(e));
         
         // Pencere olayları
-        window.addEventListener('mouseup', (e) => this.windowMouseUp(e));
-        window.addEventListener('mousemove', (e) => this.windowMouseMove(e));
-        window.addEventListener('resize', () => this.boyutlariAyarla());
+        window.addEventListener('resize', () => this.pencereYenidenBoyutlandirildi());
     }
     
     /**
@@ -424,77 +335,84 @@ class ArayuzKontrol {
      * Arayüzü günceller
      */
     arayuzuGuncelle() {
-        if (!this.oyun) return;
+        if (!this.oyunAktif || !this.oyun) return;
         
-        // Oyuncu kartlarını güncelle
-        this.oyuncuKartlariniGuncelle();
+        // Canvas'ları temizle
+        this.kontekstler.deste.clearRect(0, 0, this.canvaslar.deste.width, this.canvaslar.deste.height);
+        this.kontekstler.acikKart.clearRect(0, 0, this.canvaslar.acikKart.width, this.canvaslar.acikKart.height);
+        this.kontekstler.kombinasyon.clearRect(0, 0, this.canvaslar.kombinasyon.width, this.canvaslar.kombinasyon.height);
+        this.kontekstler.oyuncu.clearRect(0, 0, this.canvaslar.oyuncu.width, this.canvaslar.oyuncu.height);
         
-        // Masayı yeniden çiz
-        this.masa.ciz();
+        // Desteyi çiz
+        if (this.oyun.deste.length > 0) {
+            // Basit bir deste gösterimi
+            this.kontekstler.deste.fillStyle = '#2980b9';
+            this.kontekstler.deste.fillRect(0, 0, 80, 120);
+            this.kontekstler.deste.strokeStyle = '#fff';
+            this.kontekstler.deste.strokeRect(0, 0, 80, 120);
+            this.kontekstler.deste.fillStyle = '#fff';
+            this.kontekstler.deste.font = '14px Arial';
+            this.kontekstler.deste.fillText('Deste', 20, 60);
+        }
         
-        // Açık kartı güncelle
+        // Açık kartı çiz
         if (this.oyun.acikKart) {
-            acikKartiGuncelle(this.oyun.acikKart);
+            this.oyun.acikKart.x = 0;
+            this.oyun.acikKart.y = 0;
+            this.oyun.acikKart.ciz(this.kontekstler.acikKart);
+        }
+        
+        // Oyuncu kartlarını çiz
+        const kartGenislik = 70;
+        const kartYukseklik = 100;
+        const kartMarj = 5;
+        
+        // Oyuncu kartlarını düzenle ve çiz
+        for (let i = 0; i < this.oyun.oyuncu.kartlar.length; i++) {
+            const kart = this.oyun.oyuncu.kartlar[i];
+            kart.x = i * (kartGenislik + kartMarj);
+            kart.y = 0;
+            kart.ciz(this.kontekstler.oyuncu);
+        }
+        
+        // Kombinasyon alanındaki kartları çiz
+        for (let i = 0; i < this.kombinasyonKartlari.length; i++) {
+            const kart = this.kombinasyonKartlari[i];
+            kart.x = i * (kartGenislik + kartMarj);
+            kart.y = 0;
+            kart.ciz(this.kontekstler.kombinasyon);
+        }
+        
+        // Kalan kart sayısını güncelle
+        document.getElementById('kalan-kart').textContent = this.oyun.deste.length;
+        
+        // Puanları güncelle
+        document.getElementById('oyuncu-puan').textContent = this.oyun.oyuncu.puan;
+        for (let i = 0; i < this.ayarlar.botSayisi; i++) {
+            document.getElementById(`bot${i+1}-puan`).textContent = this.oyun.botlar[i].puan;
+        }
+        
+        // Durum mesajını güncelle
+        let durumMesaji = '';
+        
+        if (this.oyun.oyuncu.sirada) {
+            durumMesaji = 'Sizin sıranız.';
         } else {
-            acikKartiGuncelle(null);
+            const siradakiBotIndeks = this.oyun.aktifOyuncuIndeksi - 1;
+            durumMesaji = `Bot ${siradakiBotIndeks + 1} oynuyor...`;
         }
         
-        // Bot kartlarını güncelle
-        for (let i = 1; i < this.oyun.oyuncular.length; i++) {
-            this.botKartlariniGuncelle(i, this.oyun.oyuncular[i].kartlar);
+        document.getElementById('durum-mesaji').textContent = durumMesaji;
+        
+        // Eğer oyun sürüklenen kart varsa, ona göre güncelle
+        if (this.suruklenenKart) {
+            this.suruklenenKart.x = this.mouseX - kartGenislik / 2;
+            this.suruklenenKart.y = this.mouseY - kartYukseklik / 2;
+            this.suruklenenKart.ciz(this.kontekstler.oyuncu);
         }
         
-        // Oyun bilgilerini güncelle
-        oyunBilgileriniGuncelle(this.oyun.turSayisi, this.oyun.siradakiOyuncu.isim);
-        
-        // Destenin durumunu göster
-        const desteElement = document.getElementById('deste-bilgisi');
-        if (desteElement) {
-            desteElement.textContent = `Destede kalan: ${this.oyun.deste.length}`;
-        }
-    }
-    
-    /**
-     * Botların kartlarını günceller (element_karti nesnelerini DOM elementlerine dönüştürür)
-     * @param {number} botNo Bot numarası
-     * @param {Array} kartlar Kartlar dizisi
-     */
-    botKartlariniGuncelle(botNo, kartlar) {
-        const kartlarElementi = document.getElementById(`bot${botNo}-kartlari`);
-        if (!kartlarElementi) return;
-        
-        // Botun kartları için alanı temizle
-        kartlarElementi.innerHTML = '';
-        
-        kartlar.forEach((kart, index) => {
-            const kartDiv = document.createElement('div');
-            kartDiv.className = 'bot-kart';
-            kartDiv.dataset.index = index;
-            kartDiv.id = `bot${botNo}-kart-${index}`;
-            
-            // Kart bilgilerini gösterecek iç div
-            const kartBilgi = document.createElement('div');
-            kartBilgi.className = 'kart-bilgi';
-            kartBilgi.style.transform = 'scale(0.7)'; // Kartları %70 oranında küçült
-            
-            // Sembol ve diğer bilgiler
-            const sembolDiv = document.createElement('div');
-            sembolDiv.className = 'sembol';
-            sembolDiv.textContent = kart.element.sembol;
-            sembolDiv.style.backgroundColor = kart.element.renk;
-            
-            const grupPeriyotDiv = document.createElement('div');
-            grupPeriyotDiv.className = 'grup-periyot';
-            grupPeriyotDiv.textContent = `G:${kart.element.grup} P:${kart.element.periyot}`;
-            
-            // Bilgileri kart bilgi alanına ekle
-            kartBilgi.appendChild(sembolDiv);
-            kartBilgi.appendChild(grupPeriyotDiv);
-            
-            // Kart bilgilerini ana kart divina ekle
-            kartDiv.appendChild(kartBilgi);
-            kartlarElementi.appendChild(kartDiv);
-        });
+        // Yeniden çizim için animasyon isteği
+        requestAnimationFrame(() => this.arayuzuGuncelle());
     }
     
     /**
@@ -540,174 +458,226 @@ class ArayuzKontrol {
         
         // Kartı bırak
         this.suruklenenKart = null;
-        this.suruklenenKartIndeks = -1;
+        this.arayuzuGuncelle();
+    }
+    
+    kombinasyonMouseUp(e) {
+        if (!this.suruklenenKart) return;
+        
+        // Kartı kombinasyon alanına taşı
+        this.kombinasyonKartlari.push(this.suruklenenKart);
+        this.oyun.oyuncu.kartlar.splice(this.suruklenenKartIndeks, 1);
+        
+        // Kartı bırak
+        this.suruklenenKart = null;
+        this.arayuzuGuncelle();
+    }
+    
+    acikKartClick(e) {
+        if (!this.oyunAktif || !this.oyun.oyuncu.sirada) return;
+        
+        // Açık kartı al
+        this.oyun.acikKartiAl();
+        this.arayuzuGuncelle();
+    }
+    
+    desteClick(e) {
+        if (!this.oyunAktif || !this.oyun.oyuncu.sirada) return;
+        
+        // Desteden kart çek
+        this.destedenKartCek();
+    }
+    
+    /**
+     * Kombinasyonu kontrol eder
+     */
+    kombinasyonuKontrolEt() {
+        if (this.kombinasyonKartlari.length === 0) return;
+        
+        // Geçerli kombinasyon mu kontrol et
+        const sonuc = this.oyun.kombinasyonlariKontrolEt(this.kombinasyonKartlari);
+        
+        if (sonuc.gecerli) {
+            // Geçerli kombinasyon - puanları hesapla ve kartları kaldır
+            const puan = this.oyun.puanHesapla(sonuc);
+            this.oyun.oyuncu.puan += puan;
+            
+            // Kombinasyon alanını temizle
+            this.kombinasyonKartlari = [];
+            
+            // Oyuncu kartları bittiyse oyunu bitir
+            if (this.oyun.oyuncu.kartlar.length === 0) {
+                this.oyunuBitir(true);
+            }
+        } else {
+            // Geçersiz kombinasyon - kartları geri ver
+            this.oyun.oyuncu.kartlar.push(...this.kombinasyonKartlari);
+            this.kombinasyonKartlari = [];
+        }
+        
         this.arayuzuGuncelle();
     }
     
     /**
-     * Desteden kart çekmek için mouse olayı
+     * Kart verir
      */
-    desteMouseDown(e) {
-        if (!this.oyunAktif || !this.oyun || !this.oyun.oyuncu || !this.oyun.oyuncu.sirada) return;
+    kartVer() {
+        if (!this.oyunAktif || !this.oyun.oyuncu.sirada || this.oyun.oyuncu.kartlar.length === 0) return;
         
-        if (this.oyun.deste?.length > 0) {
-            // Desteden kart çek
-            const kart = this.oyun.desteyiAc();
-            if (kart) {
-                this.oyun.oyuncu.kartEkle(kart);
-                this.oyun.oyuncuHamlesiniTamamla();
-                this.arayuzuGuncelle();
-            }
-        }
+        // Rastgele bir kart seç
+        const kartIndeks = Math.floor(Math.random() * this.oyun.oyuncu.kartlar.length);
+        
+        // Kartı seç ve ver
+        this.oyun.kartSec(kartIndeks);
+        this.arayuzuGuncelle();
     }
     
     /**
-     * Açık kartı almak için mouse olayı
+     * Desteden kart çeker
      */
-    acikKartMouseDown(e) {
-        if (!this.oyunAktif || !this.oyun || !this.oyun.oyuncu || !this.oyun.oyuncu.sirada) {
-            console.log("Açık kart alamazsınız: Oyun aktif değil veya sıra sizde değil.");
-            return;
-        }
+    destedenKartCek() {
+        if (!this.oyunAktif || !this.oyun.oyuncu.sirada) return;
         
-        if (this.oyun.acikKart) {
-            // Açık kartı al
-            const kart = this.oyun.acikKartiAl();
-            if (kart) {
-                this.oyun.oyuncu.kartEkle(kart);
-                this.oyun.oyuncuHamlesiniTamamla();
-                this.arayuzuGuncelle();
-                console.log("Açık kart alındı:", kart);
-            }
+        // Desteden kart çek
+        this.oyun.destedenKartCek();
+        this.arayuzuGuncelle();
+    }
+    
+    /**
+     * Oyunu bitirir
+     * @param {boolean} kazandiMi Oyuncu kazandı mı
+     */
+    oyunuBitir(kazandiMi = true) {
+        // Oyun durumunu güncelle
+        this.oyunAktif = false;
+        
+        // Sonuç mesajını ayarla
+        const sonucMesaji = kazandiMi ? 'Tebrikler! Kazandınız!' : 'Kaybettiniz!';
+        document.getElementById('sonuc-mesaji').textContent = sonucMesaji;
+        
+        // Puan detaylarını göster
+        document.getElementById('sonuc-puan').textContent = this.oyun.oyuncu.puan;
+        
+        // TODO: Grup ve periyot sayılarını gerçek verilerden hesapla
+        document.getElementById('sonuc-grup').textContent = '0';
+        document.getElementById('sonuc-periyot').textContent = '0';
+        
+        // İstatistikleri güncelle
+        this.istatistikleriGuncelle(kazandiMi);
+        
+        // Oyun sonu ekranını göster
+        this.ekraniGoster('oyunSonu');
+    }
+    
+    /**
+     * İstatistikleri günceller
+     * @param {boolean} kazandiMi Oyuncu kazandı mı
+     */
+    istatistikleriGuncelle(kazandiMi) {
+        // localStorage'dan mevcut istatistikleri al
+        let istatistikler = JSON.parse(localStorage.getItem('periyodikOkey_istatistikler')) || {
+            toplamOyun: 0,
+            kazanilanOyun: 0,
+            kaybedilenOyun: 0,
+            enYuksekPuan: 0,
+            toplamPuan: 0,
+            elementSayilari: {},
+            grupSayilari: {},
+            periyotSayilari: {}
+        };
+        
+        // İstatistikleri güncelle
+        istatistikler.toplamOyun++;
+        if (kazandiMi) {
+            istatistikler.kazanilanOyun++;
         } else {
-            console.log("Alınabilecek açık kart yok.");
+            istatistikler.kaybedilenOyun++;
         }
+        
+        // Puan istatistikleri
+        const oyuncuPuani = this.oyun.oyuncu.puan;
+        istatistikler.toplamPuan += oyuncuPuani;
+        if (oyuncuPuani > istatistikler.enYuksekPuan) {
+            istatistikler.enYuksekPuan = oyuncuPuani;
+        }
+        
+        // TODO: Element, grup ve periyot istatistiklerini güncelle
+        
+        // İstatistikleri kaydet
+        localStorage.setItem('periyodikOkey_istatistikler', JSON.stringify(istatistikler));
+        
+        // İstatistik arayüzünü güncelle
+        this.istatistikArayuzunuGuncelle(istatistikler);
     }
     
     /**
-     * Önceki oyuncudan gelen kartı almak için mouse olayı
+     * İstatistik arayüzünü günceller
+     * @param {Object} istatistikler İstatistik verileri
      */
-    oncekiKartMouseDown(e) {
-        if (!this.oyunAktif || !this.oyun || !this.oyun.oyuncu || !this.oyun.oyuncu.sirada) return;
+    istatistikArayuzunuGuncelle(istatistikler) {
+        document.getElementById('toplam-oyun').textContent = istatistikler.toplamOyun;
+        document.getElementById('kazanilan-oyun').textContent = istatistikler.kazanilanOyun;
+        document.getElementById('kaybedilen-oyun').textContent = istatistikler.kaybedilenOyun;
         
-        if (this.oncekiOyuncudanGelenKart) {
-            // Önceki oyuncudan gelen kartı al
-            const kart = this.oncekiOyuncudanGelenKart;
-            this.oncekiOyuncudanGelenKart = null;
-            
-            if (kart) {
-                this.oyun.oyuncu.kartEkle(kart);
-                this.oyun.oyuncuHamlesiniTamamla();
-                this.arayuzuGuncelle();
-            }
-        }
-    }
-    
-    /**
-     * Pencere mouse up olayı
-     */
-    windowMouseUp(e) {
-        if (!this.oyun || !this.oyun.oyunAktif || !this.suruklenenKart) {
-            this.suruklenenKart = null;
-            return;
-        }
-
-        const rect = this.ortaAlanCanvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        // Kazanma oranı
+        const kazanmaOrani = istatistikler.toplamOyun > 0 
+            ? Math.round((istatistikler.kazanilanOyun / istatistikler.toplamOyun) * 100) 
+            : 0;
+        document.getElementById('kazanma-orani').textContent = `${kazanmaOrani}%`;
         
-        // Ortadaki kart atma alanına bırakıldı mı kontrol et
-        if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-            // Kart atma işlemini gerçekleştir
-            if (this.suruklenenKartIndeks !== -1) {
-                const oyuncu = this.oyun.oyuncular[0]; // Kullanıcı
-                if (oyuncu && this.suruklenenKartIndeks < oyuncu.kartlar.length) {
-                    const kart = oyuncu.kartlar[this.suruklenenKartIndeks];
-                    this.oyun.kartAt(this.suruklenenKartIndeks);
-                    this.arayuzuGuncelle();
-                }
-            }
-        }
+        // Puan istatistikleri
+        document.getElementById('en-yuksek-puan').textContent = istatistikler.enYuksekPuan;
+        const ortalamaPuan = istatistikler.toplamOyun > 0 
+            ? Math.round(istatistikler.toplamPuan / istatistikler.toplamOyun) 
+            : 0;
+        document.getElementById('ortalama-puan').textContent = ortalamaPuan;
+        document.getElementById('toplam-puan').textContent = istatistikler.toplamPuan;
         
-        this.suruklenenKart = null;
-        this.suruklenenKartIndeks = -1;
-    }
-    
-    /**
-     * Pencere mouse move olayı
-     */
-    windowMouseMove(e) {
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
-    }
-    
-    /**
-     * Oyuncu canvas mouse down olayı
-     */
-    oyuncuCanvasMouseDown(e) {
-        if (!this.oyunAktif || !this.oyun || !this.oyun.oyuncu) return;
-        
-        const rect = this.canvaslar.oyuncu.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        // Seçilen kartı bul
-        const kartGenislik = 70;
-        const kartYukseklik = 100;
-        const kartMarj = 5;
-        
-        for (let i = this.oyun.oyuncu.kartlar.length - 1; i >= 0; i--) {
-            const kart = this.oyun.oyuncu.kartlar[i];
-            if (x >= kart.x && x <= kart.x + kartGenislik &&
-                y >= kart.y && y <= kart.y + kartYukseklik) {
-                // Kart seçildi
-                if (this.oyun.oyuncu.sirada) {
-                    // Oyuncunun sırası ise, kartı sürüklemek için hazırla
-                    this.suruklenenKart = kart;
-                    this.suruklenenKartIndeks = i;
-                    this.mouseX = e.clientX;
-                    this.mouseY = e.clientY;
-                    break;
-                }
-            }
-        }
-    }
-    
-    /**
-     * Oyuncu canvas mouse move olayı
-     */
-    oyuncuCanvasMouseMove(e) {
-        if (!this.oyunAktif) return;
-        
-        const rect = this.canvaslar.oyuncu.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        // Mouse pozisyonunu güncelle
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
-    }
-    
-    /**
-     * Kart alma işlemi
-     */
-    kartAl() {
-        if (this.oyun && this.oyun.oyuncu) {
-            const sonuc = this.oyun.kartAl(this.oyun.oyuncu);
-            if (sonuc.basarili) {
-                this.arayuzuGuncelle();
-                this.mesajGoster("Kart alındı.");
-            } else {
-                this.hataGoster(sonuc.mesaj);
-            }
-        }
+        // TODO: En çok kullanılan element, grup ve periyot istatistiklerini güncelle
     }
 }
 
 // Sayfa yüklendiğinde arayüz kontrolünü başlat
 window.addEventListener('DOMContentLoaded', () => {
     const arayuzKontrol = new ArayuzKontrol();
-}); 
+});
+
+// Botların kartlarını ekrana yansıtır
+function botKartlariniGuncelle(botNo, kartlar) {
+    const kartlarElementi = document.getElementById(`bot${botNo}-kartlari`);
+    if (!kartlarElementi) return;
+    
+    kartlarElementi.innerHTML = '';
+    
+    // Botun kartları için alanı temizle
+    kartlar.forEach((kart, index) => {
+        const kartDiv = document.createElement('div');
+        kartDiv.className = 'bot-kart';
+        kartDiv.dataset.index = index;
+        kartDiv.id = `bot${botNo}-kart-${index}`;
+        
+        // Kart bilgilerini gösterecek iç div
+        const kartBilgi = document.createElement('div');
+        kartBilgi.className = 'kart-bilgi';
+        
+        // Sembol ve diğer bilgiler
+        const sembolDiv = document.createElement('div');
+        sembolDiv.className = 'sembol';
+        sembolDiv.textContent = kart.sembol;
+        
+        const grupPeriyotDiv = document.createElement('div');
+        grupPeriyotDiv.className = 'grup-periyot';
+        grupPeriyotDiv.textContent = `G:${kart.grup} P:${kart.periyot}`;
+        
+        // Bilgileri kart bilgi alanına ekle
+        kartBilgi.appendChild(sembolDiv);
+        kartBilgi.appendChild(grupPeriyotDiv);
+        
+        // Kart bilgilerini ana kart divina ekle
+        kartDiv.appendChild(kartBilgi);
+        kartlarElementi.appendChild(kartDiv);
+    });
+}
 
 // Açık kartı ekrana yansıtır
 function acikKartiGuncelle(kart) {
@@ -729,7 +699,7 @@ function acikKartiGuncelle(kart) {
         // Başlık ekle
         const baslik = document.createElement('div');
         baslik.id = 'acik-kart-baslik';
-        baslik.textContent = 'Ortadaki Element';
+        baslik.textContent = 'Son Oynanan Kart';
         acikKartAlani.insertBefore(baslik, acikKartAlani.firstChild);
     } else {
         const bosKartAlani = document.createElement('div');

@@ -177,7 +177,7 @@ h2 {
     position: relative;
 }
 
-.deste-alani, .acik-kart-alani {
+.orta-alani, .acik-kart-alani {
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -787,25 +787,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     /**
-     * Kalan kart sayısını günceller
+     * Kalan kart sayısını ve kartları günceller
      */
     function kalanKartSayisiniGuncelle() {
-        const kalanKartElement = document.getElementById('kalan-kart');
-        if (!kalanKartElement) return;
+        const oyunMantigi = window.oyunMantigi;
+        if (!oyunMantigi) return;
         
-        // Destede kalan kart sayısı (varsayılan olarak desteden kart çekme butonuna tıklama ile güncelleniyor)
-        // Bot kartlarını da hesaba katalım
-        const botKartlariToplam = Array.from(document.querySelectorAll('.bot-kartlar')).reduce((toplam, botKartlar) => {
-            return toplam + botKartlar.children.length;
-        }, 0);
+        // Kalan kart sayısını güncelle
+        const kalanKartSpan = document.getElementById('kalan-kart');
+        if (kalanKartSpan) {
+            kalanKartSpan.textContent = oyunMantigi.deste.length;
+        }
         
-        const oyuncuKartlari = document.getElementById('oyuncu-kartlari').children.length;
-        const desteKartlari = parseInt(kalanKartElement.textContent) || 0;
+        // Oyuncu kartlarını güncelle
+        const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+        if (oyuncuKartlari && oyunMantigi.oyuncu) {
+            oyuncuKartlari.innerHTML = '';
+            
+            oyunMantigi.oyuncu.kartlar.forEach((kart, index) => {
+                const kartElementi = elementKartiOlusturDOM(kart.element, 1, kart.joker);
+                kartElementi.dataset.index = index;
+                oyuncuKartlari.appendChild(kartElementi);
+            });
+        }
         
-        // Toplam kart sayısı
-        const toplamKart = desteKartlari + botKartlariToplam + oyuncuKartlari;
+        // Bot kartlarını güncelle
+        for (let i = 1; i <= oyunMantigi.botSayisi; i++) {
+            botKartlariniGuncelle(i, oyunMantigi.botlar[i-1].kartlar);
+        }
         
-        kalanKartElement.textContent = toplamKart;
+        // Açık kartı güncelle
+        const acikKartAlani = document.querySelector('.acik-kart-alani');
+        if (acikKartAlani) {
+            acikKartAlani.innerHTML = '<div id="acik-kart-baslik">Son Atılan Kart</div>';
+            
+            if (oyunMantigi.acikKart) {
+                const acikKartElementi = elementKartiOlusturDOM(oyunMantigi.acikKart.element, 1, oyunMantigi.acikKart.joker);
+                acikKartAlani.appendChild(acikKartElementi);
+            }
+        }
     }
     
     /**

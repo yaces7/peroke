@@ -181,7 +181,7 @@ h2 {
     position: relative;
 }
 
-.orta-alani, .acik-kart-alani {
+.orta-alani {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -190,7 +190,7 @@ h2 {
     margin: 0 20px;
 }
 
-#acik-kart-baslik {
+#acik-kart-baslik, #onceki-kart-baslik {
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
     padding: 5px 10px;
@@ -292,13 +292,13 @@ h2 {
 
 .element-kart:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .element-kart.secili {
     border: 2px solid #ff0000;
     transform: translateY(-10px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .element-kart .atom-no {
@@ -582,7 +582,10 @@ h2 {
     overflow-y: hidden;
     overflow-x: auto;
     max-height: 100px;
+    padding: 5px;
     width: 100%;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
 }
 
 .bot-kart {
@@ -597,6 +600,7 @@ h2 {
     transition: transform 0.2s, box-shadow 0.2s;
     font-size: 10px;
     cursor: default;
+    overflow: hidden;
 }
 
 .bot-kart:hover {
@@ -621,6 +625,7 @@ h2 {
     box-sizing: border-box;
     opacity: 0.8;
     transition: opacity 0.2s;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 .kart-bilgi .sembol {

@@ -883,6 +883,34 @@ class PeriyodikOkey {
     }
     
     /**
+     * Desteden kart çeker
+     * @return {ElementKarti} Çekilen kart
+     */
+    destedenKartCek() {
+        if (!this.oyunAktif) return null;
+        
+        if (this.aktifOyuncuIndeksi === 0 && !this.oyuncu.sirada) {
+            console.error('Oyuncunun sırası değil!');
+            return null;
+        }
+        
+        if (this.deste.length === 0) {
+            console.error('Destede kart kalmadı!');
+            return null;
+        }
+        
+        const kart = this.deste.pop();
+        
+        if (this.aktifOyuncuIndeksi === 0) {
+            this.oyuncu.kartlar.push(kart);
+        } else {
+            this.botlar[this.aktifOyuncuIndeksi - 1].kartlar.push(kart);
+        }
+        
+        return kart;
+    }
+    
+    /**
      * Açık kartı alır
      * @return {ElementKarti} Alınan açık kart
      */
@@ -901,49 +929,6 @@ class PeriyodikOkey {
         
         const kart = this.acikKart;
         this.acikKart = null;
-        
-        if (this.aktifOyuncuIndeksi === 0) {
-            this.oyuncu.kartlar.push(kart);
-        } else {
-            this.botlar[this.aktifOyuncuIndeksi - 1].kartlar.push(kart);
-        }
-        
-        // Oyuncu kartı aldıktan sonra bir kart atmalı
-        return kart;
-    }
-    
-    /**
-     * Desteden kart çeker
-     * @return {ElementKarti} Çekilen kart
-     */
-    destedenKartCek() {
-        if (!this.oyunAktif) return null;
-        
-        if (this.aktifOyuncuIndeksi === 0 && !this.oyuncu.sirada) {
-            console.error('Oyuncunun sırası değil!');
-            return null;
-        }
-        
-        // Açık kart varsa ve kullanılmıyorsa, bir sonraki oyuncuya geçir
-        if (this.acikKart) {
-            // Açık kartı bir sonraki oyuncuya geçir
-            const sonrakiOyuncuIndeksi = (this.aktifOyuncuIndeksi + 1) % (this.botlar.length + 1);
-            
-            if (sonrakiOyuncuIndeksi === 0) {
-                // Açık kartı oyuncuya geçir (sonraki turda kullanılmak üzere)
-                // Burada açık kart aynen korunuyor, kart direkt verilmiyor
-            } else {
-                // Açık kartı bota geçir (sonraki turda kullanılmak üzere)
-                // Burada açık kart aynen korunuyor, kart direkt verilmiyor
-            }
-        }
-        
-        if (this.deste.length === 0) {
-            console.error('Destede kart kalmadı!');
-            return null;
-        }
-        
-        const kart = this.deste.pop();
         
         if (this.aktifOyuncuIndeksi === 0) {
             this.oyuncu.kartlar.push(kart);
@@ -981,36 +966,6 @@ class PeriyodikOkey {
             kart = bot.kartlar.splice(kartIndeks, 1)[0];
         }
         
-        // Kart seçildiğinde eldeki kart sayısının 1 olup olmadığını kontrol et
-        // Eğer sadece 1 kart kaldıysa oyuncu kazanabilir durumda mı diye bak
-        let kartlar = [];
-        if (this.aktifOyuncuIndeksi === 0) {
-            kartlar = [...this.oyuncu.kartlar, kart]; // Atılacak kartı dahil ederek kontrol et
-            if (this.oyuncu.kartlar.length === 1) {
-                // Son kart atılmak üzere, oyuncu kazanabilir mi kontrol et
-                const kombinasyonSonucu = this.kombinasyonlariKontrolEt(kartlar);
-                if (kombinasyonSonucu.gecerli) {
-                    // Oyuncu kazandı
-                    this.acikKart = kart;
-                    this.oyunuBitir(0); // İnsan oyuncu kazandı
-                    return kart;
-                }
-            }
-        } else {
-            const bot = this.botlar[this.aktifOyuncuIndeksi - 1];
-            kartlar = [...bot.kartlar, kart]; // Atılacak kartı dahil ederek kontrol et
-            if (bot.kartlar.length === 1) {
-                // Son kart atılmak üzere, bot kazanabilir mi kontrol et
-                const kombinasyonSonucu = this.kombinasyonlariKontrolEt(kartlar);
-                if (kombinasyonSonucu.gecerli) {
-                    // Bot kazandı
-                    this.acikKart = kart;
-                    this.oyunuBitir(this.aktifOyuncuIndeksi); // Bot kazandı
-                    return kart;
-                }
-            }
-        }
-        
         this.acikKart = kart;
         this.siradakiOyuncuyaGec();
         
@@ -1018,193 +973,107 @@ class PeriyodikOkey {
     }
     
     /**
-     * Kombinasyonları kontrol eder - Yeni kazanma mantığı
-     * Tüm kartların periyot ya da grup olarak dizilip sadece 1 kart kalması durumunda geçerli
+     * Kombinasyonları kontrol eder
      * @param {Array} kartlar - Kontrol edilecek kartlar
      * @return {Object} Sonuç nesnesi
      */
     kombinasyonlariKontrolEt(kartlar) {
-        // Kart sayısı 14'ten az ise kombinasyon tamamlanmamış demektir
-        if (kartlar.length < 14) {
-            return { gecerli: false, perler: [], gruplar: [] };
-        }
-        
-        // Tüm olası kombinasyonları bul
-        const perKombinasyonlari = this.tumPerKombinasyonlariniBul(kartlar);
-        const grupKombinasyonlari = this.tumGrupKombinasyonlariniBul(kartlar);
-        
-        // En iyi kombinasyonu bul (En fazla kartı içeren kombinasyonlar)
-        const enIyiPer = perKombinasyonlari.sort((a, b) => b.kartlar.length - a.kartlar.length)[0] || { kartlar: [] };
-        const enIyiGrup = grupKombinasyonlari.sort((a, b) => b.kartlar.length - a.kartlar.length)[0] || { kartlar: [] };
-        
-        // En iyi kombinasyonun kartlarını topla
-        const enIyiKombinasyon = enIyiPer.kartlar.length >= enIyiGrup.kartlar.length ? enIyiPer : enIyiGrup;
-        
-        // Kombinasyonun kart sayısı ve toplam kartlar arasındaki fark 1 ise oyuncu kazanır
-        const geriyeKalanKartSayisi = kartlar.length - enIyiKombinasyon.kartlar.length;
-        const gecerli = geriyeKalanKartSayisi === 1;
-        
-        return {
-            gecerli: gecerli,
-            perler: enIyiPer.kartlar.length > 0 ? [enIyiPer] : [],
-            gruplar: enIyiGrup.kartlar.length > 0 ? [enIyiGrup] : []
+        const sonuc = {
+            perler: [],
+            gruplar: [],
+            gecerli: false
         };
-    }
-    
-    /**
-     * Tüm per kombinasyonlarını bulur (aynı grup, ardışık periyotlar)
-     * @param {Array} kartlar - Kontrol edilecek kartlar
-     * @return {Array} Bulunan per kombinasyonları
-     */
-    tumPerKombinasyonlariniBul(kartlar) {
-        const sonuc = [];
         
-        // Kartları gruplara ayır
-        const gruplar = {};
-        kartlar.forEach(kart => {
-            if (kart.joker) return; // Jokerleri şimdilik ayır
+        // Perleri kontrol et - Aynı grup, ardışık periyotlar
+        for (let grup = 1; grup <= 18; grup++) {
+            const gruptakiKartlar = kartlar.filter(kart => 
+                kart.element.grup === grup || kart.joker
+            );
             
-            const grupKey = kart.element.grup;
-            if (!gruplar[grupKey]) {
-                gruplar[grupKey] = [];
-            }
-            gruplar[grupKey].push(kart);
-        });
-        
-        // Jokerler
-        const jokerler = kartlar.filter(kart => kart.joker);
-        
-        // Her grup için per kombinasyonları bul
-        for (const grupKey in gruplar) {
-            if (gruplar[grupKey].length < 3) continue; // En az 3 kart olmalı
-            
-            const gruptakiKartlar = gruplar[grupKey];
-            
-            // Periyota göre sırala
-            gruptakiKartlar.sort((a, b) => a.element.periyot - b.element.periyot);
-            
-            // Ardışık periyotları bul
-            const perler = [];
-            let currentPer = [gruptakiKartlar[0]];
-            
-            for (let i = 1; i < gruptakiKartlar.length; i++) {
-                const oncekiKart = gruptakiKartlar[i-1];
-                const simdikiKart = gruptakiKartlar[i];
+            if (gruptakiKartlar.length >= this.ayarlar.minimumPerSayisi) {
+                // Periyotları sırala ve ardışık periyotları bul
+                gruptakiKartlar.sort((a, b) => a.element.periyot - b.element.periyot);
                 
-                if (simdikiKart.element.periyot === oncekiKart.element.periyot + 1) {
-                    // Ardışık periyot
-                    currentPer.push(simdikiKart);
-                } else {
-                    // Ardışık değil, mevcut peri kaydet ve yeni başlat
-                    if (currentPer.length >= 3) {
-                        perler.push({
-                            tip: 'per',
-                            grup: parseInt(grupKey),
-                            kartlar: [...currentPer]
-                        });
+                let currentPer = [gruptakiKartlar[0]];
+                
+                for (let i = 1; i < gruptakiKartlar.length; i++) {
+                    const oncekiKart = gruptakiKartlar[i - 1];
+                    const simdikiKart = gruptakiKartlar[i];
+                    
+                    if (simdikiKart.joker || 
+                        oncekiKart.joker || 
+                        simdikiKart.element.periyot === oncekiKart.element.periyot + 1) {
+                        currentPer.push(simdikiKart);
+                    } else {
+                        if (currentPer.length >= this.ayarlar.minimumPerSayisi) {
+                            sonuc.perler.push({
+                                tip: 'per',
+                                grup: grup,
+                                kartlar: [...currentPer]
+                            });
+                        }
+                        currentPer = [simdikiKart];
                     }
-                    currentPer = [simdikiKart];
                 }
-            }
-            
-            // Son peri ekle
-            if (currentPer.length >= 3) {
-                perler.push({
-                    tip: 'per',
-                    grup: parseInt(grupKey),
-                    kartlar: [...currentPer]
-                });
-            }
-            
-            // Jokerleri kullanarak perleri genişletme
-            // NOT: Burada joker kullanım mantığı geliştirilebilir
-            
-            // En uzun peri al
-            if (perler.length > 0) {
-                // En uzun peri bul
-                const enUzunPer = perler.sort((a, b) => b.kartlar.length - a.kartlar.length)[0];
-                sonuc.push(enUzunPer);
+                
+                if (currentPer.length >= this.ayarlar.minimumPerSayisi) {
+                    sonuc.perler.push({
+                        tip: 'per',
+                        grup: grup,
+                        kartlar: [...currentPer]
+                    });
+                }
             }
         }
         
-        return sonuc;
-    }
-    
-    /**
-     * Tüm grup kombinasyonlarını bulur (aynı periyot, ardışık gruplar)
-     * @param {Array} kartlar - Kontrol edilecek kartlar
-     * @return {Array} Bulunan grup kombinasyonları
-     */
-    tumGrupKombinasyonlariniBul(kartlar) {
-        const sonuc = [];
-        
-        // Kartları periyotlara ayır
-        const periyotlar = {};
-        kartlar.forEach(kart => {
-            if (kart.joker) return; // Jokerleri şimdilik ayır
+        // Grupları kontrol et - Aynı periyot, ardışık gruplar
+        for (let periyot = 1; periyot <= 7; periyot++) {
+            const periyottakiKartlar = kartlar.filter(kart => 
+                kart.element.periyot === periyot || kart.joker
+            );
             
-            const periyotKey = kart.element.periyot;
-            if (!periyotlar[periyotKey]) {
-                periyotlar[periyotKey] = [];
-            }
-            periyotlar[periyotKey].push(kart);
-        });
-        
-        // Jokerler
-        const jokerler = kartlar.filter(kart => kart.joker);
-        
-        // Her periyot için grup kombinasyonları bul
-        for (const periyotKey in periyotlar) {
-            if (periyotlar[periyotKey].length < 3) continue; // En az 3 kart olmalı
-            
-            const periyottakiKartlar = periyotlar[periyotKey];
-            
-            // Gruba göre sırala
-            periyottakiKartlar.sort((a, b) => a.element.grup - b.element.grup);
-            
-            // Ardışık grupları bul
-            const gruplar = [];
-            let currentGrup = [periyottakiKartlar[0]];
-            
-            for (let i = 1; i < periyottakiKartlar.length; i++) {
-                const oncekiKart = periyottakiKartlar[i-1];
-                const simdikiKart = periyottakiKartlar[i];
+            if (periyottakiKartlar.length >= this.ayarlar.minimumGrupSayisi) {
+                // Grupları sırala ve ardışık grupları bul
+                periyottakiKartlar.sort((a, b) => a.element.grup - b.element.grup);
                 
-                if (simdikiKart.element.grup === oncekiKart.element.grup + 1) {
-                    // Ardışık grup
-                    currentGrup.push(simdikiKart);
-                } else {
-                    // Ardışık değil, mevcut grubu kaydet ve yeni başlat
-                    if (currentGrup.length >= 3) {
-                        gruplar.push({
-                            tip: 'grup',
-                            periyot: parseInt(periyotKey),
-                            kartlar: [...currentGrup]
-                        });
+                let currentGrup = [periyottakiKartlar[0]];
+                
+                for (let i = 1; i < periyottakiKartlar.length; i++) {
+                    const oncekiKart = periyottakiKartlar[i - 1];
+                    const simdikiKart = periyottakiKartlar[i];
+                    
+                    if (simdikiKart.joker || 
+                        oncekiKart.joker || 
+                        simdikiKart.element.grup === oncekiKart.element.grup + 1) {
+                        currentGrup.push(simdikiKart);
+                    } else {
+                        if (currentGrup.length >= this.ayarlar.minimumGrupSayisi) {
+                            sonuc.gruplar.push({
+                                tip: 'grup',
+                                periyot: periyot,
+                                kartlar: [...currentGrup]
+                            });
+                        }
+                        currentGrup = [simdikiKart];
                     }
-                    currentGrup = [simdikiKart];
+                }
+                
+                if (currentGrup.length >= this.ayarlar.minimumGrupSayisi) {
+                    sonuc.gruplar.push({
+                        tip: 'grup',
+                        periyot: periyot,
+                        kartlar: [...currentGrup]
+                    });
                 }
             }
-            
-            // Son grubu ekle
-            if (currentGrup.length >= 3) {
-                gruplar.push({
-                    tip: 'grup',
-                    periyot: parseInt(periyotKey),
-                    kartlar: [...currentGrup]
-                });
-            }
-            
-            // Jokerleri kullanarak grupları genişletme
-            // NOT: Burada joker kullanım mantığı geliştirilebilir
-            
-            // En uzun grubu al
-            if (gruplar.length > 0) {
-                // En uzun grubu bul
-                const enUzunGrup = gruplar.sort((a, b) => b.kartlar.length - a.kartlar.length)[0];
-                sonuc.push(enUzunGrup);
-            }
         }
+        
+        // Tüm kartların bir kombinasyonda olup olmadığını kontrol et
+        const kullanilanKartSayisi = [...sonuc.perler, ...sonuc.gruplar]
+            .flatMap(kombin => kombin.kartlar)
+            .length;
+        
+        sonuc.gecerli = kullanilanKartSayisi === kartlar.length;
         
         return sonuc;
     }

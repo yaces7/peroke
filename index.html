@@ -120,30 +120,71 @@
         </div>
 
         <div id="oyun-screen" class="ekran gizli">
-            <div class="oyun-alani" id="oyun-alani">
-                <div class="ust-panel" id="ust-panel">
-                    <div id="bot-kartlari-container" class="bot-kartlari-container"></div>
-                </div>
-
-                <div class="orta-panel" id="orta-panel">
-                    <div class="acik-kart-alani" id="acik-kart-alani">
-                        <div class="alan-baslik">Açık Kart</div>
-                        <div id="acik-kart-icerik" class="acik-kart-icerik surukle-hedef"></div>
-                    </div>
-                    <div class="deste-alani" id="deste-alani">
-                        <div class="alan-baslik">Deste</div>
-                        <div id="deste-icerik" class="deste-icerik"></div>
+            <div class="oyun-alani">
+                <div class="ust-panel">
+                    <div class="durum-mesaji" id="durum-mesaji">Oyun başladı!</div>
+                    <div class="oyun-butonlari">
+                        <button id="btn-oyun-menu" class="btn-mini">Menü</button>
+                        <button id="btn-oyun-yardim" class="btn-mini">Yardım</button>
                     </div>
                 </div>
-
-                <div class="alt-panel" id="alt-panel">
-                    <div class="oyuncu-kartlari" id="oyuncu-kartlari">
-                        <div class="oyuncu-bilgisi">
-                            <span class="oyuncu-adi">Oyuncu</span>
-                            <span class="oyuncu-puani" id="oyuncu-puani">0</span>
+                
+                <div class="bot-alanlari">
+                    <div class="bot-alani" id="bot1-alani">
+                        <div class="bot-bilgi">
+                            <span class="bot-isim">Bot 1</span>
+                            <div class="bot1-yildizlar"></div>
+                            <span class="bot-puan" id="bot1-puan">0</span>
                         </div>
-                        <div id="oyuncu-kartlari-icerik" class="oyuncu-kartlari-icerik"></div>
+                        <div class="bot-kartlar"></div>
                     </div>
+                    <div class="bot-alani" id="bot2-alani">
+                        <div class="bot-bilgi">
+                            <span class="bot-isim">Bot 2</span>
+                            <div class="bot2-yildizlar"></div>
+                            <span class="bot-puan" id="bot2-puan">0</span>
+                        </div>
+                        <div class="bot-kartlar"></div>
+                    </div>
+                    <div class="bot-alani" id="bot3-alani">
+                        <div class="bot-bilgi">
+                            <span class="bot-isim">Bot 3</span>
+                            <div class="bot3-yildizlar"></div>
+                            <span class="bot-puan" id="bot3-puan">0</span>
+                        </div>
+                        <div class="bot-kartlar"></div>
+                    </div>
+                </div>
+                
+                <div class="orta-alan">
+                    <div class="deste-alani">
+                        <canvas id="deste-canvas" width="100" height="140"></canvas>
+                        <div class="kalan-kart">Kalan: <span id="kalan-kart">54</span></div>
+                    </div>
+                    <div class="acik-kart-alani">
+                        <canvas id="acik-kart-canvas" width="100" height="140"></canvas>
+                    </div>
+                </div>
+                
+                <div class="kombinasyon-alani" id="kombinasyon-alani">
+                    <div class="kombinasyon-baslik">Kombinasyon Alanı</div>
+                    <div id="kombinasyon-icerik" class="kombinasyon-icerik surukle-hedef"></div>
+                </div>
+                
+                <div class="oyuncu-alani">
+                    <div class="oyuncu-bilgi">
+                        <span class="oyuncu-isim">Oyuncu</span>
+                        <div class="oyuncu-yildizlar"></div>
+                        <span class="oyuncu-puan" id="oyuncu-puan">0</span>
+                    </div>
+                    <div id="oyuncu-kartlari" class="oyuncu-kartlari surukle-hedef"></div>
+                </div>
+
+                <div class="kontroller">
+                    <button id="btn-kontrol-et" class="btn">Kontrol Et</button>
+                    <button id="btn-kart-ver" class="btn">Kart Ver</button>
+                    <button id="btn-desteyi-ac" class="btn">Desteden Çek</button>
+                    <button id="btn-acik-karti-al" class="btn">Açık Kartı Al</button>
                 </div>
             </div>
         </div>

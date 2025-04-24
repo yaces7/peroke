@@ -8,10 +8,10 @@
 </head>
 <body>
     <div id="oyun-container">
-        <div id="menu-screen" class="ekran">
+        <div id="menu-ekrani" class="ekran">
             <h1>Periyodik Okey</h1>
             <div class="menu-buttons">
-                <button id="btn-oyuna-basla" class="btn">Oyuna Başla</button>
+                <button id="btn-oyunu-baslat" class="btn">Oyuna Başla</button>
                 <button id="btn-nasil-oynanir" class="btn">Nasıl Oynanır</button>
                 <button id="btn-istatistikler" class="btn">İstatistikler</button>
                 <button id="btn-ayarlar" class="btn">Ayarlar</button>
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <div id="ayarlar-screen" class="ekran gizli">
+        <div id="ayarlar-ekrani" class="ekran gizli">
             <h1>Ayarlar</h1>
             <div class="ayarlar-form">
                 <div class="form-group">
@@ -49,11 +49,11 @@
             </div>
             <div class="menu-buttons">
                 <button id="btn-ayarlar-kaydet" class="btn">Kaydet</button>
-                <button id="btn-ayarlar-iptal" class="btn btn-geri">İptal</button>
+                <button id="btn-ayarlar-geri" class="btn btn-geri">İptal</button>
             </div>
         </div>
 
-        <div id="nasil-oynanir-screen" class="ekran gizli">
+        <div id="nasil-oynanir-ekrani" class="ekran gizli">
             <h1>Nasıl Oynanır</h1>
             <div class="kural-kutusu">
                 <h2>Oyun Kuralları</h2>
@@ -77,11 +77,11 @@
                 </ol>
             </div>
             <div class="menu-buttons">
-                <button class="btn btn-geri">Ana Menü</button>
+                <button id="btn-nasil-oynanir-geri" class="btn btn-geri">Ana Menü</button>
             </div>
         </div>
 
-        <div id="istatistikler-screen" class="ekran gizli">
+        <div id="istatistikler-ekrani" class="ekran gizli">
             <h1>İstatistikler</h1>
             <div class="istatistik-kutusu">
                 <div class="istatistik-grup">
@@ -117,16 +117,16 @@
             </div>
             <div class="menu-buttons">
                 <button id="btn-istatistik-sifirla" class="btn">İstatistikleri Sıfırla</button>
-                <button id="btn-istatistik-geri" class="btn btn-geri">Ana Menü</button>
+                <button id="btn-istatistikler-geri" class="btn btn-geri">Ana Menü</button>
             </div>
         </div>
 
-        <div id="oyun-screen" class="ekran gizli">
+        <div id="oyun-ekrani" class="ekran gizli">
             <div class="oyun-alani">
                 <div class="ust-panel">
                     <div class="durum-mesaji" id="durum-mesaji">Oyun başladı!</div>
                     <div class="oyun-butonlari">
-                        <button id="btn-oyun-menu" class="btn-mini">Menü</button>
+                        <button id="btn-ana-sayfa" class="btn-mini">Ana Menü</button>
                         <button id="btn-oyun-yardim" class="btn-mini">Yardım</button>
                     </div>
                 </div>
@@ -190,7 +190,7 @@
             </div>
         </div>
 
-        <div id="oyun-sonu-screen" class="ekran gizli">
+        <div id="oyun-sonu-ekrani" class="ekran gizli">
             <h1>Oyun Sona Erdi</h1>
             <div class="sonuc-kutusu">
                 <h2 id="sonuc-mesaji">Tebrikler! Kazandınız!</h2>
@@ -208,13 +208,10 @@
     </div>
 
     <!-- Scripts -->
-    <script src="scripts/element_verileri.js"></script>
-    <script src="scripts/element_islemleri.js"></script>
-    <script src="scripts/ses_yoneticisi.js"></script>
+    <script src="scripts/elementler.js"></script>
     <script src="scripts/element_karti.js"></script>
-    <script src="scripts/oyun_mekanikleri.js"></script>
-    <script src="scripts/oyun_mantigi.js"></script>
     <script src="scripts/arayuz_kontrolu.js"></script>
-    <script src="scripts/main.js"></script>
+    <script src="scripts/oyun_alani.js"></script>
+    <script src="scripts/periyodik_okey.js"></script>
 </body>
 </html> 

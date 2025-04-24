@@ -304,6 +304,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function testKartlariOlustur() {
         console.log("Yeni oyun başlatılıyor, kartlar oluşturuluyor...");
         
+        // Debug için log
+        console.log("===== testKartlariOlustur fonksiyonu çalıştırıldı =====");
+        
         // Puanları sıfırla
         document.getElementById('oyuncu-puan').textContent = '0';
         document.getElementById('bot1-puan').textContent = '0';
@@ -325,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // CSV'den elementleri yükle ve kartları oluştur
         elementVerileriniYukle().then(yuklenenElementler => {
             console.log("Elementler yüklendi, kartlar oluşturuluyor...");
+            console.log("Yüklenen element sayısı:", yuklenenElementler.length);
                 
             // Kullanılmış kartları dikkate alarak kullanılabilir elementleri belirle
             const kullanilabilirElementler = yuklenenElementler.filter(element => 
@@ -334,6 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     kullanilmisKart.periyot === element.periyot
                 )
             );
+            
+            console.log("Kullanılabilir element sayısı:", kullanilabilirElementler.length);
                 
             // Yeterli kart kalmadıysa, kullanılmış kartları temizle ve tüm elementleri kullan
             if (kullanilabilirElementler.length < 20) {
@@ -345,6 +351,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const elementler = kullanilabilirElementler.length > 0 ? 
                             kullanilabilirElementler.slice(0, kullanilabilirElementler.length) : 
                             yuklenenElementler.slice(0, yuklenenElementler.length);
+            
+            console.log("Kullanılacak element sayısı:", elementler.length);
+            if(elementler.length > 0) {
+                console.log("İlk element örneği:", elementler[0]);
+            } else {
+                console.error("!!! Hiç element yüklenmedi !!!");
+            }
             
             // Deste alanı
             const desteAlani = document.querySelector('.deste-alani');
@@ -360,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Rastgele bir element seç
             const rastgeleIndeks = Math.floor(Math.random() * elementler.length);
             const acikKart = elementKartiOlusturDOM(elementler[rastgeleIndeks], 1);
+            console.log("Açık kart oluşturuldu:", acikKart ? "Başarılı" : "Başarısız");
             acikKartAlani.appendChild(acikKart);
             
             // Oyuncu kartları - Container oluştur
@@ -406,7 +420,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Her kart için rastgele joker kararı ver
                 const jokerMi = Math.random() < jokerOlasiligi;
                 const kart = elementKartiOlusturDOM(elementler[indeks], 1, jokerMi);
-                oyuncuKartlariDiv.appendChild(kart);
+                if (kart) {
+                    oyuncuKartlariDiv.appendChild(kart);
+                } else {
+                    console.error("Kart oluşturulamadı, indeks:", indeks);
+                }
             });
             
             // Oyuncuya 15. kartı da ekle
@@ -418,11 +436,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 } while (rastgeleElementIndeksler.includes(ekKartIndeks));
                 
                 const ekKart = elementKartiOlusturDOM(elementler[ekKartIndeks], 1, Math.random() < jokerOlasiligi);
-                oyuncuKartlariDiv.appendChild(ekKart);
+                if (ekKart) {
+                    oyuncuKartlariDiv.appendChild(ekKart);
+                }
             }
             
             // Oyuncu kartlarını oyuncu alanına ekle
             oyuncuAlani.appendChild(oyuncuKartlariDiv);
+            console.log("Oyuncu kartları oluşturuldu ve DOM'a eklendi");
             
             // Kombinasyon alanı oluştur ve sürükleme hedefi olarak işaretle
             const kombinasyonIcerik = document.getElementById('kombinasyon-icerik');
@@ -459,6 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Kalan kart sayısını güncelle
             document.getElementById('kalan-kart').textContent = elementler.length - 8; // 7 oyuncu + 1 açık kart
+            console.log("Kart dağıtımı tamamlandı!");
         }).catch(error => {
             console.error("Element verileri yüklenirken hata oluştu:", error);
             alert("Elementler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.");

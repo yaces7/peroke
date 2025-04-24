@@ -556,7 +556,7 @@ class ArayuzKontrol {
             if (kart) {
                 this.oyun.oyuncu.kartEkle(kart);
                 this.oyun.oyuncuHamlesiniTamamla();
-        this.arayuzuGuncelle();
+                this.arayuzuGuncelle();
             }
         }
     }
@@ -624,7 +624,7 @@ class ArayuzKontrol {
                 if (oyuncu && this.suruklenenKartIndeks < oyuncu.kartlar.length) {
                     const kart = oyuncu.kartlar[this.suruklenenKartIndeks];
                     this.oyun.kartAt(this.suruklenenKartIndeks);
-                    this.updateUI();
+                    this.arayuzuGuncelle();
                 }
             }
         }

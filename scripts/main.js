@@ -304,9 +304,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function testKartlariOlustur() {
         console.log("Yeni oyun başlatılıyor, kartlar oluşturuluyor...");
         
-        // Oyun ayarlarını uygula
-        const ayarlar = oyunAyarlariniUygula();
-        
+            // Oyun ayarlarını uygula
+            const ayarlar = oyunAyarlariniUygula();
+
         // Element verilerini yükle ve oyun mantığı nesnesini oluştur
         elementVerileriniYukle().then(yuklenenElementler => {
             console.log("Elementler yüklendi, oyun oluşturuluyor...");
@@ -1060,9 +1060,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Kart çekme ve alma butonlarını devre dışı bırak
         document.getElementById('btn-ortadan-cek').disabled = true;
         document.getElementById('btn-acik-karti-al').disabled = true;
-        
-        // Kalan kart sayısını güncelle
-        kalanKartSayisiniGuncelle();
+                
+                // Kalan kart sayısını güncelle
+                kalanKartSayisiniGuncelle();
     });
     
     // Açık kartı alma butonu

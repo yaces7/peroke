@@ -238,14 +238,18 @@ h2 {
 
 /* Oyuncu kartları için özel stil */
 .oyuncu-kartlari {
-    min-height: 120px;
+    min-height: 150px;
     background-color: rgba(31, 64, 104, 0.5);
     border-radius: 5px;
-    padding: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 80px);
+    grid-template-rows: 110px 110px;
+    grid-gap: 8px;
+    justify-content: center;
+    align-content: start;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 /* Kontroller */
@@ -259,7 +263,7 @@ h2 {
 .element-kart {
     width: 70px;
     height: 100px;
-    margin: 5px;
+    margin: 0;
     border: 1px solid #4895ef;
     border-radius: 5px;
     background-color: #0f3460;
@@ -277,13 +281,13 @@ h2 {
 
 .element-kart:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .element-kart.secili {
     border: 2px solid #ff0000;
     transform: translateY(-10px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .element-kart .atom-no {
@@ -560,11 +564,12 @@ h2 {
 
 /* Bot Kartları Stilleri */
 .bot-kartlar {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(7, 22px);
+    grid-template-rows: 32px 32px;
+    grid-gap: 3px;
     justify-content: center;
-    align-items: center;
+    padding: 5px;
 }
 
 .bot-kart {

@@ -61,6 +61,9 @@ class ArayuzKontrol {
             oyuncu: document.getElementById('oyuncu-canvas')
         };
         
+        // Orta alan canvas'ı
+        this.ortaAlanCanvas = document.getElementById('acik-kart-canvas');
+        
         this.oyunAlanlari = {
             bot1: document.getElementById('bot1-alani'),
             bot2: document.getElementById('bot2-alani'),
@@ -258,6 +261,7 @@ class ArayuzKontrol {
             });
         }
         
+        // Kart Al butonu için olay dinleyicisi
         const btnKartAl = document.getElementById('btn-kart-al');
         if (btnKartAl) {
             btnKartAl.addEventListener('click', () => this.kartAl());

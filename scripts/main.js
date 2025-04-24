@@ -2884,8 +2884,9 @@ function kartlariSirala(turString) {
 // ... existing code ...
 
 // Kart çekme ve atma event listener'ları
-document.getElementById('deste-buton').addEventListener('click', destedenKartCek);
-document.getElementById('acik-kart-buton').addEventListener('click', acikKartiAl);
+// Bu satırları kaldırıyorum çünkü yukarıda zaten tanımlanmış
+// document.getElementById('deste-buton').addEventListener('click', destedenKartCek);
+// document.getElementById('acik-kart-buton').addEventListener('click', acikKartiAl);
 
 // Oyuncu kartları için event listener
 document.getElementById('oyuncu-kartlari').addEventListener('click', (e) => {

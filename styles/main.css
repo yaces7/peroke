@@ -926,23 +926,3 @@ select, input[type="range"] {
     flex: 1;
     text-align: right;
 }
-
-/* Kart Dağıtma Animasyonu */
-@keyframes kartDagit {
-    0% {
-        opacity: 0;
-        transform: translateY(-50px) rotate(-10deg);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) rotate(0);
-    }
-}
-
-.element-kart.yeni-dagitilan {
-    animation: kartDagit 0.5s ease-out forwards;
-}
-
-.bot-kart.yeni-dagitilan {
-    animation: kartDagit 0.5s ease-out forwards;
-}

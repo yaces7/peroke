@@ -227,11 +227,7 @@ h2 {
 
 .oyuncu-bilgi {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    padding: 5px;
     margin-bottom: 10px;
 }
 
@@ -572,52 +568,48 @@ h2 {
 }
 
 .bot-kart {
-    width: 45px;
-    height: 65px;
-    margin: 3px;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    width: 20px;
+    height: 30px;
+    margin: 2px;
+    display: inline-block;
+    background-color: #0f3460;
+    border: 1px solid #4cc9f0;
+    border-radius: 3px;
     position: relative;
-    font-size: 12px;
-    color: #333;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    overflow: hidden;
     transition: all 0.3s ease;
 }
 
 .bot-kart:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    border-color: #aaa;
+    transform: scale(1.05);
 }
 
-.bot-kart-sembol {
-    font-weight: bold;
-    font-size: 16px;
-    color: #000;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.bot-kart-grup-periyot {
-    font-size: 8px;
-    font-weight: 600;
-    color: #555;
+.arka-yuz.bot-kart::after {
+    content: "PO";
     position: absolute;
-    bottom: 3px;
-    right: 3px;
-    background-color: rgba(240, 240, 240, 0.7);
-    padding: 1px 3px;
-    border-radius: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+    font-weight: bold;
+    color: #4cc9f0;
 }
 
-/* Kombinasyon alanını gizle */
-.kombinasyon-alani.gizli {
-    display: none;
+.po-kart {
+    width: 40px;
+    height: 60px;
+    background-color: #0f3460;
+    color: #4cc9f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.po-kart::after {
+    content: "PO";
+    font-size: 16px;
+    font-weight: bold;
 }
 
 /* Konuşma Balonu Stilleri */
@@ -765,66 +757,106 @@ select, input[type="range"] {
     margin-bottom: 10px;
 }
 
+/* Tur Başlangıç Animasyonu */
+.tur-baslangic-animasyon {
+    position: relative;
+    animation: pulseBackground 2s infinite;
+    overflow: hidden;
+}
+
+.tur-baslangic-mesaji {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    font-weight: bold;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px 40px;
+    border-radius: 10px;
+    z-index: 9999;
+    animation: pulse 1s infinite;
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+}
+
+@keyframes pulseBackground {
+    0% {
+        box-shadow: 0 0 10px 5px rgba(255, 215, 0, 0.2) inset;
+    }
+    50% {
+        box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.5) inset;
+    }
+    100% {
+        box-shadow: 0 0 10px 5px rgba(255, 215, 0, 0.2) inset;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    100% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+}
+
 /* Büyük Bildirim Stilleri */
 .buyuk-bildirim {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 90%;
-    padding: 25px 35px;
-    border-radius: 15px;
-    color: #fff;
-    font-size: 26px;
+    max-width: 80%;
+    padding: 20px 30px;
+    border-radius: 10px;
+    color: #000;
+    font-size: 24px;
     font-weight: bold;
     text-align: center;
     z-index: 9999;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    animation: buyukBildirimGoster 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: buyukBildirimGoster 0.5s ease-out;
 }
 
 .buyuk-bildirim.kaybol {
-    animation: buyukBildirimKaybol 0.8s ease-in-out forwards;
+    animation: buyukBildirimKaybol 1s ease-in-out forwards;
 }
 
 .buyuk-bildirim-success {
-    background-color: rgba(38, 166, 91, 0.95);
-    border: 4px solid #1d8348;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: rgba(46, 204, 113, 0.9);
+    border: 3px solid #27ae60;
 }
 
 .buyuk-bildirim-error {
-    background-color: rgba(192, 57, 43, 0.95);
-    border: 4px solid #922b21;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: rgba(231, 76, 60, 0.9);
+    border: 3px solid #c0392b;
 }
 
 .buyuk-bildirim-warning {
-    background-color: rgba(243, 156, 18, 0.95);
-    border: 4px solid #b9770e;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: rgba(241, 196, 15, 0.9);
+    border: 3px solid #f39c12;
 }
 
 .buyuk-bildirim-info {
-    background-color: rgba(41, 128, 185, 0.95);
-    border: 4px solid #1f618d;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: rgba(52, 152, 219, 0.9);
+    border: 3px solid #2980b9;
 }
 
 @keyframes buyukBildirimGoster {
     0% {
         opacity: 0;
-        transform: translate(-50%, -100%);
-        scale: 0.8;
-    }
-    70% {
-        transform: translate(-50%, -45%);
-        scale: 1.05;
+        transform: translate(-50%, -70%);
     }
     100% {
         opacity: 1;
         transform: translate(-50%, -50%);
-        scale: 1;
     }
 }
 
@@ -835,7 +867,7 @@ select, input[type="range"] {
     }
     100% {
         opacity: 0;
-        transform: translate(-50%, -20%);
+        transform: translate(-50%, -30%);
     }
 }
 
@@ -901,4 +933,24 @@ select, input[type="range"] {
 .bot-puan, .oyuncu-puan {
     flex: 1;
     text-align: right;
+}
+
+/* Kart Dağıtma Animasyonu */
+@keyframes kartDagit {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px) rotate(-10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+    }
+}
+
+.element-kart.yeni-dagitilan {
+    animation: kartDagit 0.5s ease-out forwards;
+}
+
+.bot-kart.yeni-dagitilan {
+    animation: kartDagit 0.5s ease-out forwards;
 }

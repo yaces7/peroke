@@ -143,14 +143,13 @@ function ardisikMi(element1, element2) {
     return Math.abs(element1.atomNumarasi - element2.atomNumarasi) === 1;
 }
 
-export { 
-    elementListesi,
-    elementBul,
-    elementleriFiltrele,
-    rastgeleElement,
-    elementKategorileri,
-    ayniGrupMu,
-    ayniPeriyotMu,
-    ayniKategoriMi,
-    ardisikMi
-};
+// Global değişkenler olarak tanımla
+window.elementListesi = elementListesi;
+window.elementBul = elementBul;
+window.elementleriFiltrele = elementleriFiltrele;
+window.rastgeleElement = rastgeleElement;
+window.elementKategorileri = elementKategorileri;
+window.ayniGrupMu = ayniGrupMu;
+window.ayniPeriyotMu = ayniPeriyotMu;
+window.ayniKategoriMi = ayniKategoriMi;
+window.ardisikMi = ardisikMi;

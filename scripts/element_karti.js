@@ -3,7 +3,7 @@
  * Oyun içerisinde kullanılan element kartlarını temsil eder
  */
 
-import { elementBul } from './elementler.js';
+// import { elementBul } from './elementler.js';
 
 class ElementKarti {
     /**
@@ -152,4 +152,5 @@ class ElementKarti {
     }
 }
 
-export { ElementKarti }; 
+// Global değişken olarak tanımla
+window.ElementKarti = ElementKarti; 

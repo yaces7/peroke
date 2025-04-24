@@ -3,9 +3,6 @@
  * Oyun alanını ve oyun mantığını yöneten sınıf
  */
 
-// import { ElementKarti } from './element_karti.js';
-// import { elementBul, elementleriFiltrele, rastgeleElement } from './elementler.js';
-
 class OyunAlani {
     /**
      * Oyun alanını oluşturur
@@ -557,6 +554,4 @@ class OyunAlani {
         // Sıradaki oyuncuya geç
         setTimeout(() => this.siradakiOyuncu(), 500);
     }
-}
-
-export { OyunAlani }; 
+} 

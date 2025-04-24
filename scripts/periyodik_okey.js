@@ -72,39 +72,56 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Oyun başlatılıyor...');
         
         try {
-            // Ekranı doğrudan değiştir
-            ekranGoster(ekranlar.oyun);
-            
             // Bot sayısı ve zorluk seviyesini ayarla
             const botSayisi = parseInt(document.getElementById('bot-sayisi').value) || 3;
             const zorlukSeviyesi = document.getElementById('zorluk-seviyesi').value || 'orta';
             
             console.log('Ayarlar:', { botSayisi, zorlukSeviyesi });
             
-            // Değerli oyun alanları
-            console.log("Oyuncu kartları alanı:", document.getElementById('oyuncu-kartlari'));
-            console.log("Açık kart canvas:", document.getElementById('acik-kart-canvas'));
+            // Oyun ekranını göster
+            ekranGoster(ekranlar.oyun);
             
-            // ArayuzKontrol ve OyunAlani sınıflarını kontrol et
-            console.log("ArayuzKontrol sınıfı tipi:", typeof ArayuzKontrol);
-            console.log("OyunAlani sınıfı tipi:", typeof OyunAlani);
+            // Sınıfların mevcut olup olmadığını kontrol et
+            if (typeof ArayuzKontrol !== 'function') {
+                throw new Error('ArayuzKontrol sınıfı bulunamadı!');
+            }
             
-            /* Sınıflar şu an erişilebilir olmadığı için bu bölümü kapatıyoruz
+            if (typeof OyunAlani !== 'function') {
+                throw new Error('OyunAlani sınıfı bulunamadı!');
+            }
+            
             // Arayüz kontrolünü ve oyun alanını başlat
-            arayuzKontrol = new ArayuzKontrol();
-            oyunAlani = new OyunAlani();
+            try {
+                arayuzKontrol = new ArayuzKontrol();
+            } catch (error) {
+                console.error("ArayuzKontrol başlatılırken hata:", error);
+                throw error;
+            }
+            
+            try {
+                oyunAlani = new OyunAlani({
+                    botSayisi: botSayisi,
+                    zorlukSeviyesi: zorlukSeviyesi
+                });
+            } catch (error) {
+                console.error("OyunAlani başlatılırken hata:", error);
+                throw error;
+            }
             
             // Oyunu başlat
-            oyunAlani.oyunuBaslat({
-                botSayisi: botSayisi,
-                zorlukSeviyesi: zorlukSeviyesi
-            });
-            */
+            try {
+                oyunAlani.oyunuBaslat();
+            } catch (error) {
+                console.error("Oyun başlatılırken hata:", error);
+                throw error;
+            }
             
-            console.log('Oyun ekranı gösterildi.');
+            console.log('Oyun başarıyla başlatıldı!');
         } catch (hata) {
             console.error('Oyun başlatılırken hata oluştu:', hata);
             alert('Oyun başlatılırken bir hata oluştu: ' + hata.message);
+            // Hata durumunda ana menüye dön
+            ekranGoster(ekranlar.menu);
         }
     }
 

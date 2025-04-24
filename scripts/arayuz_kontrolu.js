@@ -12,12 +12,12 @@ class ArayuzKontrol {
         
         // DOM Elementleri
         this.ekranlar = {
-            menu: document.getElementById('menu-screen'),
-            ayarlar: document.getElementById('ayarlar-screen'),
-            nasilOynanir: document.getElementById('nasil-oynanir-screen'),
-            istatistikler: document.getElementById('istatistikler-screen'),
-            oyun: document.getElementById('game-screen'),
-            oyunSonu: document.getElementById('oyun-sonu-screen')
+            menu: document.getElementById('menu-ekrani'),
+            ayarlar: document.getElementById('ayarlar-ekrani'),
+            nasilOynanir: document.getElementById('nasil-oynanir-ekrani'),
+            istatistikler: document.getElementById('istatistikler-ekrani'),
+            oyun: document.getElementById('oyun-ekrani'),
+            oyunSonu: document.getElementById('oyun-sonu-ekrani')
         };
         
         this.butonlar = {

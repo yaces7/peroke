@@ -180,9 +180,20 @@ class ArayuzKontrol {
         this.butonlar.oyunMenu.addEventListener('click', () => this.oyunuDurdur());
         this.butonlar.oyunYardim.addEventListener('click', () => this.ekraniGoster('nasilOynanir'));
         
-        this.butonlar.kontrolEt.addEventListener('click', () => this.kombinasyonuKontrolEt());
-        this.butonlar.kartVer.addEventListener('click', () => this.kartVer());
-        this.butonlar.desteyiAc.addEventListener('click', () => this.destedenKartCek());
+        // Kart işlemleri butonları
+        document.getElementById('btn-gruba-gore-sirala').addEventListener('click', () => {
+            this.oyun.oyuncu.kartlar = kartlariSirala(this.oyun.oyuncu.kartlar, 'grup');
+            this.arayuzuGuncelle();
+        });
+        
+        document.getElementById('btn-periyoda-gore-sirala').addEventListener('click', () => {
+            this.oyun.oyuncu.kartlar = kartlariSirala(this.oyun.oyuncu.kartlar, 'periyot');
+            this.arayuzuGuncelle();
+        });
+        
+        document.getElementById('btn-kart-ver').addEventListener('click', () => this.kartVer());
+        document.getElementById('btn-desteyi-ac').addEventListener('click', () => this.destedenKartCek());
+        document.getElementById('btn-kontrol-et').addEventListener('click', () => this.kombinasyonuKontrolEt());
         
         // Oyun sonu butonları
         this.butonlar.yeniOyun.addEventListener('click', () => this.oyunuBaslat());
@@ -375,34 +386,34 @@ class ArayuzKontrol {
             kart.ciz(this.kontekstler.oyuncu);
         }
         
-        // Kombinasyon alanındaki kartları çiz
-        for (let i = 0; i < this.kombinasyonKartlari.length; i++) {
-            const kart = this.kombinasyonKartlari[i];
-            kart.x = i * (kartGenislik + kartMarj);
-            kart.y = 0;
-            kart.ciz(this.kontekstler.kombinasyon);
+        // Botların kart sayısını güncelle
+        for (let i = 0; i < this.ayarlar.botSayisi; i++) {
+            botKartlariniGuncelle(i+1, this.oyun.botlar[i].kartlar);
         }
         
         // Kalan kart sayısını güncelle
-        document.getElementById('kalan-kart').textContent = this.oyun.deste.length;
-        
-        // Puanları güncelle
-        document.getElementById('oyuncu-puan').textContent = this.oyun.oyuncu.puan;
-        for (let i = 0; i < this.ayarlar.botSayisi; i++) {
-            document.getElementById(`bot${i+1}-puan`).textContent = this.oyun.botlar[i].puan;
+        const kalanKartElement = document.getElementById('kalan-kart');
+        if (kalanKartElement) {
+            kalanKartElement.textContent = this.oyun.deste.length;
         }
         
         // Durum mesajını güncelle
         let durumMesaji = '';
+        let siradakiOyuncu = '';
         
         if (this.oyun.oyuncu.sirada) {
             durumMesaji = 'Sizin sıranız.';
+            siradakiOyuncu = 'Oyuncu';
         } else {
             const siradakiBotIndeks = this.oyun.aktifOyuncuIndeksi - 1;
             durumMesaji = `Bot ${siradakiBotIndeks + 1} oynuyor...`;
+            siradakiOyuncu = `Bot ${siradakiBotIndeks + 1}`;
         }
         
         document.getElementById('durum-mesaji').textContent = durumMesaji;
+        
+        // Oyun bilgilerini güncelle
+        oyunBilgileriniGuncelle(this.oyun.turSayisi || 1, siradakiOyuncu);
         
         // Eğer oyun sürüklenen kart varsa, ona göre güncelle
         if (this.suruklenenKart) {
@@ -410,9 +421,6 @@ class ArayuzKontrol {
             this.suruklenenKart.y = this.mouseY - kartYukseklik / 2;
             this.suruklenenKart.ciz(this.kontekstler.oyuncu);
         }
-        
-        // Yeniden çizim için animasyon isteği
-        requestAnimationFrame(() => this.arayuzuGuncelle());
     }
     
     /**
@@ -489,46 +497,51 @@ class ArayuzKontrol {
     }
     
     /**
-     * Kombinasyonu kontrol eder
+     * Kombinasyonu kontrol eder - artık kombinasyon sistemi yok
+     * Kartları periyot veya grup olarak sıralar
      */
     kombinasyonuKontrolEt() {
         if (this.kombinasyonKartlari.length === 0) return;
         
-        // Geçerli kombinasyon mu kontrol et
-        const sonuc = this.oyun.kombinasyonlariKontrolEt(this.kombinasyonKartlari);
+        // Artık kombinasyon kontrolü yapmıyoruz
+        // Kartları geri ver
+        this.oyun.oyuncu.kartlar.push(...this.kombinasyonKartlari);
+        this.kombinasyonKartlari = [];
         
-        if (sonuc.gecerli) {
-            // Geçerli kombinasyon - puanları hesapla ve kartları kaldır
-            const puan = this.oyun.puanHesapla(sonuc);
-            this.oyun.oyuncu.puan += puan;
-            
-            // Kombinasyon alanını temizle
-            this.kombinasyonKartlari = [];
-            
-            // Oyuncu kartları bittiyse oyunu bitir
-            if (this.oyun.oyuncu.kartlar.length === 0) {
-                this.oyunuBitir(true);
-            }
-        } else {
-            // Geçersiz kombinasyon - kartları geri ver
-            this.oyun.oyuncu.kartlar.push(...this.kombinasyonKartlari);
-            this.kombinasyonKartlari = [];
-        }
+        // Kartları periyot veya gruba göre otomatik sırala
+        this.oyun.oyuncu.kartlar = kartlariSirala(this.oyun.oyuncu.kartlar, 'grup');
         
         this.arayuzuGuncelle();
     }
     
     /**
-     * Kart verir
+     * Kart verir - Son kart kalırsa oyunu kazanır
      */
     kartVer() {
         if (!this.oyunAktif || !this.oyun.oyuncu.sirada || this.oyun.oyuncu.kartlar.length === 0) return;
         
+        // Son kart kalıp kalmadığını kontrol et
+        if (this.oyun.oyuncu.kartlar.length === 1) {
+            // Oyunu kazandık
+            this.oyunuBitir(true);
+            return;
+        }
+        
         // Rastgele bir kart seç
         const kartIndeks = Math.floor(Math.random() * this.oyun.oyuncu.kartlar.length);
         
-        // Kartı seç ve ver
-        this.oyun.kartSec(kartIndeks);
+        // Kartı seç ve ver (Bot 1'e gönder)
+        const secilenKart = this.oyun.oyuncu.kartlar.splice(kartIndeks, 1)[0];
+        this.oyun.botlar[0].kartlar.push(secilenKart);
+        
+        // Sırayı değiştir
+        this.oyun.oyuncu.sirada = false;
+        this.oyun.botlar[0].sirada = true;
+        this.oyun.aktifOyuncuIndeksi = 1;
+        
+        // Bot düşünme animasyonu başlat
+        this.botDusunmeAnimasyonuBaslat(1);
+        
         this.arayuzuGuncelle();
     }
     
@@ -539,8 +552,109 @@ class ArayuzKontrol {
         if (!this.oyunAktif || !this.oyun.oyuncu.sirada) return;
         
         // Desteden kart çek
-        this.oyun.destedenKartCek();
+        const yeniKart = this.oyun.destedenKartCek();
+        
+        // Kartları otomatik olarak sırala
+        this.oyun.oyuncu.kartlar = kartlariSirala(this.oyun.oyuncu.kartlar, 'grup');
+        
+        // Sırayı değiştir
+        this.oyun.oyuncu.sirada = false;
+        this.oyun.botlar[0].sirada = true;
+        this.oyun.aktifOyuncuIndeksi = 1;
+        
+        // Bot düşünme animasyonu başlat
+        this.botDusunmeAnimasyonuBaslat(1);
+        
         this.arayuzuGuncelle();
+    }
+    
+    /**
+     * Bot düşünme animasyonu başlatır
+     * @param {number} botNo Bot numarası (1-tabanlı)
+     */
+    botDusunmeAnimasyonuBaslat(botNo) {
+        const botAlani = document.getElementById(`bot${botNo}-alani`);
+        if (!botAlani) return;
+        
+        // "Düşünüyor..." balonu ekle
+        const konusmaBalonu = document.createElement('div');
+        konusmaBalonu.className = 'konusma-balonu';
+        konusmaBalonu.textContent = 'Düşünüyor...';
+        botAlani.appendChild(konusmaBalonu);
+        
+        // 2-4 saniye sonra bot hamlesini yap
+        const dusunmeSuresi = 2000 + Math.random() * 2000;
+        setTimeout(() => {
+            // Balonu kaldır
+            konusmaBalonu.remove();
+            
+            // Bot hamlesini yap
+            this.botHamlesiniYap(botNo);
+        }, dusunmeSuresi);
+    }
+    
+    /**
+     * Bot hamlesini yapar
+     * @param {number} botNo Bot numarası (1-tabanlı)
+     */
+    botHamlesiniYap(botNo) {
+        const bot = this.oyun.botlar[botNo - 1];
+        
+        // Botun yapay zekası
+        // %50 ihtimalle ortadan kart çeker, %50 ihtimalle kart verir
+        const ortadanCek = Math.random() > 0.5;
+        
+        if (ortadanCek && this.oyun.deste.length > 0) {
+            // Ortadan kart çek
+            this.oyun.destedenKartCekBot(botNo - 1);
+        } else {
+            // Kart ver (bir sonraki bota veya oyuncuya)
+            if (bot.kartlar.length > 0) {
+                const kartIndeks = Math.floor(Math.random() * bot.kartlar.length);
+                const secilenKart = bot.kartlar.splice(kartIndeks, 1)[0];
+                
+                const sonrakiIndex = botNo % (this.ayarlar.botSayisi + 1);
+                if (sonrakiIndex === 0) {
+                    // Oyuncuya ver
+                    this.oyun.oyuncu.kartlar.push(secilenKart);
+                    this.oyun.oyuncu.sirada = true;
+                    bot.sirada = false;
+                    this.oyun.aktifOyuncuIndeksi = 0;
+                } else {
+                    // Sonraki bota ver
+                    this.oyun.botlar[sonrakiIndex - 1].kartlar.push(secilenKart);
+                    bot.sirada = false;
+                    this.oyun.botlar[sonrakiIndex - 1].sirada = true;
+                    this.oyun.aktifOyuncuIndeksi = sonrakiIndex;
+                    
+                    // Sonraki bot için düşünme animasyonu başlat
+                    this.botDusunmeAnimasyonuBaslat(sonrakiIndex);
+                }
+            }
+        }
+        
+        // Son kart kaldıysa kazandı
+        if (bot.kartlar.length === 1) {
+            this.botKazandi(botNo);
+        }
+        
+        this.arayuzuGuncelle();
+    }
+    
+    /**
+     * Bot kazandı
+     * @param {number} botNo Bot numarası (1-tabanlı)
+     */
+    botKazandi(botNo) {
+        // Oyun durumunu güncelle
+        this.oyunAktif = false;
+        
+        // Sonuç mesajını ayarla
+        const sonucMesaji = `Bot ${botNo} kazandı!`;
+        document.getElementById('sonuc-mesaji').textContent = sonucMesaji;
+        
+        // Oyun sonu ekranını göster
+        this.ekraniGoster('oyunSonu');
     }
     
     /**
@@ -663,11 +777,11 @@ function botKartlariniGuncelle(botNo, kartlar) {
         // Sembol ve diğer bilgiler
         const sembolDiv = document.createElement('div');
         sembolDiv.className = 'sembol';
-        sembolDiv.textContent = kart.sembol;
+        sembolDiv.textContent = kart.element.sembol;
         
         const grupPeriyotDiv = document.createElement('div');
         grupPeriyotDiv.className = 'grup-periyot';
-        grupPeriyotDiv.textContent = `G:${kart.grup} P:${kart.periyot}`;
+        grupPeriyotDiv.textContent = `G:${kart.element.grup} P:${kart.element.periyot}`;
         
         // Bilgileri kart bilgi alanına ekle
         kartBilgi.appendChild(sembolDiv);
@@ -699,7 +813,7 @@ function acikKartiGuncelle(kart) {
         // Başlık ekle
         const baslik = document.createElement('div');
         baslik.id = 'acik-kart-baslik';
-        baslik.textContent = 'Son Oynanan Kart';
+        baslik.textContent = 'Ortadaki Element';
         acikKartAlani.insertBefore(baslik, acikKartAlani.firstChild);
     } else {
         const bosKartAlani = document.createElement('div');

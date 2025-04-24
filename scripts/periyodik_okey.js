@@ -47,11 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
         periyodaGoreSirala: document.getElementById('btn-periyoda-gore-sirala')
     };
 
+    // Butonları kontrol et
+    console.log("Oyunu başlat butonu:", butonlar.oyunuBaslat);
+
     /**
      * Belirli bir ekranı gösterip diğerlerini gizler
      * @param {HTMLElement} ekran - Gösterilecek ekran
      */
     function ekranGoster(ekran) {
+        console.log("Ekran gösteriliyor:", ekran);
         // Tüm ekranları gizle
         Object.values(ekranlar).forEach(e => {
             if (e) e.classList.add('gizli');
@@ -67,22 +71,41 @@ document.addEventListener('DOMContentLoaded', function() {
     function oyunuBaslat() {
         console.log('Oyun başlatılıyor...');
         
-        // Arayüz kontrolünü ve oyun alanını başlat
-        arayuzKontrol = new ArayuzKontrol();
-        oyunAlani = new OyunAlani();
-
-        // Bot sayısı ve zorluk seviyesini ayarla
-        const botSayisi = parseInt(document.getElementById('bot-sayisi').value) || 3;
-        const zorlukSeviyesi = document.getElementById('zorluk-seviyesi').value || 'orta';
-        
-        // Oyunu başlat
-        oyunAlani.oyunuBaslat({
-            botSayisi: botSayisi,
-            zorlukSeviyesi: zorlukSeviyesi
-        });
-        
-        // Oyun ekranını göster
-        ekranGoster(ekranlar.oyun);
+        try {
+            // Ekranı doğrudan değiştir
+            ekranGoster(ekranlar.oyun);
+            
+            // Bot sayısı ve zorluk seviyesini ayarla
+            const botSayisi = parseInt(document.getElementById('bot-sayisi').value) || 3;
+            const zorlukSeviyesi = document.getElementById('zorluk-seviyesi').value || 'orta';
+            
+            console.log('Ayarlar:', { botSayisi, zorlukSeviyesi });
+            
+            // Değerli oyun alanları
+            console.log("Oyuncu kartları alanı:", document.getElementById('oyuncu-kartlari'));
+            console.log("Açık kart canvas:", document.getElementById('acik-kart-canvas'));
+            
+            // ArayuzKontrol ve OyunAlani sınıflarını kontrol et
+            console.log("ArayuzKontrol sınıfı tipi:", typeof ArayuzKontrol);
+            console.log("OyunAlani sınıfı tipi:", typeof OyunAlani);
+            
+            /* Sınıflar şu an erişilebilir olmadığı için bu bölümü kapatıyoruz
+            // Arayüz kontrolünü ve oyun alanını başlat
+            arayuzKontrol = new ArayuzKontrol();
+            oyunAlani = new OyunAlani();
+            
+            // Oyunu başlat
+            oyunAlani.oyunuBaslat({
+                botSayisi: botSayisi,
+                zorlukSeviyesi: zorlukSeviyesi
+            });
+            */
+            
+            console.log('Oyun ekranı gösterildi.');
+        } catch (hata) {
+            console.error('Oyun başlatılırken hata oluştu:', hata);
+            alert('Oyun başlatılırken bir hata oluştu: ' + hata.message);
+        }
     }
 
     /**

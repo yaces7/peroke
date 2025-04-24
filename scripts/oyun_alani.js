@@ -3,8 +3,8 @@
  * Oyun alanını ve oyun mantığını yöneten sınıf
  */
 
-import { ElementKarti } from './element_karti.js';
-import { elementBul, elementleriFiltrele, rastgeleElement } from './elementler.js';
+// import { ElementKarti } from './element_karti.js';
+// import { elementBul, elementleriFiltrele, rastgeleElement } from './elementler.js';
 
 class OyunAlani {
     /**
@@ -12,6 +12,7 @@ class OyunAlani {
      * @param {Object} ayarlar Oyun ayarları
      */
     constructor(ayarlar = {}) {
+        console.log("OyunAlani başlatılıyor...");
         // Varsayılan ayarlar
         this.ayarlar = {
             oyuncuSayisi: 2,

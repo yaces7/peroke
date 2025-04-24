@@ -328,7 +328,7 @@ function tasAt(oyuncuIndex, tasIndex) {
 /**
  * Sıradaki oyuncuya geçer
  */
-siradakiOyuncuyaGec() {
+function siradakiOyuncuyaGec() {
     // Sırayı değiştirmeden önce önceki oyuncunun attığı kartı sakla
     let atilan_kart = this.acikKart;
     this.acikKart = null;

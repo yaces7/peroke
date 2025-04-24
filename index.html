@@ -61,19 +61,17 @@
                 <h3>Temel Kurallar</h3>
                 <ul>
                     <li>Oyun element kartlarıyla oynanır.</li>
-                    <li>Amaç, elinizdeki kartları grup veya periyot kombinasyonları yaparak oyunu bitirmektir.</li>
-                    <li>Bir grup kombinasyonu, aynı periyottaki en az 3 ardışık gruba ait elementlerden oluşur.</li>
-                    <li>Bir periyot kombinasyonu, aynı gruptaki en az 4 ardışık periyoda ait elementlerden oluşur.</li>
-                    <li>Oyunu kazanmak için tüm kartlarınızı grup veya periyot sıralarına uygun şekilde dizmeniz ve elinizde sadece 1 kart kalması gerekir.</li>
+                    <li>Amaç, elinizdeki kartları grup veya periyot kombinasyonları yaparak bitirmektir.</li>
+                    <li>Bir grup kombinasyonu, aynı periyottaki 3 veya daha fazla ardışık gruba ait elementlerden oluşur.</li>
+                    <li>Bir periyot kombinasyonu, aynı gruptaki 3 veya daha fazla ardışık periyoda ait elementlerden oluşur.</li>
                 </ul>
                 <h3>Oyun Akışı</h3>
                 <ol>
-                    <li>Her oyuncuya 14 kart, sizin elinize 15 kart dağıtılır.</li>
-                    <li>Sıra size geldiğinde, desteden bir kart çekebilir veya önceki oyuncunun (Bot 3) attığı açık kartı alabilirsiniz.</li>
-                    <li>Kart aldıktan sonra elinizden bir kartı seçip atmalısınız.</li>
-                    <li>Kartlarınızı grup veya periyoda göre sıralayabilirsiniz.</li>
-                    <li>Oyunu kazanmak için elinizdeki kartların 1 tanesi hariç hepsinin grup veya periyot oluşturması gerekir.</li>
-                    <li>Botlar da aynı şekilde kart alıp verir ve kazanmaya çalışır.</li>
+                    <li>Her oyuncuya 14 kart, oyuna başlayan oyuncuya ise 15 kart dağıtılır.</li>
+                    <li>Sıra size geldiğinde, desteden bir kart çekebilir veya önceki oyuncunun attığı kartı alabilirsiniz.</li>
+                    <li>Kartlarınızı grup ve periyotlara göre düzenlemek için karta çift tıklayın. Gruplar ve periyotlar arasında geçiş yapabilirsiniz.</li>
+                    <li>Elinizden bir kartı atmak için, kartı sürükleyip oyun alanına bırakın.</li>
+                    <li>Tüm kartlarınızı, 1 kart hariç, grup (aynı periyottaki en az 3 ardışık grup) veya periyot (aynı gruptaki en az 4 ardışık periyot) şeklinde düzenlediğinizde ve son kartı verdiğinizde oyunu kazanırsınız.</li>
                 </ol>
             </div>
             <div class="menu-buttons">
@@ -136,54 +134,56 @@
                         <div class="bot-bilgi">
                             <span class="bot-isim">Bot 1</span>
                             <div class="bot1-yildizlar"></div>
+                            <span class="bot-puan" id="bot1-puan">0</span>
                         </div>
-                        <div class="bot-kartlar" id="bot1-kartlari"></div>
+                        <div class="bot-kartlar"></div>
                     </div>
                     <div class="bot-alani" id="bot2-alani">
                         <div class="bot-bilgi">
                             <span class="bot-isim">Bot 2</span>
                             <div class="bot2-yildizlar"></div>
+                            <span class="bot-puan" id="bot2-puan">0</span>
                         </div>
-                        <div class="bot-kartlar" id="bot2-kartlari"></div>
+                        <div class="bot-kartlar"></div>
                     </div>
                     <div class="bot-alani" id="bot3-alani">
                         <div class="bot-bilgi">
                             <span class="bot-isim">Bot 3</span>
                             <div class="bot3-yildizlar"></div>
+                            <span class="bot-puan" id="bot3-puan">0</span>
                         </div>
-                        <div class="bot-kartlar" id="bot3-kartlari"></div>
+                        <div class="bot-kartlar"></div>
                     </div>
                 </div>
                 
                 <div class="orta-alan">
-                    <div class="orta-alani">
+                    <div class="deste-alani">
                         <canvas id="deste-canvas" width="100" height="140"></canvas>
                         <div class="kalan-kart">Kalan: <span id="kalan-kart">54</span></div>
                     </div>
                     <div class="acik-kart-alani">
-                        <div id="acik-kart-baslik">Son Atılan Kart</div>
                         <canvas id="acik-kart-canvas" width="100" height="140"></canvas>
                     </div>
-                    <div class="oyun-bilgileri">
-                        <div id="tur-bilgisi">Tur: 1</div>
-                        <div id="siradaki-oyuncu">Sıradaki: Oyuncu</div>
-                    </div>
+                </div>
+                
+                <div class="kombinasyon-alani gizli" id="kombinasyon-alani">
+                    <div class="kombinasyon-baslik">Kombinasyon Alanı</div>
+                    <div id="kombinasyon-icerik" class="kombinasyon-icerik surukle-hedef"></div>
                 </div>
                 
                 <div class="oyuncu-alani">
                     <div class="oyuncu-bilgi">
                         <span class="oyuncu-isim">Oyuncu</span>
                         <div class="oyuncu-yildizlar"></div>
+                        <span class="oyuncu-puan" id="oyuncu-puan">0</span>
                     </div>
                     <div id="oyuncu-kartlari" class="oyuncu-kartlari surukle-hedef"></div>
                 </div>
 
                 <div class="kontroller">
-                    <button id="btn-kart-sirala-grup" class="btn">Gruba Göre Sırala</button>
-                    <button id="btn-kart-sirala-periyot" class="btn">Periyoda Göre Sırala</button>
-                    <button id="btn-ortadan-cek" class="btn">Ortadan Çek</button>
-                    <button id="btn-acik-karti-al" class="btn">Açık Kartı Al</button>
-                    <button id="btn-kart-at" class="btn" disabled>Kart At</button>
+                    <button id="btn-desteyi-ac" class="btn">Desteden Çek</button>
+                    <button id="btn-onceki-karti-al" class="btn">Önceki Kartı Al</button>
+                    <button id="btn-kart-sec" class="btn">Kart Seç</button>
                 </div>
             </div>
         </div>

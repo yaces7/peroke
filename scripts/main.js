@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const botKartlarAlani = botAlani.querySelector('.bot-kartlar');
                 if (botKartlarAlani) {
                     botKartlarAlani.innerHTML = ''; // İçeriği temizle
-                    for (let i = 0; i < 7; i++) {
+                    for (let i = 0; i < 14; i++) {
                         const kapaliKart = document.createElement('div');
                         kapaliKart.className = 'element-kart arka-yuz bot-kart';
                         botKartlarAlani.appendChild(kapaliKart);

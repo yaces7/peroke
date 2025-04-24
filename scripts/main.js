@@ -1017,8 +1017,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Desteden kart çekme butonu
-    document.getElementById('btn-desteyi-ac').addEventListener('click', () => {
+    // Desteden kart çekme butonu yerine ortadan kart çekme butonu
+    document.getElementById('btn-ortadan-cek').addEventListener('click', () => {
         // Oyun mantığı sınıfını kullan
         const oyunMantigi = window.oyunMantigi;
         if (!oyunMantigi) {
@@ -1027,10 +1027,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Kart çekme işlemini gerçekleştir
-        const sonuc = oyunMantigi.destedenKartCek();
+        const sonuc = oyunMantigi.ortadanKartCek();
         
         if (!sonuc) {
-            bildirimGoster("Desteden kart çekilemedi. Şu an sizin sıranız olmayabilir.", "error");
+            bildirimGoster("Ortadan kart çekilemedi. Şu an sizin sıranız olmayabilir.", "error");
             return;
         }
         
@@ -1038,11 +1038,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btn-kart-at').disabled = false;
         
         // Kart çekme ve alma butonlarını devre dışı bırak
-        document.getElementById('btn-desteyi-ac').disabled = true;
+        document.getElementById('btn-ortadan-cek').disabled = true;
         document.getElementById('btn-acik-karti-al').disabled = true;
-                
-                // Kalan kart sayısını güncelle
-                kalanKartSayisiniGuncelle();
+        
+        // Kalan kart sayısını güncelle
+        kalanKartSayisiniGuncelle();
     });
     
     // Açık kartı alma butonu
@@ -1066,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btn-kart-at').disabled = false;
         
         // Kart çekme ve alma butonlarını devre dışı bırak
-        document.getElementById('btn-desteyi-ac').disabled = true;
+        document.getElementById('btn-ortadan-cek').disabled = true;
         document.getElementById('btn-acik-karti-al').disabled = true;
         
         // Kalan kart sayısını güncelle

@@ -268,6 +268,45 @@ class PeriyodikOkey {
     }
     
     /**
+     * Ortadan kart çekme işlemi
+     */
+    ortadanKartCek() {
+        if (!this.oyuncu.sirada || this.mevcutDurum !== this.durumlar.KART_SECME) {
+            return false;
+        }
+        
+        // Deste boşsa, açık kartlar (kullanılmış kartlar) karıştırılır
+        if (this.deste.length === 0) {
+            if (typeof document !== 'undefined') {
+                const durumMesaji = document.getElementById('durum-mesaji');
+                if (durumMesaji) {
+                    durumMesaji.textContent = 'Ortada kart kalmadı!';
+                }
+            }
+            return false;
+        }
+        
+        // Desteden bir kart çek
+        const yeniKart = this.deste.pop();
+        
+        // Kartı oyuncuya ver
+        this.oyuncu.kartlar.push(yeniKart);
+        
+        // Durum mesajını güncelle
+        if (typeof document !== 'undefined') {
+            const durumMesaji = document.getElementById('durum-mesaji');
+            if (durumMesaji) {
+                durumMesaji.textContent = 'Ortadan kart çektiniz. Şimdi bir kart atın.';
+            }
+        }
+        
+        // Mekanizmayı kart atma durumuna geçir
+        this.mevcutDurum = this.durumlar.KART_ATMA;
+        
+        return true;
+    }
+    
+    /**
      * Desteden kart çekme işlemi
      */
     destedenKartCek() {

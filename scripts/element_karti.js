@@ -94,21 +94,21 @@ class ElementKarti {
      */
     kategoriRengi() {
         switch (this.element.kategori) {
-            case 'Alkali Metaller':
+            case 'Alkali Metal':
                 return '#ff5733';
-            case 'Toprak Alkali Metaller':
+            case 'Toprak Alkali Metal':
                 return '#ffc300';
-            case 'Geçiş Metalleri':
+            case 'Geçiş Metali':
                 return '#daf7a6';
-            case 'Diğer Metaller':
+            case 'Metal':
                 return '#c70039';
-            case 'Yarı Metaller':
+            case 'Yarı Metal':
                 return '#900c3f';
-            case 'Ametaller':
+            case 'Reaktif Ametal':
                 return '#581845';
-            case 'Halojenler':
+            case 'Halojen':
                 return '#2471a3';
-            case 'Soy Gazlar':
+            case 'Soy Gaz':
                 return '#7d3c98';
             default:
                 return '#bdc3c7';

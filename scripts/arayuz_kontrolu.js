@@ -615,18 +615,18 @@ class ArayuzKontrol {
         // Ortadaki kart atma alanına bırakıldı mı kontrol et
         if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
             // Kart atma işlemini gerçekleştir
-            if (this.suruklenenKartIndex !== -1) {
+            if (this.suruklenenKartIndeks !== -1) {
                 const oyuncu = this.oyun.oyuncular[0]; // Kullanıcı
-                if (oyuncu && this.suruklenenKartIndex < oyuncu.kartlar.length) {
-                    const kart = oyuncu.kartlar[this.suruklenenKartIndex];
-                    this.oyun.kartAt(this.suruklenenKartIndex);
+                if (oyuncu && this.suruklenenKartIndeks < oyuncu.kartlar.length) {
+                    const kart = oyuncu.kartlar[this.suruklenenKartIndeks];
+                    this.oyun.kartAt(this.suruklenenKartIndeks);
                     this.updateUI();
                 }
             }
         }
         
         this.suruklenenKart = null;
-        this.suruklenenKartIndex = -1;
+        this.suruklenenKartIndeks = -1;
     }
     
     /**

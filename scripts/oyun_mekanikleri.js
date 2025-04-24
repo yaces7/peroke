@@ -27,6 +27,12 @@ let oyunDurumu = {
     bitis_zamani: null
 };
 
+// Değişkenler
+let siradakiOyuncu = 0;
+let kartCekildi = false;
+let sonAtilan = null;
+let oyuncuKartCekti = false;
+
 /**
  * Yeni bir oyun başlatır
  * @param {Array} oyuncular - Oyuncu bilgilerini içeren dizi
@@ -887,27 +893,40 @@ class PeriyodikOkey {
      * @return {ElementKarti} Çekilen kart
      */
     destedenKartCek() {
-        if (!this.oyunAktif) return null;
-        
-        if (this.aktifOyuncuIndeksi === 0 && !this.oyuncu.sirada) {
-            console.error('Oyuncunun sırası değil!');
-            return null;
+        if (siradakiOyuncu !== 0 || kartCekildi) {
+            bildirimGoster("Şu anda kart çekemezsiniz!", "warning");
+            return;
         }
         
         if (this.deste.length === 0) {
-            console.error('Destede kart kalmadı!');
-            return null;
+            this.desteYenile();
         }
         
-        const kart = this.deste.pop();
+        const cekilen = this.deste.pop();
+        this.oyuncu.kartlar.push(cekilen);
         
-        if (this.aktifOyuncuIndeksi === 0) {
-            this.oyuncu.kartlar.push(kart);
-        } else {
-            this.botlar[this.aktifOyuncuIndeksi - 1].kartlar.push(kart);
-        }
+        // Kart elementini oluştur
+        const kartElement = document.createElement("div");
+        kartElement.className = "element-kart";
+        kartElement.dataset.id = cekilen.id;
+        kartElement.dataset.periyot = cekilen.periyot;
+        kartElement.dataset.grup = cekilen.grup;
+        kartElement.innerHTML = `
+            <img src="${cekilen.resim}" alt="${cekilen.isim}">
+            <span class="kart-deger">${cekilen.deger}</span>
+        `;
         
-        return kart;
+        // Oyuncu kartları alanına ekle
+        document.getElementById("oyuncu-kartlari").appendChild(kartElement);
+        
+        // Kart çekildi olarak işaretle
+        kartCekildi = true;
+        oyuncuKartCekti = true;
+        
+        bildirimGoster("Desteden kart çektiniz.", "success");
+        
+        // Destenin durumunu güncelle
+        this.desteGuncelle();
     }
     
     /**
@@ -915,243 +934,169 @@ class PeriyodikOkey {
      * @return {ElementKarti} Alınan açık kart
      */
     acikKartiAl() {
-        if (!this.oyunAktif) return null;
-        
-        if (this.aktifOyuncuIndeksi === 0 && !this.oyuncu.sirada) {
-            console.error('Oyuncunun sırası değil!');
-            return null;
+        if (siradakiOyuncu !== 0 || kartCekildi) {
+            bildirimGoster("Şu anda kart alamazsınız!", "warning");
+            return;
         }
         
-        if (!this.acikKart) {
-            console.error('Açık kart yok!');
-            return null;
+        const acikKartlarAlani = document.getElementById("acik-kartlar");
+        if (!acikKartlarAlani || acikKartlarAlani.children.length === 0) {
+            bildirimGoster("Alınabilecek açık kart yok!", "warning");
+            return;
         }
         
-        const kart = this.acikKart;
-        this.acikKart = null;
+        // Son atılan kartı al
+        const sonKartElement = acikKartlarAlani.lastChild;
+        const kartId = sonKartElement.dataset.id;
         
-        if (this.aktifOyuncuIndeksi === 0) {
-            this.oyuncu.kartlar.push(kart);
-        } else {
-            this.botlar[this.aktifOyuncuIndeksi - 1].kartlar.push(kart);
+        // Kartı bul
+        const kart = this.acikKartlar.find(k => k.id.toString() === kartId);
+        if (!kart) {
+            bildirimGoster("Kart bulunamadı!", "error");
+            return;
         }
         
-        return kart;
+        // Kartı açık kartlar dizisinden çıkar
+        this.acikKartlar.pop();
+        
+        // Kartı oyuncuya ekle
+        this.oyuncu.kartlar.push(kart);
+        
+        // Kart elementini oluştur
+        const kartElement = document.createElement("div");
+        kartElement.className = "element-kart";
+        kartElement.dataset.id = kart.id;
+        kartElement.dataset.periyot = kart.periyot;
+        kartElement.dataset.grup = kart.grup;
+        kartElement.innerHTML = `
+            <img src="${kart.resim}" alt="${kart.isim}">
+            <span class="kart-deger">${kart.deger}</span>
+        `;
+        
+        // Oyuncu kartları alanına ekle
+        document.getElementById("oyuncu-kartlari").appendChild(kartElement);
+        
+        // Açık kart alanından kaldır
+        acikKartlarAlani.removeChild(sonKartElement);
+        
+        // Kart çekildi olarak işaretle
+        kartCekildi = true;
+        oyuncuKartCekti = true;
+        
+        bildirimGoster("Açık kartı aldınız.", "success");
     }
     
     /**
-     * Kart seçer ve açık kart olarak atar
-     * @param {number} kartIndeks - Seçilen kartın indeksi
-     * @return {ElementKarti} Atılan kart
+     * Kart atma
+     * @param {HTMLElement} kartElement - Atılacak kart elementi
      */
-    kartSec(kartIndeks) {
-        if (!this.oyunAktif) return null;
-        
-        let kart = null;
-        
-        if (this.aktifOyuncuIndeksi === 0) {
-            if (kartIndeks < 0 || kartIndeks >= this.oyuncu.kartlar.length) {
-                console.error('Geçersiz kart indeksi!');
-                return null;
-            }
-            
-            kart = this.oyuncu.kartlar.splice(kartIndeks, 1)[0];
-        } else {
-            const bot = this.botlar[this.aktifOyuncuIndeksi - 1];
-            if (kartIndeks < 0 || kartIndeks >= bot.kartlar.length) {
-                console.error('Geçersiz kart indeksi!');
-                return null;
-            }
-            
-            kart = bot.kartlar.splice(kartIndeks, 1)[0];
+    kartAt(kartElement) {
+        if (siradakiOyuncu !== 0 || !kartCekildi) {
+            bildirimGoster("Şu anda kart atamazsınız!", "warning");
+            return;
         }
         
-        this.acikKart = kart;
+        const kartId = kartElement.dataset.id;
+        
+        // Kartı oyuncu kartlarından bul
+        const kartIndex = this.oyuncu.kartlar.findIndex(k => k.id.toString() === kartId);
+        if (kartIndex === -1) {
+            bildirimGoster("Kart bulunamadı!", "error");
+            return;
+        }
+        
+        // Kartı oyuncu kartlarından çıkar
+        const atilan = this.oyuncu.kartlar.splice(kartIndex, 1)[0];
+        
+        // Açık kartlara ekle
+        this.acikKartlar.push(atilan);
+        
+        // Arayüzden kaldır
+        kartElement.parentNode.removeChild(kartElement);
+        
+        // Açık kartlar alanına ekle
+        const acikKartlarAlani = document.getElementById("acik-kartlar");
+        const yeniKartElement = document.createElement("div");
+        yeniKartElement.className = "element-kart";
+        yeniKartElement.dataset.id = atilan.id;
+        yeniKartElement.dataset.periyot = atilan.periyot;
+        yeniKartElement.dataset.grup = atilan.grup;
+        yeniKartElement.innerHTML = `
+            <img src="${atilan.resim}" alt="${atilan.isim}">
+            <span class="kart-deger">${atilan.deger}</span>
+        `;
+        
+        acikKartlarAlani.appendChild(yeniKartElement);
+        
+        // Son atılan kartı kaydet
+        sonAtilan = atilan;
+        
+        // Kart çekildi olarak işaretle
+        kartCekildi = false;
+        oyuncuKartCekti = false;
+        
+        // Sıradaki oyuncuya geç
         this.siradakiOyuncuyaGec();
         
-        return kart;
+        bildirimGoster("Kart attınız.", "success");
     }
     
     /**
-     * Kombinasyonları kontrol eder
-     * @param {Array} kartlar - Kontrol edilecek kartlar
-     * @return {Object} Sonuç nesnesi
+     * Destenin durumunu güncelleme
      */
-    kombinasyonlariKontrolEt(kartlar) {
-        const sonuc = {
-            perler: [],
-            gruplar: [],
-            gecerli: false
-        };
+    desteGuncelle() {
+        const desteAlani = document.getElementById("deste");
         
-        // Perleri kontrol et - Aynı grup, ardışık periyotlar
-        for (let grup = 1; grup <= 18; grup++) {
-            const gruptakiKartlar = kartlar.filter(kart => 
-                kart.element.grup === grup || kart.joker
-            );
-            
-            if (gruptakiKartlar.length >= this.ayarlar.minimumPerSayisi) {
-                // Periyotları sırala ve ardışık periyotları bul
-                gruptakiKartlar.sort((a, b) => a.element.periyot - b.element.periyot);
-                
-                let currentPer = [gruptakiKartlar[0]];
-                
-                for (let i = 1; i < gruptakiKartlar.length; i++) {
-                    const oncekiKart = gruptakiKartlar[i - 1];
-                    const simdikiKart = gruptakiKartlar[i];
-                    
-                    if (simdikiKart.joker || 
-                        oncekiKart.joker || 
-                        simdikiKart.element.periyot === oncekiKart.element.periyot + 1) {
-                        currentPer.push(simdikiKart);
-                    } else {
-                        if (currentPer.length >= this.ayarlar.minimumPerSayisi) {
-                            sonuc.perler.push({
-                                tip: 'per',
-                                grup: grup,
-                                kartlar: [...currentPer]
-                            });
-                        }
-                        currentPer = [simdikiKart];
-                    }
-                }
-                
-                if (currentPer.length >= this.ayarlar.minimumPerSayisi) {
-                    sonuc.perler.push({
-                        tip: 'per',
-                        grup: grup,
-                        kartlar: [...currentPer]
-                    });
-                }
-            }
-        }
-        
-        // Grupları kontrol et - Aynı periyot, ardışık gruplar
-        for (let periyot = 1; periyot <= 7; periyot++) {
-            const periyottakiKartlar = kartlar.filter(kart => 
-                kart.element.periyot === periyot || kart.joker
-            );
-            
-            if (periyottakiKartlar.length >= this.ayarlar.minimumGrupSayisi) {
-                // Grupları sırala ve ardışık grupları bul
-                periyottakiKartlar.sort((a, b) => a.element.grup - b.element.grup);
-                
-                let currentGrup = [periyottakiKartlar[0]];
-                
-                for (let i = 1; i < periyottakiKartlar.length; i++) {
-                    const oncekiKart = periyottakiKartlar[i - 1];
-                    const simdikiKart = periyottakiKartlar[i];
-                    
-                    if (simdikiKart.joker || 
-                        oncekiKart.joker || 
-                        simdikiKart.element.grup === oncekiKart.element.grup + 1) {
-                        currentGrup.push(simdikiKart);
-                    } else {
-                        if (currentGrup.length >= this.ayarlar.minimumGrupSayisi) {
-                            sonuc.gruplar.push({
-                                tip: 'grup',
-                                periyot: periyot,
-                                kartlar: [...currentGrup]
-                            });
-                        }
-                        currentGrup = [simdikiKart];
-                    }
-                }
-                
-                if (currentGrup.length >= this.ayarlar.minimumGrupSayisi) {
-                    sonuc.gruplar.push({
-                        tip: 'grup',
-                        periyot: periyot,
-                        kartlar: [...currentGrup]
-                    });
-                }
-            }
-        }
-        
-        // Tüm kartların bir kombinasyonda olup olmadığını kontrol et
-        const kullanilanKartSayisi = [...sonuc.perler, ...sonuc.gruplar]
-            .flatMap(kombin => kombin.kartlar)
-            .length;
-        
-        sonuc.gecerli = kullanilanKartSayisi === kartlar.length;
-        
-        return sonuc;
-    }
-    
-    /**
-     * Puanları hesaplar
-     * @param {Object} kombinasyonSonucu - Kombinasyon sonuç nesnesi
-     * @return {number} Toplam puan
-     */
-    puanHesapla(kombinasyonSonucu) {
-        let toplamPuan = 0;
-        
-        // Her per için 10 puan
-        toplamPuan += kombinasyonSonucu.perler.length * 10;
-        
-        // Her grup için 5 puan
-        toplamPuan += kombinasyonSonucu.gruplar.length * 5;
-        
-        // Son kart joker ise puanı 2 katına çıkar
-        const tumKartlar = [
-            ...kombinasyonSonucu.perler.flatMap(per => per.kartlar),
-            ...kombinasyonSonucu.gruplar.flatMap(grup => grup.kartlar)
-        ];
-        
-        const sonKartJokerMi = tumKartlar.length > 0 && 
-                              tumKartlar[tumKartlar.length - 1].joker;
-        
-        if (sonKartJokerMi) {
-            toplamPuan *= 2;
-        }
-        
-        return toplamPuan;
-    }
-    
-    /**
-     * Oyunu bitirir
-     * @param {number} kazananIndeks - Kazanan oyuncu indeksi
-     */
-    oyunuBitir(kazananIndeks = 0) {
-        if (!this.oyunAktif) return;
-        
-        this.oyunAktif = false;
-        this.bitisZamani = new Date();
-        
-        // Kazananı belirle ve puanları hesapla
-        if (kazananIndeks === 0) {
-            // Oyuncu kazandı
-            this.oyuncu.puan = 100;
-            
-            // Botlar için puan hesapla
-            this.botlar.forEach(bot => {
-                bot.puan = -5 * bot.kartlar.length;
-            });
+        if (this.deste.length === 0) {
+            desteAlani.innerHTML = `<div class="bos-deste">Boş</div>`;
         } else {
-            // Bot kazandı
-            this.botlar[kazananIndeks - 1].puan = 100;
-            
-            // Diğer oyuncular için puan hesapla
-            this.oyuncu.puan = -5 * this.oyuncu.kartlar.length;
-            
-            this.botlar.forEach((bot, indeks) => {
-                if (indeks !== kazananIndeks - 1) {
-                    bot.puan = -5 * bot.kartlar.length;
-                }
-            });
+            desteAlani.innerHTML = `
+                <div class="element-kart kapali-kart">
+                    <img src="images/cards/arka.png" alt="Kapalı Kart">
+                    <span class="kart-sayisi">${this.deste.length}</span>
+                </div>
+            `;
+        }
+    }
+    
+    /**
+     * Boş deste yenileme
+     */
+    desteYenile() {
+        // Açık kartların en üstteki kartı hariç hepsini al
+        const yeniDeste = this.acikKartlar.slice(0, this.acikKartlar.length - 1);
+        
+        // Son kartı açık kartlarda bırak
+        this.acikKartlar = this.acikKartlar.slice(this.acikKartlar.length - 1);
+        
+        // Desteyi karıştır
+        for (let i = yeniDeste.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [yeniDeste[i], yeniDeste[j]] = [yeniDeste[j], yeniDeste[i]];
         }
         
-        // İstatistikleri güncelle
-        const oyunDurumu = {
-            oyuncular: [
-                { ...this.oyuncu },
-                ...this.botlar
-            ],
-            baslangic_zamani: this.baslangicZamani,
-            bitis_zamani: this.bitisZamani
-        };
+        // Desteye ekle
+        this.deste = yeniDeste;
         
-        istatistikleriGuncelle(oyunDurumu);
+        // Açık kartlar alanını güncelle
+        const acikKartlarAlani = document.getElementById("acik-kartlar");
+        acikKartlarAlani.innerHTML = '';
+        
+        if (this.acikKartlar.length > 0) {
+            const acikKart = this.acikKartlar[0];
+            const kartElement = document.createElement("div");
+            kartElement.className = "element-kart";
+            kartElement.dataset.id = acikKart.id;
+            kartElement.dataset.periyot = acikKart.periyot;
+            kartElement.dataset.grup = acikKart.grup;
+            kartElement.innerHTML = `
+                <img src="${acikKart.resim}" alt="${acikKart.isim}">
+                <span class="kart-deger">${acikKart.deger}</span>
+            `;
+            acikKartlarAlani.appendChild(kartElement);
+        }
+        
+        bildirimGoster("Deste yenilendi.", "info");
     }
 }
 

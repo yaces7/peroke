@@ -2731,6 +2731,24 @@ style.textContent = `
     .siralama-menu button:hover {
         background-color: #e0e0e0;
     }
+    
+    /* Sıralama menüsü */
+    .siralama-menusu {
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+    }
+    
+    .siralama-opsiyon {
+        padding: 8px 16px;
+        cursor: pointer;
+    }
+    
+    .siralama-opsiyon:hover {
+        background-color: #f0f0f0;
+    }
 `;
 document.head.appendChild(style);
 
@@ -2862,5 +2880,138 @@ function kartlariSirala(turString) {
     
     bildirimGoster(`Kartlarınız ${turString}a göre sıralandı.`, 'info');
 }
+
+// ... existing code ...
+
+// Kart çekme ve atma event listener'ları
+document.getElementById('deste-buton').addEventListener('click', destedenKartCek);
+document.getElementById('acik-kart-buton').addEventListener('click', acikKartiAl);
+
+// Oyuncu kartları için event listener
+document.getElementById('oyuncu-kartlari').addEventListener('click', (e) => {
+    if (e.target.closest('.element-kart')) {
+        const kartElement = e.target.closest('.element-kart');
+        // Eğer oyuncu kart çektiyse kart atabilir
+        if (oyuncuKartCekti) {
+            kartAt(kartElement);
+        } else {
+            bildirimGoster("Önce kart çekmelisiniz!", "warning");
+        }
+    }
+});
+
+// Kart sıralama butonu için event listener
+document.getElementById('sirala-buton').addEventListener('click', (e) => {
+    // Sıralama menüsünü oluştur
+    const siralamaMenusu = document.createElement('div');
+    siralamaMenusu.className = 'siralama-menusu';
+    siralamaMenusu.innerHTML = `
+        <div class="siralama-opsiyon" data-tur="periyot">Periyoda Göre Sırala</div>
+        <div class="siralama-opsiyon" data-tur="grup">Gruba Göre Sırala</div>
+    `;
+    
+    // Menüyü pozisyonla
+    siralamaMenusu.style.position = 'absolute';
+    siralamaMenusu.style.top = (e.target.offsetTop + e.target.offsetHeight) + 'px';
+    siralamaMenusu.style.left = e.target.offsetLeft + 'px';
+    
+    // Menüyü sayfaya ekle
+    document.body.appendChild(siralamaMenusu);
+    
+    // Menü opsiyonları için event listener
+    const opsiyonlar = siralamaMenusu.querySelectorAll('.siralama-opsiyon');
+    opsiyonlar.forEach(opsiyon => {
+        opsiyon.addEventListener('click', () => {
+            const tur = opsiyon.dataset.tur;
+            kartlariSirala(tur);
+            document.body.removeChild(siralamaMenusu);
+        });
+    });
+    
+    // Dışarı tıklandığında menüyü kapat
+    document.addEventListener('click', function kapatMenu(event) {
+        if (!siralamaMenusu.contains(event.target) && event.target !== e.target) {
+            document.body.removeChild(siralamaMenusu);
+            document.removeEventListener('click', kapatMenu);
+        }
+    });
+});
+
+// Kazanma durumu kontrolü
+document.getElementById('kazanma-kontrol-buton').addEventListener('click', () => {
+    // Kazanma durumunu kontrol et (Bu fonksiyon oyun_mekanikleri.js içinde tanımlanacak)
+    bildirimGoster("Kazanma kontrolü yapılıyor...", "info");
+    // oyuncuKazanabilirMi(0) fonksiyonu implemente edilecek
+});
+
+/**
+ * Kartları belirli bir türe göre sıralar
+ * @param {string} turString - Sıralama türü ("periyot" veya "grup")
+ */
+function kartlariSirala(turString) {
+    const kartlarAlani = document.getElementById('oyuncu-kartlari');
+    const kartlar = Array.from(kartlarAlani.querySelectorAll('.element-kart'));
+    
+    // Sıralamayı uygula
+    kartlar.sort((a, b) => {
+        if (turString === 'periyot') {
+            // Önce periyoda, sonra gruba göre sırala
+            if (parseInt(a.dataset.periyot) !== parseInt(b.dataset.periyot)) {
+                return parseInt(a.dataset.periyot) - parseInt(b.dataset.periyot);
+            }
+            return parseInt(a.dataset.grup) - parseInt(b.dataset.grup);
+        } else if (turString === 'grup') {
+            // Önce gruba, sonra periyoda göre sırala
+            if (parseInt(a.dataset.grup) !== parseInt(b.dataset.grup)) {
+                return parseInt(a.dataset.grup) - parseInt(b.dataset.grup);
+            }
+            return parseInt(a.dataset.periyot) - parseInt(b.dataset.periyot);
+        }
+        return 0;
+    });
+    
+    // DOM'da kartları yeniden yerleştir
+    kartlar.forEach(kart => {
+        kartlarAlani.appendChild(kart);
+    });
+    
+    bildirimGoster(`Kartlar ${turString}a göre sıralandı.`, "success");
+}
+
+// Oyun alanı stillerini ayarla
+document.head.insertAdjacentHTML('beforeend', `
+<style>
+    /* Kart alanı düzeni */
+    .kartlar-alani {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        max-width: 100%;
+    }
+    
+    /* İki satır kart düzeni */
+    #oyuncu-kartlari {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        grid-template-rows: repeat(2, auto);
+        gap: 8px;
+        max-height: 170px;
+        overflow-y: auto;
+        padding: 5px;
+    }
+    
+    /* Kart hover efektleri */
+    .element-kart {
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+    
+    .element-kart:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 10;
+    }
+</style>
+`);
 
 // ... existing code ...

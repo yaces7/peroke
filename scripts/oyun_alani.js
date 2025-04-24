@@ -3,7 +3,8 @@
  * Oyun alanını ve oyun mantığını yöneten sınıf
  */
 
-class OyunAlani {
+// Global olarak OyunAlani sınıfını tanımla
+window.OyunAlani = class OyunAlani {
     /**
      * Oyun alanını oluşturur
      * @param {Object} ayarlar Oyun ayarları
@@ -554,7 +555,4 @@ class OyunAlani {
         // Sıradaki oyuncuya geç
         setTimeout(() => this.siradakiOyuncu(), 500);
     }
-}
-
-// Global olarak OyunAlani sınıfını tanımla
-window.OyunAlani = OyunAlani; 
+} 

@@ -554,4 +554,7 @@ class OyunAlani {
         // Sıradaki oyuncuya geç
         setTimeout(() => this.siradakiOyuncu(), 500);
     }
-} 
+}
+
+// Global olarak OyunAlani sınıfını tanımla
+window.OyunAlani = OyunAlani; 

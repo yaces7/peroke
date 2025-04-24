@@ -3,8 +3,13 @@
  * Bu dosya, oyunun ana akışını kontrol eder ve modüller arası koordinasyonu sağlar.
  */
 
+console.log('ArayuzKontrol var mı?', typeof window.ArayuzKontrol);
+console.log('OyunAlani var mı?', typeof window.OyunAlani);
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Periyodik Okey oyunu başlatılıyor...');
+    console.log('ArayuzKontrol DOMContentLoaded içinde var mı?', typeof window.ArayuzKontrol);
+    console.log('OyunAlani DOMContentLoaded içinde var mı?', typeof window.OyunAlani);
 
     // Global değişkenler
     let arayuzKontrol = null;

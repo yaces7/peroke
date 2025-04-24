@@ -3,7 +3,8 @@
  * Oyun arayüzünü ve kullanıcı etkileşimlerini yöneten dosya
  */
 
-class ArayuzKontrol {
+// Global olarak ArayuzKontrol sınıfını tanımla
+window.ArayuzKontrol = class ArayuzKontrol {
     /**
      * Arayüz kontrolü yapıcı metodu
      */

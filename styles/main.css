@@ -225,11 +225,7 @@ h2 {
 
 .oyuncu-bilgi {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    padding: 5px;
     margin-bottom: 10px;
 }
 
@@ -769,6 +765,56 @@ select, input[type="range"] {
     margin-bottom: 10px;
 }
 
+/* Tur Başlangıç Animasyonu */
+.tur-baslangic-animasyon {
+    position: relative;
+    animation: pulseBackground 2s infinite;
+    overflow: hidden;
+}
+
+.tur-baslangic-mesaji {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    font-weight: bold;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px 40px;
+    border-radius: 10px;
+    z-index: 9999;
+    animation: pulse 1s infinite;
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+}
+
+@keyframes pulseBackground {
+    0% {
+        box-shadow: 0 0 10px 5px rgba(255, 215, 0, 0.2) inset;
+    }
+    50% {
+        box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.5) inset;
+    }
+    100% {
+        box-shadow: 0 0 10px 5px rgba(255, 215, 0, 0.2) inset;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    100% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+}
+
 /* Büyük Bildirim Stilleri */
 .buyuk-bildirim {
     position: fixed;
@@ -895,4 +941,24 @@ select, input[type="range"] {
 .bot-puan, .oyuncu-puan {
     flex: 1;
     text-align: right;
+}
+
+/* Kart Dağıtma Animasyonu */
+@keyframes kartDagit {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px) rotate(-10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+    }
+}
+
+.element-kart.yeni-dagitilan {
+    animation: kartDagit 0.5s ease-out forwards;
+}
+
+.bot-kart.yeni-dagitilan {
+    animation: kartDagit 0.5s ease-out forwards;
 }

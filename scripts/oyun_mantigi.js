@@ -625,7 +625,7 @@ class PeriyodikOkey {
             
             // Sıradaki oyuncuya geç
             setTimeout(() => {
-                this.siradakiOyuncu();
+            this.siradakiOyuncu();
             }, 500);
         }, dusunmeSuresi);
     }

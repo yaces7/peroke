@@ -182,7 +182,16 @@ class ArayuzKontrol {
         
         this.butonlar.kontrolEt.addEventListener('click', () => this.kombinasyonuKontrolEt());
         this.butonlar.kartVer.addEventListener('click', () => this.kartVer());
-        this.butonlar.desteyiAc.addEventListener('click', () => this.destedenKartCek());
+        this.butonlar.ortadanKartAl = document.getElementById('btn-ortadan-kart-al');
+        this.butonlar.acikKartiAl = document.getElementById('btn-acik-karti-al');
+        
+        if (this.butonlar.ortadanKartAl) {
+            this.butonlar.ortadanKartAl.addEventListener('click', () => this.destedenKartCek());
+        }
+        
+        if (this.butonlar.acikKartiAl) {
+            this.butonlar.acikKartiAl.addEventListener('click', () => this.acikKartiAl());
+        }
         
         // Oyun sonu butonları
         this.butonlar.yeniOyun.addEventListener('click', () => this.oyunuBaslat());

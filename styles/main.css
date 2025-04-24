@@ -572,12 +572,12 @@ h2 {
 }
 
 .bot-kart {
-    width: 40px;
-    height: 60px;
-    margin: 2px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    width: 45px;
+    height: 65px;
+    margin: 3px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
@@ -586,27 +586,33 @@ h2 {
     font-size: 12px;
     color: #333;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    transition: all 0.3s ease;
 }
 
 .bot-kart:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-color: #aaa;
 }
 
 .bot-kart-sembol {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     color: #000;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .bot-kart-grup-periyot {
     font-size: 8px;
-    color: #666;
+    font-weight: 600;
+    color: #555;
     position: absolute;
-    bottom: 2px;
-    right: 2px;
+    bottom: 3px;
+    right: 3px;
+    background-color: rgba(240, 240, 240, 0.7);
+    padding: 1px 3px;
+    border-radius: 3px;
 }
 
 /* Kombinasyon alanını gizle */

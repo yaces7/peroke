@@ -7,6 +7,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Periyodik Okey oyunu başlatılıyor...");
     
+    // Butonları kontrol et
+    butonlariKontrolEt();
+    
     // Ses Yöneticisi Sınıfı
     class SesYoneticisi {
         constructor() {
@@ -1395,3 +1398,171 @@ document.addEventListener('DOMContentLoaded', function() {
         yeniOyunBtn.addEventListener('click', oyunuBaslat);
     }
 }); 
+
+// Tüm buton işlemlerini ayarla
+function butonlariKontrolEt() {
+    console.log("Butonlar kontrol ediliyor...");
+    
+    // Ana menü butonları
+    const butonlar = {
+        'yeni-oyun-btn': document.getElementById('yeni-oyun-btn'),
+        'istatistikler-btn': document.getElementById('istatistikler-btn'),
+        'ayarlar-btn': document.getElementById('ayarlar-btn'),
+        'nasil-oynanir-btn': document.getElementById('nasil-oynanir-btn')
+    };
+    
+    // Log butonları
+    for (const [id, btn] of Object.entries(butonlar)) {
+        console.log(`Buton ID: ${id}, Buton var mı: ${btn !== null}`);
+        
+        // Event listener'ları ekle
+        if (btn) {
+            btn.onclick = function() {
+                console.log(`${id} butonuna tıklandı!`);
+                
+                // Ekran geçişleri
+                if (id === 'yeni-oyun-btn') {
+                    document.getElementById('ana-menu-ekrani').classList.add('gizli');
+                    document.getElementById('oyun-ekrani').classList.remove('gizli');
+                    testKartlariOlustur();
+                    turBaslat();
+                } else if (id === 'istatistikler-btn') {
+                    document.getElementById('ana-menu-ekrani').classList.add('gizli');
+                    document.getElementById('istatistikler-ekrani').classList.remove('gizli');
+                } else if (id === 'ayarlar-btn') {
+                    document.getElementById('ana-menu-ekrani').classList.add('gizli');
+                    document.getElementById('ayarlar-ekrani').classList.remove('gizli');
+                } else if (id === 'nasil-oynanir-btn') {
+                    document.getElementById('ana-menu-ekrani').classList.add('gizli');
+                    document.getElementById('nasil-oynanir-ekrani').classList.remove('gizli');
+                }
+            };
+        }
+    }
+    
+    // Geri butonları
+    const geriButonlar = {
+        'nasil-oynanir-geri-btn': document.getElementById('nasil-oynanir-geri-btn'),
+        'istatistik-geri-btn': document.getElementById('istatistik-geri-btn'),
+        'ayarlar-geri-btn': document.getElementById('ayarlar-geri-btn')
+    };
+    
+    for (const [id, btn] of Object.entries(geriButonlar)) {
+        console.log(`Geri buton ID: ${id}, Buton var mı: ${btn !== null}`);
+        
+        if (btn) {
+            btn.onclick = function() {
+                console.log(`${id} butonuna tıklandı!`);
+                // Tüm ekranları gizle
+                document.querySelectorAll('.ekran').forEach(ekran => {
+                    ekran.classList.add('gizli');
+                });
+                // Ana menüyü göster
+                document.getElementById('ana-menu-ekrani').classList.remove('gizli');
+            };
+        }
+    }
+    
+    // Oyun içi butonlar
+    const oyunButonlari = {
+        'kart-cek-btn': document.getElementById('kart-cek-btn'),
+        'acik-kart-al-btn': document.getElementById('acik-kart-al-btn'),
+        'kart-at-btn': document.getElementById('kart-at-btn'),
+        'kontrol-et-btn': document.getElementById('kontrol-et-btn'),
+        'ana-menu-don-btn': document.getElementById('ana-menu-don-btn'),
+        'yardim-btn': document.getElementById('yardim-btn')
+    };
+    
+    for (const [id, btn] of Object.entries(oyunButonlari)) {
+        console.log(`Oyun buton ID: ${id}, Buton var mı: ${btn !== null}`);
+        
+        if (btn) {
+            if (id === 'kart-cek-btn') {
+                btn.onclick = function() {
+                    console.log("Kart çekiliyor...");
+                    
+                    // Kartları yokla
+                    if (typeof ELEMENT_VERILERI_OKEY === 'undefined') {
+                        console.error("Element verileri bulunamadı!");
+                        return;
+                    }
+                    
+                    // Rastgele bir element al
+                    const randomIndex = Math.floor(Math.random() * ELEMENT_VERILERI_OKEY.length);
+                    const element = ELEMENT_VERILERI_OKEY[randomIndex];
+                    
+                    // Oyuncu kartlarını bul
+                    const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
+                    if (!oyuncuKartlari) {
+                        console.error("Oyuncu kartları alanı bulunamadı!");
+                        return;
+                    }
+                    
+                    // Kart HTML oluştur
+                    const kartDiv = document.createElement('div');
+                    kartDiv.className = 'element-kart';
+                    kartDiv.style.backgroundColor = '#A0FFA0';
+                    kartDiv.style.color = '#000000';
+                    
+                    // Sembol
+                    const sembolDiv = document.createElement('div');
+                    sembolDiv.className = 'sembol';
+                    sembolDiv.textContent = element.sembol;
+                    kartDiv.appendChild(sembolDiv);
+                    
+                    // İsim
+                    const isimDiv = document.createElement('div');
+                    isimDiv.className = 'isim';
+                    isimDiv.textContent = element.isim;
+                    kartDiv.appendChild(isimDiv);
+                    
+                    // Grup ve periyot
+                    const gpDiv = document.createElement('div');
+                    gpDiv.className = 'grup-periyot';
+                    gpDiv.textContent = `G:${element.grup} P:${element.periyot}`;
+                    kartDiv.appendChild(gpDiv);
+                    
+                    // Dataset
+                    kartDiv.dataset.atomNo = element.atom_no;
+                    kartDiv.dataset.sembol = element.sembol;
+                    kartDiv.dataset.grup = element.grup;
+                    kartDiv.dataset.periyot = element.periyot;
+                    
+                    // Seçim özelliği
+                    kartDiv.addEventListener('click', function() {
+                        document.querySelectorAll('.element-kart.secili').forEach(k => {
+                            k.classList.remove('secili');
+                        });
+                        this.classList.toggle('secili');
+                    });
+                    
+                    oyuncuKartlari.appendChild(kartDiv);
+                    
+                    // Kalan kart sayısını güncelle
+                    const kalanKartSpan = document.getElementById('kalan-kart');
+                    if (kalanKartSpan) {
+                        const kalan = parseInt(kalanKartSpan.textContent.replace('Kalan: ', '')) - 1;
+                        kalanKartSpan.textContent = `Kalan: ${kalan}`;
+                    }
+                    
+                    durumMesajiGoster('Kart çektiniz. Şimdi bir kart atın veya kombinasyonları kontrol edin.', '#000000');
+                };
+            } else if (id === 'kontrol-et-btn') {
+                btn.onclick = function() {
+                    console.log("Kartlar kontrol ediliyor...");
+                    kartlariKontrolEt();
+                };
+            } else if (id === 'ana-menu-don-btn') {
+                btn.onclick = function() {
+                    document.getElementById('oyun-ekrani').classList.add('gizli');
+                    document.getElementById('ana-menu-ekrani').classList.remove('gizli');
+                };
+            } else if (id === 'yardim-btn') {
+                btn.onclick = function() {
+                    document.getElementById('oyun-ekrani').classList.add('gizli');
+                    document.getElementById('nasil-oynanir-ekrani').classList.remove('gizli');
+                };
+            }
+        }
+    }
+} 

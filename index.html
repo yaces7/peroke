@@ -7,262 +7,125 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <!-- Ana Menü Ekranı -->
-    <div id="menu-screen" class="ekran">
-        <h1>Periyodik Okey</h1>
-        <div class="menu-butonlar">
-            <button id="btn-oyuna-basla" class="btn-ana">Oyuna Başla</button>
-            <button id="btn-ayarlar" class="btn-ana">Ayarlar</button>
-            <button id="btn-oyun-yardim" class="btn-ana" onclick="document.getElementById('kontroller-panel').style.display='flex';">Nasıl Oynanır?</button>
-        </div>
-        <div class="versiyon">v1.0.0</div>
-    </div>
-
-    <!-- Oyun Başlangıç Ekranı -->
-    <div id="oyun-baslangic-screen" class="ekran gizli">
-        <h2>Oyun Ayarları</h2>
-        <div class="baslangic-form">
-            <div class="form-grup">
-                <label for="baslangic-bot-sayisi">Bot Sayısı:</label>
-                <div class="secim-butonlar">
-                    <button data-value="1" class="secim-buton" onclick="this.classList.add('secili'); this.nextElementSibling.classList.remove('secili'); this.nextElementSibling.nextElementSibling.classList.remove('secili');">1 Bot</button>
-                    <button data-value="2" class="secim-buton" onclick="this.classList.add('secili'); this.previousElementSibling.classList.remove('secili'); this.nextElementSibling.classList.remove('secili');">2 Bot</button>
-                    <button data-value="3" class="secim-buton secili" onclick="this.classList.add('secili'); this.previousElementSibling.classList.remove('secili'); this.previousElementSibling.previousElementSibling.classList.remove('secili');">3 Bot</button>
-                </div>
-            </div>
-            <div class="form-grup">
-                <label for="baslangic-zorluk">Zorluk Seviyesi:</label>
-                <div class="secim-butonlar">
-                    <button data-value="kolay" class="secim-buton" onclick="this.classList.add('secili'); this.nextElementSibling.classList.remove('secili'); this.nextElementSibling.nextElementSibling.classList.remove('secili');">Kolay</button>
-                    <button data-value="orta" class="secim-buton secili" onclick="this.classList.add('secili'); this.previousElementSibling.classList.remove('secili'); this.nextElementSibling.classList.remove('secili');">Orta</button>
-                    <button data-value="zor" class="secim-buton" onclick="this.classList.add('secili'); this.previousElementSibling.classList.remove('secili'); this.previousElementSibling.previousElementSibling.classList.remove('secili');">Zor</button>
-                </div>
-            </div>
-            <div class="form-grup">
-                <label for="baslangic-oyuncu-ismi">Oyuncu İsmi:</label>
-                <input type="text" id="baslangic-oyuncu-ismi" value="Oyuncu" maxlength="15">
-            </div>
-            <div class="baslangic-butonlar">
-                <button id="btn-oyunu-baslat" class="btn-ana">Oyunu Başlat</button>
-                <button id="btn-baslangic-iptal" class="btn-ana iptal">İptal</button>
-            </div>
+    <div id="yukleniyorEkrani" class="yukleniyor-ekrani">
+        <div class="yukleniyor-mesaj">
+            <h2>Oyun Yükleniyor</h2>
+            <div class="yukleniyor-bar"></div>
+            <p id="yukleniyorMesaj">Elementler hazırlanıyor...</p>
         </div>
     </div>
 
-    <!-- Yükleme Ekranı -->
-    <div id="yukleme-screen" class="ekran gizli">
-        <div class="yukleme-animasyon">
-            <div class="atom">
-                <div class="elektron"></div>
-                <div class="elektron"></div>
-                <div class="elektron"></div>
-            </div>
-        </div>
-        <h3 class="yukleme-mesaj">Oyun yükleniyor...</h3>
-        <div class="yukleme-bar">
-            <div class="yukleme-ilerleyis"></div>
+    <div id="menuEkrani" class="menu-container gizli">
+        <h1 class="oyun-baslik">Periyodik Okey</h1>
+        <div class="menu-buttons">
+            <button id="baslatButonu" class="menu-btn">Oyunu Başlat</button>
+            <button id="nasilOynanirButonu" class="menu-btn">Nasıl Oynanır</button>
+            <button id="yapimcilarButonu" class="menu-btn">Yapımcılar</button>
         </div>
     </div>
 
-    <!-- Ayarlar Ekranı -->
-    <div id="ayarlar-screen" class="ekran gizli">
-        <h2>Oyun Ayarları</h2>
-        <div class="ayarlar-form">
-            <div class="ayar-grup">
-                <label for="bot-sayisi">Bot Sayısı:</label>
-                <select id="bot-sayisi">
-                    <option value="1">1 Bot</option>
-                    <option value="2">2 Bot</option>
-                    <option value="3" selected>3 Bot</option>
-                </select>
+    <div id="nasilOynanirEkrani" class="gizli">
+        <div class="yardim-container">
+            <h2>Nasıl Oynanır?</h2>
+            <div class="yardim-icerik">
+                <section>
+                    <h3>Oyunun Amacı</h3>
+                    <p>Periyodik Okey, periyodik tablodaki elementleri kullanarak el bitirmeye çalıştığınız bir kart oyunudur. Amacınız, elinizde bulunan element kartlarını gruplar veya seriler halinde düzenleyerek tüm kartlarınızı bitirmektir.</p>
+                </section>
+                <section>
+                    <h3>Oyun Kuralları</h3>
+                    <ul>
+                        <li>Her oyuncu 14 kart ile oyuna başlar.</li>
+                        <li>Sıra size geldiğinde, desteden bir kart çekebilir veya açık kartı alabilirsiniz.</li>
+                        <li>Elinizde tutmak istemediğiniz bir kartı atarak sırayı diğer oyuncuya devredebilirsiniz.</li>
+                        <li>Kartlarınızı düzenleyerek gruplar veya seriler oluşturmaya çalışın.</li>
+                        <li>Tüm kartlarınızı bitirdiğinizde oyunu kazanırsınız.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>Geçerli Kombinasyonlar</h3>
+                    <p><strong>Gruplar:</strong> Aynı periyotta bulunan en az 3 farklı element.</p>
+                    <p><strong>Seriler:</strong> Aynı grupta bulunan ardışık en az 3 element.</p>
+                </section>
             </div>
-            <div class="ayar-grup">
-                <label for="zorluk-seviyesi">Zorluk Seviyesi:</label>
-                <select id="zorluk-seviyesi">
-                    <option value="kolay">Kolay</option>
-                    <option value="orta" selected>Orta</option>
-                    <option value="zor">Zor</option>
-                </select>
-            </div>
-            <div class="ayar-grup">
-                <label for="oyuncu-ismi">Oyuncu İsmi:</label>
-                <input type="text" id="oyuncu-ismi" value="Oyuncu" maxlength="15">
-            </div>
-            <div class="ayar-grup checkbox-grup">
-                <input type="checkbox" id="ses-efektleri" checked>
-                <label for="ses-efektleri">Ses Efektleri</label>
-            </div>
-            <div class="ayar-grup checkbox-grup">
-                <input type="checkbox" id="muzik" checked>
-                <label for="muzik">Arka Plan Müziği</label>
-            </div>
-            <div class="ayar-butonlar">
-                <button id="btn-ayarlari-kaydet" class="btn-ayar">Kaydet</button>
-                <button id="btn-ayarlari-iptal" class="btn-ayar">İptal</button>
-            </div>
+            <button class="geri-btn">Ana Menüye Dön</button>
         </div>
     </div>
 
-    <!-- Oyun Ekranı -->
-    <div id="oyun-screen" class="ekran gizli">
-        <div class="ust-bar">
-            <button id="btn-oyun-menu">Menü</button>
-            <div class="oyun-bilgi">
-                <span>Kalan Kart: <span id="kalan-kart">0</span></span>
+    <div id="yapimcilarEkrani" class="gizli">
+        <div class="yapimcilar-container">
+            <h2>Yapımcılar</h2>
+            <div class="yapimci-bilgi">
+                <div class="yapimci">
+                    <h3>Cesur Beyazıt</h3>
+                    <p>Oyun Geliştiricisi</p>
+                    <p class="animasyonlu-yazı">Kimyager ve bilgisayar mühendisliği öğrencisi</p>
+                </div>
             </div>
-            <button id="btn-oyun-ayarlar">Ayarlar</button>
+            <button class="geri-btn">Ana Menüye Dön</button>
         </div>
+    </div>
 
-        <!-- Bot Alanları -->
-        <div class="bot-alanlari">
-            <div class="bot-alan" id="bot1-alan">
-                <div class="bot-bilgi">
-                    <span class="bot-isim">Bot 1</span>
-                    <span class="bot-yildizlar" id="bot1-yildizlar"></span>
-                </div>
-                <div class="bot-kartlar" id="bot1-kartlar"></div>
+    <div id="oyunEkrani" class="oyun-container gizli">
+        <div class="ust-bilgi-alani">
+            <div class="oyuncu-bilgileri">
+                <div class="oyuncu-adi" id="oyuncuAdi">Oyuncu</div>
+                <div class="oyuncu-puani" id="oyuncuPuani">0 Puan</div>
             </div>
-            <div class="bot-alan bot2" id="bot2-alan">
-                <div class="bot-bilgi">
-                    <span class="bot-isim">Bot 2</span>
-                    <span class="bot-yildizlar" id="bot2-yildizlar"></span>
-                </div>
-                <div class="bot-kartlar" id="bot2-kartlar"></div>
-            </div>
-            <div class="bot-alan bot3" id="bot3-alan">
-                <div class="bot-bilgi">
-                    <span class="bot-isim">Bot 3</span>
-                    <span class="bot-yildizlar" id="bot3-yildizlar"></span>
-                </div>
-                <div class="bot-kartlar" id="bot3-kartlar"></div>
+            <button class="geri-btn">Ana Menüye Dön</button>
+            <div class="oyun-durumu" id="oyunDurumu">
+                <div class="aktif-oyuncu" id="aktifOyuncu">Sıra: Oyuncu</div>
+                <div class="kalan-kart" id="kalanKart">Kalan: 0</div>
             </div>
         </div>
 
-        <!-- Orta Alan -->
-        <div class="orta-alan">
-            <div class="son-atilan-kart-alani" id="son-atilan-kart-alani">
-                <!-- Önceki oyuncudan gelen kart burada gösterilecek -->
-            </div>
+        <div class="masa-alani">
             <div class="deste-alani">
-                <button id="btn-desteyi-ac" class="element-kart arka-yuz"></button>
+                <div class="deste" id="deste"></div>
+                <div class="acik-kart" id="acikKart"></div>
             </div>
-            <div class="acik-kart-alani"></div>
-            <div class="durum-mesaji" id="durum-mesaji">
-                Oyun başlıyor...
-            </div>
+            <div class="mesaj-alani" id="mesajAlani">Oyun başladı!</div>
         </div>
 
-        <!-- Oyuncu Alanı -->
-        <div class="oyuncu-alani" id="oyuncu-alan">
-            <div class="oyuncu-bilgi">
-                <span class="oyuncu-isim" id="oyuncu-isim-goster">Oyuncu</span>
-                <span class="oyuncu-yildizlar" id="oyuncu-yildizlar"></span>
+        <div class="oyuncu-alani">
+            <div class="bot-alanlari">
+                <div class="bot-alani" id="bot1">
+                    <div class="bot-bilgisi">
+                        <span class="bot-adi">Bot 1</span>
+                        <span class="bot-kart-sayisi">0 kart</span>
+                    </div>
+                    <div class="bot-kartlari"></div>
+                </div>
+                <div class="bot-alani" id="bot2">
+                    <div class="bot-bilgisi">
+                        <span class="bot-adi">Bot 2</span>
+                        <span class="bot-kart-sayisi">0 kart</span>
+                    </div>
+                    <div class="bot-kartlari"></div>
+                </div>
+                <div class="bot-alani" id="bot3">
+                    <div class="bot-bilgisi">
+                        <span class="bot-adi">Bot 3</span>
+                        <span class="bot-kart-sayisi">0 kart</span>
+                    </div>
+                    <div class="bot-kartlari"></div>
+                </div>
             </div>
-            <div class="oyuncu-kartlari" id="oyuncu-kartlari"></div>
-            <div class="oyuncu-butonlar">
-                <button id="btn-kontrol-et">Kontrol Et</button>
-                <button id="btn-acik-karti-al">Açık Kartı Al</button>
-                <button id="btn-kart-ver" disabled>Kartı At</button>
-                <button id="btn-son-karti-ver" class="gizli">Son Kartı Bota Ver</button>
+
+            <div class="oyuncu-kartlari-alani">
+                <div class="oyuncu-kartlari" id="oyuncuKartlari"></div>
+            </div>
+
+            <div class="butonlar">
+                <button id="desteCekBtn" class="oyun-butonu" disabled>Desteden Çek</button>
+                <button id="acikKartAlBtn" class="oyun-butonu" disabled>Açık Kartı Al</button>
+                <button id="kartAtBtn" class="oyun-butonu" disabled>Kartı At</button>
             </div>
         </div>
     </div>
 
-    <!-- Oyun Sonu Ekranı -->
-    <div id="oyun-sonu-screen" class="ekran gizli">
-        <h2>Oyun Bitti!</h2>
-        <div id="sonuc-mesaji" class="sonuc-mesaj"></div>
-        <div class="skor-tablosu">
-            <h3>Skor Tablosu</h3>
-            <div id="skor-liste" class="skor-liste"></div>
-        </div>
-        <div class="menu-butonlar">
-            <button id="btn-tekrar-oyna" class="btn-ana">Tekrar Oyna</button>
-            <button id="btn-ana-menuye-don" class="btn-ana">Ana Menüye Dön</button>
-        </div>
-    </div>
-
-    <!-- Oyun Kontrolleri Yardımı -->
-    <div id="kontroller-panel" class="gizli" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:9999;">
-        <div class="kontroller-icerik">
-            <h3>Oyun Kontrolleri</h3>
-            <ul>
-                <li><strong>Kart Seçme:</strong> Kartlara tıklayarak seçebilirsiniz</li>
-                <li><strong>Kombinasyon:</strong> En az 3 kart seçip "Kontrol Et" butonuna basın</li>
-                <li><strong>Kart Çekme:</strong> Desteden kart çekmek için destenin üzerine tıklayın</li>
-                <li><strong>Açık Kart Alma:</strong> "Açık Kartı Al" butonunu kullanın</li>
-                <li><strong>Kart Atma:</strong> Bir kart seçip "Kartı At" butonuna basın</li>
-            </ul>
-            <button id="btn-kontroller-kapat" class="btn-kapat" onclick="document.getElementById('kontroller-panel').style.display='none';">Kapat</button>
-        </div>
-    </div>
-
-    <!-- JavaScript Dosyaları -->
-    <script src="scripts/oyun_mantigi.js"></script>
     <script src="scripts/main.js"></script>
-    
-    <!-- Direkt çalışan JavaScript kodu -->
-    <script>
-        // Ekranları gösterme/gizleme fonksiyonu
-        function ekraniGoster(ekranId) {
-            console.log("Ekran değiştiriliyor: " + ekranId);
-            document.querySelectorAll('.ekran').forEach(ekran => {
-                ekran.classList.add('gizli');
-                ekran.style.display = 'none';
-            });
-            const ekran = document.getElementById(ekranId);
-            if (ekran) {
-                ekran.classList.remove('gizli');
-                ekran.style.display = 'block';
-            } else {
-                console.error(`Ekran bulunamadı: ${ekranId}`);
-            }
-        }
-        
-        // Sayfa yüklendikten sonra hemen çalışacak kod
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("Doğrudan JavaScript çalıştırılıyor...");
-            
-            // Ana menü butonlarına tıklama olayları ekle
-            const btnOyunaBasla = document.getElementById('btn-oyuna-basla');
-            if (btnOyunaBasla) {
-                btnOyunaBasla.onclick = function() {
-                    ekraniGoster('oyun-baslangic-screen');
-                };
-            }
-            
-            const btnAyarlar = document.getElementById('btn-ayarlar');
-            if (btnAyarlar) {
-                btnAyarlar.onclick = function() {
-                    ekraniGoster('ayarlar-screen');
-                };
-            }
-            
-            // Oyunu başlat butonuna tıklama olayı ekle
-            const btnOyunuBaslat = document.getElementById('btn-oyunu-baslat');
-            if (btnOyunuBaslat) {
-                btnOyunuBaslat.onclick = function() {
-                    // Yükleme ekranına geç
-                    ekraniGoster('yukleme-screen');
-                    
-                    // 3 saniye sonra oyun ekranına geç
-                    setTimeout(function() {
-                        ekraniGoster('oyun-screen');
-                    }, 3000);
-                };
-            }
-            
-            // İptal butonuna tıklama olayı ekle
-            const btnBaslangicIptal = document.getElementById('btn-baslangic-iptal');
-            if (btnBaslangicIptal) {
-                btnBaslangicIptal.onclick = function() {
-                    ekraniGoster('menu-screen');
-                };
-            }
-            
-            // İlk ekranı göster
-            ekraniGoster('menu-screen');
-        });
-    </script>
+    <script src="scripts/oyun_mantigi.js"></script>
+    <script src="scripts/oyun_mekanikleri.js"></script>
 </body>
 </html> 

@@ -877,3 +877,58 @@ function botSirasiGuvenligi() {
 
 // Periyodik olarak bot sırası kontrolü yap (her saniye)
 setInterval(botSirasiGuvenligi, 1000);
+
+// DOM elemanlarını seçme
+document.addEventListener("DOMContentLoaded", function() {
+    // Mevcut seçiciler...
+    
+    // Menü düğmeleri
+    const baslatButonu = document.getElementById('baslatButonu');
+    const nasilOynanirButonu = document.getElementById('nasilOynanirButonu');
+    const yapimcilarButonu = document.getElementById('yapimcilarButonu');
+    const geriButonlari = document.querySelectorAll('.geri-btn');
+    
+    // Ekranlar
+    const menuEkrani = document.getElementById('menuEkrani');
+    const nasilOynanirEkrani = document.getElementById('nasilOynanirEkrani');
+    const yapimcilarEkrani = document.getElementById('yapimcilarEkrani');
+    const oyunEkrani = document.getElementById('oyunEkrani');
+    
+    // Menü butonları event dinleyicileri
+    baslatButonu.addEventListener('click', function() {
+        menuEkrani.classList.add('gizli');
+        oyunEkrani.classList.remove('gizli');
+        oyunuBaslat();
+    });
+    
+    nasilOynanirButonu.addEventListener('click', function() {
+        menuEkrani.classList.add('gizli');
+        nasilOynanirEkrani.classList.remove('gizli');
+    });
+    
+    yapimcilarButonu.addEventListener('click', function() {
+        menuEkrani.classList.add('gizli');
+        yapimcilarEkrani.classList.remove('gizli');
+    });
+    
+    // Geri butonları için event dinleyicileri
+    geriButonlari.forEach(button => {
+        button.addEventListener('click', function() {
+            // Tüm ekranları gizle
+            nasilOynanirEkrani.classList.add('gizli');
+            yapimcilarEkrani.classList.add('gizli');
+            oyunEkrani.classList.add('gizli');
+            
+            // Ana menüyü göster
+            menuEkrani.classList.remove('gizli');
+            
+            // Eğer oyun ekranından dönüldüyse oyunu sıfırla
+            if (!oyunEkrani.classList.contains('gizli')) {
+                // Oyun sıfırlama işlemleri eklenebilir
+                console.log("Oyun sıfırlanıyor...");
+            }
+        });
+    });
+    
+    // ... Mevcut event dinleyicileri devam ediyor
+});

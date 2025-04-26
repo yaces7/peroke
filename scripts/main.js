@@ -698,10 +698,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (oyun) {
-            const kombinasyonSonuc = oyun.kombinasyonKontrolEt(seciliKartlar);
+            const kombinasyonSonuc = oyun.kombinasyonKontrolEtVeKaldir(seciliKartlar);
             
             if (kombinasyonSonuc) {
-                alert("Tebrikler! Geçerli bir kombinasyon oluşturdunuz.");
                 seciliKartlar = [];
                 oyunDurumunuGuncelle();
             } else {
@@ -782,3 +781,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // İlk ekranı göster
         ekraniGoster('menu-screen');
     });
+
+// Botların sıra geçişi sırasında takılma sorununu engellemek için güvenlik mekanizması
+function botSirasiGuvenligi() {
+    // Eğer aktif oyuncu bot ise ve 10 saniyeden fazla zaman geçtiyse
+    if (oyun && oyun.aktifOyuncu > 0 && oyun.oyunDurumu === 'devam') {
+        console.log("Bot sırası güvenlik kontrolü");
+        
+        // Aktif oyuncuyu oyuncuya çevir
+        oyun.aktifOyuncu = 0;
+        oyun.oyuncuKartCekildi = false;
+        
+        // Oyun durumunu güncelle
+        oyunDurumunuGuncelle();
+    }
+}
+
+// Periyodik olarak bot sırası kontrolü yap
+setInterval(botSirasiGuvenligi, 10000); // 10 saniyede bir kontrol et

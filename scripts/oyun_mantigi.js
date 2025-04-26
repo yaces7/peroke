@@ -556,6 +556,46 @@ class PeriyodikOkey {
         
         return false;
     }
+
+    /**
+     * Kombinasyon kontrolü yapıp, eğer geçerliyse kartları kaldırır
+     * @param {Array} kartIdleri - Seçilen kart ID'leri
+     * @returns {boolean} Kombinasyon geçerliyse ve kartlar kaldırıldıysa true, değilse false
+     */
+    kombinasyonKontrolEtVeKaldir(kartIdleri) {
+        // Kombinasyonu kontrol et
+        const gecerli = this.kombinasyonKontrolEt(kartIdleri);
+        
+        if (!gecerli) {
+            return false;
+        }
+        
+        // Eğer kombinasyon geçerliyse, kartları elinden çıkar
+        for (const kartId of kartIdleri) {
+            const kartIndex = this.oyuncuKartlari.findIndex(kart => kart.id === kartId);
+            if (kartIndex !== -1) {
+                this.oyuncuKartlari.splice(kartIndex, 1);
+            }
+        }
+        
+        // Eğer son kart kaldıysa, oyunu kazandınız
+        if (this.oyuncuKartlari.length === 1) {
+            // Son kartı da kaldır
+            this.oyuncuKartlari = [];
+            this.oyunDurumu = 'bitti';
+            this.kazananOyuncu = 0;
+            this.oyuncuPuani += 1;
+            
+            // Yeni el başlat
+            setTimeout(() => {
+                this.yeniElBaslat();
+            }, 1500);
+            
+            return true;
+        }
+        
+        return true;
+    }
 }
 
 // Global olarak erişilebilmesi için

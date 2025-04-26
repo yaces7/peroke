@@ -687,51 +687,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // ... Diğer event listener'lar devam ediyor ...
 });
 
-// Kontrol Et butonuna tıklandığında çağrılacak fonksiyon - kombinasyon mantığı düzeltildi
-document.getElementById('btn-kontrol-et')?.addEventListener('click', function() {
-    if (oyun) {
-        try {
-            // Tüm kartları kontrol et
-            const kombinasyonSonucu = oyun.tumKartlariKontrolEt();
-            const durumMesaji = document.getElementById('durum-mesaji');
-            
-            if (kombinasyonSonucu.basarili) {
-                // Başarılı kombinasyon - bulunan kartlar otomatik çıkarıldı
-                seciliKartlar = []; // Seçili kartları temizle
-                oyunDurumunuGuncelle();
-                
-                // Başarılı mesajı göster
-                if (durumMesaji) {
-                    durumMesaji.textContent = "Kombinasyon başarılı! " + kombinasyonSonucu.mesaj;
-                    durumMesaji.style.color = "#4CAF50";
-                    
-                    // 2 saniye sonra eski haline getir
-                    setTimeout(() => {
-                        durumMesaji.style.color = "";
-                        if (oyun.oyunDurumuGetir().aktifOyuncu === 0) {
-                            durumMesaji.textContent = "Sıra sizde. Desteden kart çekin veya açık kartı alın.";
-                        }
-                    }, 2000);
-                }
-            } else {
-                // Başarısız kombinasyon
-                if (durumMesaji) {
-                    durumMesaji.textContent = "Geçerli bir kombinasyon bulunamadı!";
-                    durumMesaji.style.color = "#f44336";
-                    
-                    // 2 saniye sonra eski haline getir
-                    setTimeout(() => {
-                        durumMesaji.style.color = "";
-                        if (oyun.oyunDurumuGetir().aktifOyuncu === 0) {
-                            durumMesaji.textContent = "Sıra sizde. Desteden kart çekin veya açık kartı alın.";
-                        }
-                    }, 2000);
-                }
-            }
-        } catch (error) {
-            console.error("Kombinasyon kontrolünde hata:", error);
-            alert("Kombinasyon kontrolü sırasında bir hata oluştu!");
-        }
+// Kontrol Et düğmesinin olay dinleyicisi
+document.getElementById('kontrolButonu').addEventListener('click', function() {
+    if (!oyun || !oyun.oyunBasladi) {
+        bilgiMesajiGoster('Önce oyunu başlatmalısınız!', 'hata');
+        return;
+    }
+    
+    const sonuc = oyun.tumKartlariKontrolEt();
+    
+    if (sonuc.basarili) {
+        // Kombinasyon başarılı
+        bilgiMesajiGoster(sonuc.mesaj, 'basari');
+        kartlariGoster(); // Kartları güncelle
+    } else {
+        // Kombinasyon başarısız
+        bilgiMesajiGoster(sonuc.mesaj, 'hata');
     }
 });
 

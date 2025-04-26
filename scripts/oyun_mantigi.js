@@ -19,6 +19,7 @@ class PeriyodikOkey {
         this.kazananOyuncu = null;
         this.oyuncuPuani = 0;
         this.botPuanlari = {};
+        this.fazlaKartiOlanOyuncu = 0; // 0: oyuncu, 1-3: botlar
     }
 
     /**
@@ -43,6 +44,10 @@ class PeriyodikOkey {
         // Oyun durumunu güncelle
         this.oyunDurumu = 'devam';
         this.aktifOyuncu = 0; // Oyuncu başlar
+        this.fazlaKartiOlanOyuncu = 0; // Oyuncunun 15 kartı olacak
+        
+        // 1 kart ekstra ekle
+        this.oyuncuKartlari.push(this.kalanKartlar.pop());
         
         // Mevcut oyun durumunu döndür
         return this.oyunDurumuGetir();
@@ -116,13 +121,13 @@ class PeriyodikOkey {
      * Kartları dağıt
      */
     kartlariDagit() {
-        // Oyuncu kartları
+        // Oyuncu kartları (başlangıçta 14 kart, sonra 1 kart daha alacak)
         this.oyuncuKartlari = [];
         for (let i = 0; i < 14; i++) {
             this.oyuncuKartlari.push(this.kalanKartlar.pop());
         }
         
-        // Bot kartları
+        // Bot kartları (her biri 14 kart)
         this.botKartlari = {};
         for (let botId = 1; botId <= this.botSayisi; botId++) {
             this.botKartlari[botId] = [];
@@ -140,6 +145,7 @@ class PeriyodikOkey {
         return {
             oyunDurumu: this.oyunDurumu,
             aktifOyuncu: this.aktifOyuncu,
+            fazlaKartiOlanOyuncu: this.fazlaKartiOlanOyuncu,
             oyuncuKartlari: this.oyuncuKartlari,
             botKartlariSayisi: Object.keys(this.botKartlari).reduce((acc, botId) => {
                 acc[botId] = this.botKartlari[botId].length;
@@ -162,6 +168,11 @@ class PeriyodikOkey {
             throw new Error("Şu anda sıra sizde değil!");
         }
         
+        // Fazla kart kontrolü
+        if (this.fazlaKartiOlanOyuncu === 0 && this.oyuncuKartlari.length >= 15) {
+            throw new Error("Zaten fazla kartınız var, önce bir kart atmalısınız!");
+        }
+        
         // Kalan kart kontrolü
         if (this.kalanKartlar.length === 0) {
             throw new Error("Destede kart kalmadı!");
@@ -170,6 +181,9 @@ class PeriyodikOkey {
         // Kart çek
         const cekilenKart = this.kalanKartlar.pop();
         this.oyuncuKartlari.push(cekilenKart);
+        
+        // Fazla kartı olan oyuncu güncellendi
+        this.fazlaKartiOlanOyuncu = 0;
         
         return cekilenKart;
     }
@@ -184,6 +198,11 @@ class PeriyodikOkey {
             throw new Error("Şu anda sıra sizde değil!");
         }
         
+        // Fazla kart kontrolü
+        if (this.fazlaKartiOlanOyuncu === 0 && this.oyuncuKartlari.length >= 15) {
+            throw new Error("Zaten fazla kartınız var, önce bir kart atmalısınız!");
+        }
+        
         // Açık kart kontrolü
         if (!this.acikKart) {
             throw new Error("Açık kart bulunmuyor!");
@@ -192,6 +211,9 @@ class PeriyodikOkey {
         // Açık kartı al
         const alinanKart = this.acikKart;
         this.oyuncuKartlari.push(alinanKart);
+        
+        // Fazla kartı olan oyuncu güncellendi
+        this.fazlaKartiOlanOyuncu = 0;
         
         // Açık kartı güncelle (son atılan karttan bir önceki)
         if (this.atilanKartlar.length > 1) {
@@ -226,6 +248,9 @@ class PeriyodikOkey {
         const atilanKart = this.oyuncuKartlari.splice(kartIndex, 1)[0];
         this.acikKart = atilanKart;
         this.atilanKartlar.push(atilanKart);
+        
+        // Fazla kartı olan oyuncu sıfırlandı (artık normal kart sayısına sahip)
+        this.fazlaKartiOlanOyuncu = null;
         
         // Bot sırasına geç
         this.aktifOyuncu = 1;
@@ -275,6 +300,10 @@ class PeriyodikOkey {
                 // Son bot ise sırayı oyuncuya ver
                 if (botId === this.botSayisi) {
                     this.aktifOyuncu = 0;
+                    
+                    // Oyuncunun sırası geldiğinde fazla kartı olmadığından
+                    // desteden 1 kart çekmesi gerekecek
+                    this.fazlaKartiOlanOyuncu = null;
                 }
             }, botId * 1000); // Her bot için gecikme süresi
         }
@@ -289,14 +318,24 @@ class PeriyodikOkey {
         // Bot kartları
         const botKartlari = this.botKartlari[botId] || [];
         
+        // Bot sırasını güncelle
+        this.aktifOyuncu = botId;
+        
         // Kart çek veya aç
         const rastgele = Math.random();
         let cekilenKart = null;
         
-        if (rastgele > 0.5 && this.acikKart) {
+        // Eğer önceki bot fazla kart bıraktıysa, bu bot fazla kartı alacak
+        if (this.fazlaKartiOlanOyuncu === botId - 1 || 
+            (this.fazlaKartiOlanOyuncu === this.botSayisi && botId === 1)) {
+            // Bu bot zaten fazla kartlı, kart çekmesine gerek yok
+        } else if (rastgele > 0.5 && this.acikKart) {
             // Açık kartı al
             cekilenKart = this.acikKart;
             botKartlari.push(cekilenKart);
+            
+            // Bu botta fazla kart olacak
+            this.fazlaKartiOlanOyuncu = botId;
             
             // Açık kartı güncelle
             if (this.atilanKartlar.length > 1) {
@@ -310,6 +349,9 @@ class PeriyodikOkey {
             // Desteden çek
             cekilenKart = this.kalanKartlar.pop();
             botKartlari.push(cekilenKart);
+            
+            // Bu botta fazla kart olacak
+            this.fazlaKartiOlanOyuncu = botId;
         }
         
         // Zorluk seviyesine göre hamle yap
@@ -334,6 +376,16 @@ class PeriyodikOkey {
         
         // Kartları güncelle
         this.botKartlari[botId] = botKartlari;
+        
+        // Fazla kartı olan oyuncu sıfırlandı (artık normal kart sayısına sahip)
+        this.fazlaKartiOlanOyuncu = null;
+        
+        // Sonraki bot sırasına geç
+        if (botId < this.botSayisi) {
+            this.aktifOyuncu = botId + 1;
+        } else {
+            this.aktifOyuncu = 0; // Oyuncuya geç
+        }
         
         // Bot kartları bittiyse
         if (botKartlari.length === 0) {
@@ -443,6 +495,10 @@ class PeriyodikOkey {
         // Oyun durumunu güncelle
         this.oyunDurumu = 'devam';
         this.aktifOyuncu = 0; // Oyuncu başlar
+        
+        // Oyuncuya ekstra kart ver
+        this.oyuncuKartlari.push(this.kalanKartlar.pop());
+        this.fazlaKartiOlanOyuncu = 0;
     }
 
     /**

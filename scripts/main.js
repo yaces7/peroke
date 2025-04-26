@@ -242,16 +242,121 @@ function botKartlariniGoster(botId, kartSayisi) {
     if (botKartlarDiv) {
         botKartlarDiv.innerHTML = '';
         
+        // Bot kartları için yuvaları oluştur
+        const kartDizilimi = document.createElement('div');
+        kartDizilimi.className = 'bot-kart-dizilimi';
+        kartDizilimi.style.display = 'flex';
+        kartDizilimi.style.width = '100%';
+        
         // Bot kartlarını oluştur (arka yüz)
         for (let i = 0; i < kartSayisi; i++) {
             const botKart = document.createElement('div');
             botKart.className = 'element-kart arka-yuz';
-            botKart.style.transform = 'scale(0.6)'; // %60 daha küçük
-            botKart.style.margin = '2px';
-            botKart.style.transformOrigin = 'center center';
             botKartlarDiv.appendChild(botKart);
         }
+        
+        // Kartta kaç tane olduğunu göster
+        const botBilgi = document.querySelector(`.bot-bilgi:has(+ #bot${botId}-kartlar)`);
+        if (botBilgi) {
+            const kartSayisiGosterge = botBilgi.querySelector('.bot-kart-sayisi');
+            if (kartSayisiGosterge) {
+                kartSayisiGosterge.textContent = `(${kartSayisi} kart)`;
+            } else {
+                const yeniGosterge = document.createElement('span');
+                yeniGosterge.className = 'bot-kart-sayisi';
+                yeniGosterge.textContent = `(${kartSayisi} kart)`;
+                botBilgi.appendChild(yeniGosterge);
+            }
+        }
     }
+}
+
+// Bot mesajı oluştur
+function botMesajiGoster(botId, mesajTipi = 'normal') {
+    // Her seferinde 1/5 ihtimalle mesaj gönder
+    if (Math.random() > 0.2) return;
+    
+    const botBilgi = document.querySelector(`.bot-bilgi:has(+ #bot${botId}-kartlar)`);
+    if (!botBilgi) return;
+    
+    // Mevcut bot mesajı varsa sil
+    const eskiMesaj = botBilgi.querySelector('.bot-mesaj');
+    if (eskiMesaj) {
+        eskiMesaj.remove();
+    }
+    
+    // Bot puanına göre mesajlar
+    const botPuani = (oyun.botPuanlari[botId] || 0);
+    const kartSayisi = oyun.botKartlari[botId]?.length || 0;
+    
+    // Mesaj setleri
+    const mesajlar = {
+        kazanmaya_yakin: [
+            'Sadece 1 yıldız daha!',
+            'Kazanmak üzereyim!',
+            'Çok yakındayım...',
+            'Bu el benim!',
+            'Neredeyse bitti!'
+        ],
+        iyi_durum: [
+            'İyi gidiyorum!',
+            'Durumum fena değil!',
+            'Yıldızları topluyorum!',
+            'Yakında kazanırım!'
+        ],
+        normal: [
+            'Hmmm, ne yapmalıyım?',
+            'Düşünüyorum...',
+            'Şansım bugün nasıl?',
+            'Bakalım ne olacak',
+            'İyi bir el olabilir'
+        ],
+        kotu_durum: [
+            'Bu kartlar hiç iyi değil!',
+            'Şansım kötü bugün...',
+            'Daha iyi bir el bekliyordum',
+            'Zor bir durumdayım'
+        ]
+    };
+    
+    // Mesaj tipini seç (bot durumuna göre)
+    let secilmisMesajTipi = mesajTipi;
+    
+    if (botPuani === 2) {
+        secilmisMesajTipi = 'kazanmaya_yakin';
+    } else if (botPuani === 1 || (kartSayisi <= 8 && botPuani > 0)) {
+        secilmisMesajTipi = 'iyi_durum';
+    } else if (kartSayisi >= 16) {
+        secilmisMesajTipi = 'kotu_durum';
+    }
+    
+    // Mesaj seç
+    const mesajListesi = mesajlar[secilmisMesajTipi] || mesajlar.normal;
+    const mesaj = mesajListesi[Math.floor(Math.random() * mesajListesi.length)];
+    
+    // Mesaj elementi oluştur
+    const mesajElement = document.createElement('span');
+    mesajElement.className = 'bot-mesaj bot-mesaj-animasyon';
+    mesajElement.textContent = mesaj;
+    
+    // Mesaj durumuna göre renk belirle
+    if (secilmisMesajTipi === 'kazanmaya_yakin') {
+        mesajElement.style.color = '#ff5722';
+    } else if (secilmisMesajTipi === 'iyi_durum') {
+        mesajElement.style.color = '#8bc34a';
+    } else if (secilmisMesajTipi === 'kotu_durum') {
+        mesajElement.style.color = '#9e9e9e';
+    }
+    
+    // Mesajı göster
+    botBilgi.appendChild(mesajElement);
+    
+    // Mesajı 4 saniye sonra kaldır
+    setTimeout(() => {
+        if (mesajElement.parentNode) {
+            mesajElement.remove();
+        }
+    }, 4000);
 }
 
 // Açık kartı göster
@@ -402,7 +507,13 @@ function oyunDurumunuGuncelle() {
     
     // Bot kartları
     Object.keys(oyunDurumu.botKartlariSayisi).forEach(botId => {
-        botKartlariniGoster(botId, oyunDurumu.botKartlariSayisi[botId]);
+        const kartSayisi = oyunDurumu.botKartlariSayisi[botId];
+        botKartlariniGoster(botId, kartSayisi);
+        
+        // Eğer bot sırası ise mesaj göster
+        if (oyunDurumu.aktifOyuncu == botId) {
+            setTimeout(() => botMesajiGoster(botId), 500);
+        }
     });
     
     // Yıldızları güncelle

@@ -414,17 +414,19 @@ body {
 /* Bot Alanları */
 .bot-alanlari {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    width: 100%;
     gap: 10px;
     margin: 10px 0;
 }
 
 .bot-alan {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 5px;
+    width: 100%;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 10px;
 }
 
 .bot-alan.gizli {
@@ -434,19 +436,46 @@ body {
 .bot-bilgi {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    margin-bottom: 5px;
 }
 
 .bot-isim {
     font-weight: bold;
 }
 
+.bot-mesaj {
+    color: #d1a7e2;
+    font-style: italic;
+    font-size: 0.9em;
+    margin-left: 10px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.bot-mesaj.aktif {
+    opacity: 1;
+}
+
 .bot-kartlar {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     gap: 5px;
-    min-height: 100px;
+    min-height: 70px;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+}
+
+/* Kart Yuvası Stillemesi */
+.kart-yuvasi {
+    width: 40px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    margin: 2px;
+    position: relative;
 }
 
 /* Orta Alan */
@@ -455,7 +484,7 @@ body {
     justify-content: center;
     align-items: center;
     gap: 20px;
-    margin: 20px 0;
+    margin: 15px 0;
     position: relative;
 }
 
@@ -481,7 +510,18 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
     gap: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.oyuncu-bilgi {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .oyuncu-isim {
@@ -491,9 +531,11 @@ body {
 
 .oyuncu-kartlari {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
     justify-content: center;
-    gap: 10px;
+    gap: 5px;
     min-height: 140px;
     padding: 10px;
     background-color: rgba(255, 255, 255, 0.1);
@@ -508,9 +550,9 @@ body {
 
 /* Element Kartı Stili */
 .element-kart {
-    width: 100px;
-    height: 140px;
-    border-radius: 10px;
+    width: 80px;
+    height: 120px;
+    border-radius: 8px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     background-color: #2a2a2a;
     display: flex;
@@ -521,6 +563,7 @@ body {
     transition: all 0.2s ease;
     position: relative;
     user-select: none;
+    flex-shrink: 0;
 }
 
 .element-kart.secili {
@@ -538,20 +581,20 @@ body {
 }
 
 .element-kart .sembol {
-    font-size: 2em;
+    font-size: 1.8em;
     font-weight: bold;
     margin: 5px 0;
 }
 
 .element-kart .isim {
-    font-size: 0.8em;
+    font-size: 0.7em;
     text-align: center;
     padding: 0 5px;
 }
 
 .element-kart .grup-periyot {
-    font-size: 0.7em;
-    margin-top: 10px;
+    font-size: 0.6em;
+    margin-top: 8px;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.3);
     padding: 2px 5px;
@@ -559,13 +602,39 @@ body {
 }
 
 .element-kart.arka-yuz {
+    width: 40px;
+    height: 60px;
     background: linear-gradient(45deg, #2a2a2a 25%, #333 25%, #333 50%, #2a2a2a 50%, #2a2a2a 75%, #333 75%);
     background-size: 20px 20px;
+    position: relative;
+}
+
+.element-kart.arka-yuz::before {
+    content: 'PO';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #9c27b0;
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 0 0 5px rgba(156, 39, 176, 0.5);
 }
 
 .element-kart.joker {
     background-color: #fff2cc;
     color: #333;
+}
+
+/* Bot kartları için özel stil */
+.bot-kartlar .element-kart.arka-yuz {
+    margin: 0 -10px 0 0;
+}
+
+/* İlk ve son kartlar için özel stil */
+.bot-kartlar .element-kart.arka-yuz:first-child,
+.bot-kartlar .element-kart.arka-yuz:last-child {
+    margin-right: 0;
 }
 
 /* Buton Stilleri */
@@ -700,31 +769,23 @@ button:disabled {
 
 /* Responsive Tasarım */
 @media (max-width: 768px) {
-    .bot-alanlari {
-        flex-direction: column;
-    }
-    
-    .orta-alan {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
     .oyuncu-butonlar {
         flex-wrap: wrap;
         justify-content: center;
     }
     
     .element-kart {
-        width: 80px;
-        height: 112px;
+        width: 65px;
+        height: 100px;
     }
     
     .element-kart .sembol {
         font-size: 1.5em;
     }
     
-    .secim-butonlar {
-        flex-direction: column;
+    .element-kart.arka-yuz {
+        width: 35px;
+        height: 50px;
     }
 }
 
@@ -739,13 +800,14 @@ button:disabled {
     animation: yildizParlama 1s ease-in-out;
 }
 
-/* Son Kartı Ver Butonu */
-#btn-son-karti-ver {
-    background-color: #e74c3c;
-    animation: dikkatCek 2s infinite alternate;
+/* Bot mesaj animasyonu */
+@keyframes mesajGoster {
+    0% { opacity: 0; transform: translateY(10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
-@keyframes dikkatCek {
-    0% { background-color: #e74c3c; transform: scale(1); }
-    100% { background-color: #c0392b; transform: scale(1.05); }
+.bot-mesaj-animasyon {
+    animation: mesajGoster 4s ease-in-out;
 }

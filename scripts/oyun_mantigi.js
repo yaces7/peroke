@@ -4,7 +4,7 @@
  */
 
 // ElementKartiSinifi sınıfını içe aktar (import)
-const { ElementKartiSinifi } = typeof require !== 'undefined' ? require('./kart_sablonu.js') : {};
+const { ElementKartiSinifi } = typeof require !== 'undefined' ? require('./element_karti.js') : {};
 
 /**
  * Oyun sınıfı
@@ -41,7 +41,7 @@ class PeriyodikOkey {
         this.oyuncu = {
             kartlar: [],
             kombinasyonlar: [],
-            yildiz: 0,
+            puan: 0,
             sirada: false
         };
         
@@ -51,7 +51,7 @@ class PeriyodikOkey {
                 id: i + 1,
                 kartlar: [],
                 kombinasyonlar: [],
-                yildiz: 0,
+                puan: 0,
                 sirada: false
             });
         }
@@ -67,7 +67,7 @@ class PeriyodikOkey {
      */
     oyunuBaslat(elementVerileri) {
         // Tüm kartları oluştur
-        this.kartlariOlustur();
+        this.kartlariOlustur(elementVerileri);
         
         // Kartları karıştır
         this.kartlariKaristir();
@@ -84,35 +84,35 @@ class PeriyodikOkey {
     }
     
     /**
-     * Oyun kartlarını oluşturur ve dağıtır
+     * Element kartlarını oluşturur
+     * @param {Array} elementVerileri Element verileri
      */
-    kartlariOlustur() {
-        // Element verilerini al
-        const elementVerileri = window.ELEMENT_VERILERI;
-        const jokerVerileri = window.JOKER_VERILERI;
-
-        if (!elementVerileri || elementVerileri.length === 0) {
-            console.error("Element verileri yüklenemedi!");
-            return;
-        }
-
-        // Kart destesini oluştur (2 takım kart ve 2 joker)
-        this.kartDestesi = new KartDestesi(elementVerileri, 2, 2);
-
-        // Her oyuncuya 14 kart dağıt
-        this.oyuncular.forEach(oyuncu => {
-            const cekilenKartlar = this.kartDestesi.kartlarCek(14);
-            oyuncu.kartlariAl(cekilenKartlar);
+    kartlariOlustur(elementVerileri) {
+        // Elementleri kartlara dönüştür
+        elementVerileri.forEach(element => {
+            const kart = new ElementKartiSinifi(element);
+            this.kartlar.push(kart);
         });
-
-        // Açık kartı belirle
-        const acikKart = this.kartDestesi.kartCek();
-        if (acikKart) {
-            this.kartDestesi.acikKartBelirle(acikKart);
-        }
-
-        // Arayüzü güncelle
-        this.arayuzuGuncelle();
+        
+        // Joker kartları ekle
+        this.jokerler.push(new ElementKartiSinifi({
+            id: 119,
+            sembol: "SE1",
+            isim: "Süper Element 1",
+            grupTuru: "Joker",
+            joker: true
+        }));
+        
+        this.jokerler.push(new ElementKartiSinifi({
+            id: 120,
+            sembol: "SE2",
+            isim: "Süper Element 2",
+            grupTuru: "Joker",
+            joker: true
+        }));
+        
+        // Tüm kartları birleştir
+        this.deste = [...this.kartlar, ...this.jokerler];
     }
     
     /**
@@ -267,7 +267,9 @@ class PeriyodikOkey {
         this.acikKart = null;
         
         // Oyuncunun elini kontrol et
-        return this.kombinasyonlariKontrolEt();
+        this.kombinasyonlariKontrolEt();
+        
+        return true;
     }
     
     /**
@@ -291,7 +293,9 @@ class PeriyodikOkey {
         this.oyuncu.kartlar.push(yeniKart);
         
         // Oyuncunun elini kontrol et
-        return this.kombinasyonlariKontrolEt();
+        this.kombinasyonlariKontrolEt();
+        
+        return true;
     }
     
     /**
@@ -309,30 +313,8 @@ class PeriyodikOkey {
         const gecerliGruplar = this.gruplariKontrolEt(kartlar);
         const gecerliPeriyotlar = this.periyotlariKontrolEt(kartlar);
         
-        // Hem grup hem de periyot kombinasyonu varsa yıldız kazandır
-        if (gecerliGruplar.length > 0 && gecerliPeriyotlar.length > 0) {
-            this.oyuncu.yildiz += 1;
-            
-            // Tüm kartları sil (sadece bir kart kalsın)
-            const kalacakKart = kartlar[0];
-            kartlar.length = 0;
-            kartlar.push(kalacakKart);
-            
-            // Oyun sonu kontrolü
-            if (this.oyuncu.yildiz >= 3) {
-                this.mevcutDurum = this.durumlar.OYUN_SONU;
-                return { 
-                    gecerli: true, 
-                    gruplar: gecerliGruplar, 
-                    periyotlar: gecerliPeriyotlar,
-                    oyunSonu: true,
-                    kazanan: 'oyuncu' 
-                };
-            }
-        }
-        
         return {
-            gecerli: gecerliGruplar.length > 0 && gecerliPeriyotlar.length > 0,
+            gecerli: gecerliGruplar.length > 0 || gecerliPeriyotlar.length > 0,
             gruplar: gecerliGruplar,
             periyotlar: gecerliPeriyotlar
         };
@@ -458,11 +440,11 @@ class PeriyodikOkey {
                 }
             }
             
-            // Botun kombinasyonlarını kontrol et
-            const kombinasyonSonucu = this.botKombinasyonKontrol(bot);
+            // Botun elini kontrol et
+            const kombinasyonlar = this.kombinasyonlariKontrolEt(bot.kartlar);
             
             // Bot kazandı mı kontrolü
-            if (kombinasyonSonucu.gecerli && bot.yildiz >= 3) {
+            if (bot.kartlar.length === 0) {
                 this.mevcutDurum = this.durumlar.OYUN_SONU;
                 return;
             }
@@ -473,31 +455,216 @@ class PeriyodikOkey {
     }
     
     /**
-     * Bot için kombinasyon kontrolü
-     * @param {Object} bot Kontrol edilecek bot
-     * @returns {Object} Kombinasyon sonucu
+     * Puan hesaplama
+     * @param {Object} kombinasyonlar Kombinasyonlar
+     * @returns {number} Toplam puan
      */
-    botKombinasyonKontrol(bot) {
-        // Rastgele kombinasyon olasılığı (zorluk seviyesine göre ayarlanabilir)
-        const kombinasyonOlasiligi = 0.15; // %15
+    puanHesapla(kombinasyonlar) {
+        let puan = 0;
         
-        if (Math.random() < kombinasyonOlasiligi) {
-            // Bot kombinasyon yaptı
-            bot.yildiz += 1;
-            
-            // Kartların çoğunu sil (sadece 1-2 kart kalsın)
-            const kalacakKartSayisi = Math.min(2, bot.kartlar.length);
-            const kalacakKartlar = bot.kartlar.slice(0, kalacakKartSayisi);
-            bot.kartlar = kalacakKartlar;
-            
-            return { gecerli: true, yildiz: bot.yildiz };
+        // Grup puanları: Her grup 10 puan
+        puan += kombinasyonlar.gruplar.length * 10;
+        
+        // Periyot puanları: Her periyot 5 puan
+        puan += kombinasyonlar.periyotlar.length * 5;
+        
+        // Joker kontrolü: Son kart joker ise puan 2 katına çıkar
+        const sonKartJoker = false; // TODO: Son kart kontrolü eklenecek
+        
+        if (sonKartJoker) {
+            puan *= 2;
         }
         
-        return { gecerli: false, yildiz: bot.yildiz };
+        return puan;
     }
 }
 
 // Dışa aktarma (export)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { PeriyodikOkey };
+}
+
+/**
+ * Element kartını DOM elementi olarak oluşturur
+ * @param {Object} element - Element verisi
+ * @param {number} takim - Kartın takım numarası (1 veya 2)
+ * @param {boolean} joker - Kartın joker olup olmadığı
+ * @return {HTMLElement} Oluşturulan kart DOM elementi
+ */
+function elementKartiOlusturDOM(element, takim = 1, jokerMi = false) {
+    if (!element) {
+        console.error("Element verisi eksik!");
+        return null;
+    }
+    
+    // Kart div'i oluştur
+    const kartDiv = document.createElement('div');
+    kartDiv.className = 'element-kart';
+    if (jokerMi) {
+        kartDiv.className += ' joker';
+    }
+    
+    // Periyodik tablo bilgilerini data öznitelikleri olarak ekle
+    kartDiv.dataset.atomNo = element.atom_no;
+    kartDiv.dataset.sembol = element.sembol;
+    kartDiv.dataset.grup = element.grup;
+    kartDiv.dataset.periyot = element.periyot;
+    kartDiv.dataset.takim = takim;
+    kartDiv.dataset.joker = jokerMi;
+    
+    // Kart içeriğini oluştur
+    if (jokerMi) {
+        // Joker kart içeriği
+        kartDiv.innerHTML = `
+            <div class="atom-no">J</div>
+            <div class="sembol">Jk</div>
+            <div class="isim">Joker</div>
+            <div class="grup-periyot">Joker</div>
+        `;
+    } else {
+        // Normal element kartı içeriği
+        kartDiv.innerHTML = `
+            <div class="atom-no">${element.atom_no}</div>
+            <div class="takim">T${takim}</div>
+            <div class="sembol">${element.sembol}</div>
+            <div class="isim">${element.isim}</div>
+            <div class="grup-periyot">G:${element.grup} P:${element.periyot}</div>
+        `;
+    }
+    
+    // Arka plan rengini element türüne göre ayarla
+    if (element.element_turu) {
+        let renkKodu;
+        switch (element.element_turu.toLowerCase()) {
+            case 'metal':
+            case 'alkali metal':
+            case 'toprak alkali metal':
+                renkKodu = '#b3e0ff'; // Açık mavi
+                break;
+            case 'ametal':
+            case 'halojen':
+                renkKodu = '#ffb3b3'; // Açık kırmızı
+                break;
+            case 'yarı metal':
+                renkKodu = '#ffe0b3'; // Açık turuncu
+                break;
+            case 'soy gaz':
+                renkKodu = '#d6b3ff'; // Açık mor
+                break;
+            default:
+                renkKodu = '#f2f2f2'; // Açık gri
+        }
+        kartDiv.style.backgroundColor = renkKodu;
+    } else {
+        // Grup numarasına göre renk
+        const grupRenkler = {
+            1: '#ffb3b3',  // Kırmızı
+            2: '#ffe0b3',  // Turuncu
+            13: '#ffffb3', // Sarı
+            14: '#b3ffb3', // Yeşil
+            15: '#b3e0ff', // Açık mavi
+            16: '#b3b3ff', // Mavi
+            17: '#d6b3ff', // Mor
+            18: '#ffb3e0'  // Pembe
+        };
+        
+        const renk = grupRenkler[element.grup] || '#f2f2f2';
+        kartDiv.style.backgroundColor = renk;
+    }
+    
+    // Joker kartlara özel stil
+    if (jokerMi) {
+        kartDiv.style.backgroundColor = '#ffffb3'; // Altın sarısı
+        kartDiv.style.borderColor = '#ffd700';
+    }
+    
+    // Kart seçimi olayı
+    kartDiv.addEventListener('click', (e) => {
+        // Diğer seçili kartları temizle
+        document.querySelectorAll('.element-kart.secili').forEach(kart => {
+            if (kart !== kartDiv) {
+                kart.classList.remove('secili');
+            }
+        });
+        
+        // Bu kartın seçili durumunu değiştir
+        kartDiv.classList.toggle('secili');
+        e.stopPropagation(); // Olay yayılımını durdur
+    });
+    
+    // Sürükleme özelliği ekle
+    kartDiv.setAttribute('draggable', 'true');
+    kartDiv.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', kartDiv.dataset.sembol);
+        e.dataTransfer.setData('kart', JSON.stringify({
+            atomNo: kartDiv.dataset.atomNo,
+            sembol: kartDiv.dataset.sembol,
+            grup: kartDiv.dataset.grup,
+            periyot: kartDiv.dataset.periyot,
+            takim: kartDiv.dataset.takim,
+            joker: kartDiv.dataset.joker
+        }));
+        setTimeout(() => {
+            kartDiv.classList.add('surukle');
+        }, 0);
+    });
+    
+    kartDiv.addEventListener('dragend', () => {
+        kartDiv.classList.remove('surukle');
+    });
+    
+    return kartDiv;
+}
+
+// Sürükleme olayları için işleyiciler
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDragEnter(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('surukle-uzerinde');
+}
+
+function handleDragLeave(e) {
+    e.currentTarget.classList.remove('surukle-uzerinde');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('surukle-uzerinde');
+    
+    // Sürüklenen kartın verilerini al
+    const kartVerisi = e.dataTransfer.getData('kart');
+    if (!kartVerisi) return;
+    
+    const kartBilgisi = JSON.parse(kartVerisi);
+    const sürüklenenKart = document.querySelector(`.element-kart.surukle`);
+    
+    if (sürüklenenKart) {
+        // Kart kombinasyon alanına taşınıyorsa
+        if (e.currentTarget.id === 'kombinasyon-icerik') {
+            e.currentTarget.appendChild(sürüklenenKart);
+        } 
+        // Kart oyuncu kartlarına taşınıyorsa
+        else if (e.currentTarget.id === 'oyuncu-kartlari') {
+            e.currentTarget.appendChild(sürüklenenKart);
+        }
+    }
+}
+
+// Fonksiyonları global scope'a ekle (tarayıcıda çalıştığında)
+if (typeof window !== 'undefined') {
+    window.elementKartiOlusturDOM = elementKartiOlusturDOM;
+    window.handleDragOver = handleDragOver;
+    window.handleDragEnter = handleDragEnter;
+    window.handleDragLeave = handleDragLeave;
+    window.handleDrop = handleDrop;
+}
+
+// Module.exports kontrolü
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { PeriyodikOkey, elementKartiOlusturDOM };
 } 

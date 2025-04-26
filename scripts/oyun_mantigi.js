@@ -164,8 +164,8 @@ class PeriyodikOkey {
      * Kartı çek (desteden)
      */
     kartiCek() {
-        // Sıra kontrolü
-        if (this.aktifOyuncu !== 0) {
+        // Sıra kontrolü - oyuncu için aktifOyuncu kontrolü
+        if (this.aktifOyuncu !== 0 && this.fazlaKartiOlanOyuncu === null) {
             throw new Error("Şu anda sizin sıranız değil!");
         }
         
@@ -176,12 +176,22 @@ class PeriyodikOkey {
         
         // Kart çek
         const cekilenKart = this.kalanKartlar.pop();
-        this.oyuncuKartlari.push(cekilenKart);
-        this.fazlaKartiOlanOyuncu = 0; // Oyuncunun fazla kartı var
-        this.oyuncuKartCekildi = true; // Oyuncu kart çekti
         
-        // Kartları sırala (daha kolay görüntülemek için)
-        this.kartlariSirala();
+        // Oyuncu mu çekiyor yoksa bot mu?
+        if (this.aktifOyuncu === 0) {
+            this.oyuncuKartlari.push(cekilenKart);
+            this.fazlaKartiOlanOyuncu = 0; // Oyuncunun fazla kartı var
+            this.oyuncuKartCekildi = true; // Oyuncu kart çekti
+            
+            // Kartları sırala (daha kolay görüntülemek için)
+            this.kartlariSirala();
+        } else {
+            // Bot çekiyor
+            const botId = this.aktifOyuncu;
+            this.botKartlari[botId].push(cekilenKart);
+            this.fazlaKartiOlanOyuncu = botId; // Botun fazla kartı var
+            this.oyuncuKartCekildi = true; // Bot kart çekti
+        }
         
         return cekilenKart;
     }
@@ -190,8 +200,8 @@ class PeriyodikOkey {
      * Açık kartı al
      */
     acikKartiAl() {
-        // Sıra kontrolü
-        if (this.aktifOyuncu !== 0) {
+        // Sıra kontrolü - oyuncu için aktifOyuncu kontrolü
+        if (this.aktifOyuncu !== 0 && this.fazlaKartiOlanOyuncu === null) {
             throw new Error("Şu anda sizin sıranız değil!");
         }
         
@@ -202,13 +212,25 @@ class PeriyodikOkey {
         
         // Açık kartı al
         const acikKart = this.acikKart;
-        this.oyuncuKartlari.push(acikKart);
-        this.acikKart = null;
-        this.fazlaKartiOlanOyuncu = 0; // Oyuncunun fazla kartı var
-        this.oyuncuKartCekildi = true; // Oyuncu kart çekti (açık karttan da olsa)
         
-        // Kartları sırala
-        this.kartlariSirala();
+        // Oyuncu mu çekiyor yoksa bot mu?
+        if (this.aktifOyuncu === 0) {
+            this.oyuncuKartlari.push(acikKart);
+            this.fazlaKartiOlanOyuncu = 0; // Oyuncunun fazla kartı var
+            this.oyuncuKartCekildi = true; // Oyuncu kart çekti (açık karttan da olsa)
+            
+            // Kartları sırala
+            this.kartlariSirala();
+        } else {
+            // Bot çekiyor
+            const botId = this.aktifOyuncu;
+            this.botKartlari[botId].push(acikKart);
+            this.fazlaKartiOlanOyuncu = botId; // Botun fazla kartı var
+            this.oyuncuKartCekildi = true; // Bot kart çekti
+        }
+        
+        // Açık kartı sıfırla
+        this.acikKart = null;
         
         return acikKart;
     }
@@ -342,6 +364,12 @@ class PeriyodikOkey {
         if (this.oyunDurumu !== 'devam') return false;
         if (botId <= 0 || botId > this.botSayisi) return false;
         
+        // Bot ID'si ve aktif oyuncu kontrolü
+        if (this.aktifOyuncu !== botId) {
+            console.error(`Hata: Aktif oyuncu Bot ${botId} değil, aktif oyuncu: ${this.aktifOyuncu}`);
+            return "hatali_sira";
+        }
+        
         const botSeviye = this.botZorlukSeviyesi;
         const botKartlari = this.botKartlari[botId];
         
@@ -353,24 +381,31 @@ class PeriyodikOkey {
             const acikKart = this.acikKart;
             let kartCekildi = false;
             
-            if (botSeviye === 'zor' && acikKart) {
-                // Zor bot için açık kartın değerli olup olmadığını kontrol et
-                const acikKartFaydali = this.botIcinKartFaydaliMi(botId, acikKart);
-                
-                if (acikKartFaydali) {
-                    console.log(`Bot ${botId} açık kartı alıyor:`, acikKart);
-                    this.acikKartiAl();
-                    kartCekildi = true;
+            try {
+                if (botSeviye === 'zor' && acikKart) {
+                    // Zor bot için açık kartın değerli olup olmadığını kontrol et
+                    const acikKartFaydali = this.botIcinKartFaydaliMi(botId, acikKart);
+                    
+                    if (acikKartFaydali) {
+                        console.log(`Bot ${botId} açık kartı alıyor:`, acikKart);
+                        this.aktifOyuncu = botId; // Aktif oyuncuyu güncelle
+                        this.acikKartiAl();
+                        kartCekildi = true;
+                    }
                 }
+                
+                // Açık kart alınmadıysa kapalı kart çek
+                if (!kartCekildi) {
+                    console.log(`Bot ${botId} kapalı kart çekiyor`);
+                    this.aktifOyuncu = botId; // Aktif oyuncuyu güncelle
+                    this.kartiCek();
+                }
+                
+                this.oyuncuKartCekildi = true;
+            } catch (error) {
+                console.error(`Bot ${botId} kart çekerken hata:`, error);
+                return "kart_cekme_hatasi";
             }
-            
-            // Açık kart alınmadıysa kapalı kart çek
-            if (!kartCekildi) {
-                console.log(`Bot ${botId} kapalı kart çekiyor`);
-                this.kartiCek();
-            }
-            
-            this.oyuncuKartCekildi = true;
         }
         
         // Kısa bir bekleme simüle et (stratejik düşünme)

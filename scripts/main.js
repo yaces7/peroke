@@ -206,15 +206,13 @@ function butonlariGuncelle() {
         return;
     }
     
+    // Kontrol et butonu her zaman aktif olmalı (sıra bizdeyken)
+    if (btnKontrolEt) btnKontrolEt.disabled = false;
+    
     // Kart çekilmiş mi kontrolü
     const kartCekilmis = oyun && oyun.oyuncuKartCekildi;
     
-    if (seciliKartlar.length >= 3) {
-        if (btnKontrolEt) btnKontrolEt.disabled = false;
-    } else {
-        if (btnKontrolEt) btnKontrolEt.disabled = true;
-    }
-    
+    // Kart çekilmişse VE bir kart seçiliyse kart ver butonu aktif olmalı
     if (seciliKartlar.length === 1 && kartCekilmis) {
         if (btnKartVer) btnKartVer.disabled = false;
     } else {
@@ -634,8 +632,22 @@ document.addEventListener('DOMContentLoaded', function() {
         ekraniGoster('oyun-baslangic-screen');
     });
     
-    document.getElementById('btn-ayarlar')?.addEventListener('click', function() {
-        ekraniGoster('ayarlar-screen');
+    document.getElementById('btn-nasil-oynanir')?.addEventListener('click', function() {
+        ekraniGoster('nasil-oynanir-screen');
+    });
+    
+    document.getElementById('btn-yapimcilar')?.addEventListener('click', function() {
+        ekraniGoster('yapimcilar-screen');
+    });
+    
+    // Yardım ekranından dönüş
+    document.getElementById('btn-yardim-geri')?.addEventListener('click', function() {
+        ekraniGoster('menu-screen');
+    });
+    
+    // Yapımcılar ekranından dönüş
+    document.getElementById('btn-yapimcilar-geri')?.addEventListener('click', function() {
+        ekraniGoster('menu-screen');
     });
     
     // Oyun başlangıç ekranı

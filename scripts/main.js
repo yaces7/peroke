@@ -1004,8 +1004,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('oyun-sonu-ekrani').classList.add('gizli');
             document.getElementById('oyun-ekrani').classList.remove('gizli');
             
-            // Yeni oyun başlat
+            // Test kartlarını oluştur
             testKartlariOlustur();
+            
+            // İlk tur başlat
             turBaslat();
         });
     }

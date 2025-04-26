@@ -1048,31 +1048,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Ayarlar ekranını göster
         document.getElementById('ana-menu-ekrani').classList.add('gizli');
-        document.getElementById('ayarlar-ekrani').classList.remove('gizli');
-        
-        // Ayarları Kaydet butonuna yeni bir işlev ekle
-        document.getElementById('ayarlar-kaydet-btn').onclick = function() {
-            // Ayarları kaydet
-            const ayarlar = {
-                botSayisi: parseInt(document.getElementById('bot-sayisi').value),
-                zorlukSeviyesi: document.getElementById('zorluk-seviyesi').value,
-                sesEfektleri: document.getElementById('ses-efektleri').checked,
-                muzik: document.getElementById('muzik').checked
-            };
-            
-            localStorage.setItem('periyodikOkey_ayarlar', JSON.stringify(ayarlar));
-            console.log("Ayarlar kaydedildi:", ayarlar);
-            
-            // Oyun ekranına geç ve kartları oluştur
-            document.getElementById('ayarlar-ekrani').classList.add('gizli');
-            document.getElementById('oyun-ekrani').classList.remove('gizli');
-            
-            // Kartları oluştur
-            kartlariOlustur();
-            
-            // İlk tur başlat
-            turBaslat();
-        };
+        document.getElementById('oyun-ekrani').classList.remove('gizli');
+        kartlariOlustur();
+        turBaslat();
     });
     
     // Ekranlardan ana menüye dönüş butonları
@@ -1131,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('oyun-ekrani').classList.remove('gizli');
             
             // Test kartlarını oluştur
-            testKartlariOlustur();
+            kartlariOlustur();
             
             // İlk tur başlat
             turBaslat();

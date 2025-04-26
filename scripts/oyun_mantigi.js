@@ -67,7 +67,7 @@ class PeriyodikOkey {
      */
     oyunuBaslat(elementVerileri) {
         // Tüm kartları oluştur
-        this.kartlariOlustur(elementVerileri);
+        this.kartlariOlustur();
         
         // Kartları karıştır
         this.kartlariKaristir();
@@ -84,35 +84,35 @@ class PeriyodikOkey {
     }
     
     /**
-     * Element kartlarını oluşturur
-     * @param {Array} elementVerileri Element verileri
+     * Oyun kartlarını oluşturur ve dağıtır
      */
-    kartlariOlustur(elementVerileri) {
-        // Elementleri kartlara dönüştür
-        elementVerileri.forEach(element => {
-            const kart = new ElementKartiSinifi(element);
-            this.kartlar.push(kart);
+    kartlariOlustur() {
+        // Element verilerini al
+        const elementVerileri = window.ELEMENT_VERILERI;
+        const jokerVerileri = window.JOKER_VERILERI;
+
+        if (!elementVerileri || elementVerileri.length === 0) {
+            console.error("Element verileri yüklenemedi!");
+            return;
+        }
+
+        // Kart destesini oluştur (2 takım kart ve 2 joker)
+        this.kartDestesi = new KartDestesi(elementVerileri, 2, 2);
+
+        // Her oyuncuya 14 kart dağıt
+        this.oyuncular.forEach(oyuncu => {
+            const cekilenKartlar = this.kartDestesi.kartlarCek(14);
+            oyuncu.kartlariAl(cekilenKartlar);
         });
-        
-        // Joker kartları ekle
-        this.jokerler.push(new ElementKartiSinifi({
-            id: 119,
-            sembol: "SE1",
-            isim: "Süper Element 1",
-            grupTuru: "Joker",
-            joker: true
-        }));
-        
-        this.jokerler.push(new ElementKartiSinifi({
-            id: 120,
-            sembol: "SE2",
-            isim: "Süper Element 2",
-            grupTuru: "Joker",
-            joker: true
-        }));
-        
-        // Tüm kartları birleştir
-        this.deste = [...this.kartlar, ...this.jokerler];
+
+        // Açık kartı belirle
+        const acikKart = this.kartDestesi.kartCek();
+        if (acikKart) {
+            this.kartDestesi.acikKartBelirle(acikKart);
+        }
+
+        // Arayüzü güncelle
+        this.arayuzuGuncelle();
     }
     
     /**

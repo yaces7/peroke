@@ -1045,7 +1045,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Global erişim için element verilerini ekleyelim
 window.ELEMENT_VERILERI = ELEMENT_VERILERI; 
-
 // Event Listeners
 function eventListenerleriEkle() {
     // Ana menü butonları

@@ -254,6 +254,54 @@ function botKartlariniGoster(botId, kartSayisi) {
     }
 }
 
+// Açık kartı göster
+function acikKartiGoster(kart) {
+    const acikKartAlani = document.querySelector('.acik-kart-alani');
+    if (acikKartAlani) {
+        acikKartAlani.innerHTML = '';
+        
+        if (kart) {
+            const kartElement = elementKartiOlustur(kart, 1.0);
+            kartElement.classList.add('acik-kart');
+            acikKartAlani.appendChild(kartElement);
+        } else {
+            const bosKart = document.createElement('div');
+            bosKart.className = 'element-kart bos-kart';
+            bosKart.textContent = 'Açık kart yok';
+            acikKartAlani.appendChild(bosKart);
+        }
+    }
+}
+
+// Yıldızları güncelle
+function yildizlariGuncelle(oyuncuPuani, botPuanlari) {
+    // Oyuncu yıldızları
+    const oyuncuYildizlar = document.getElementById('oyuncu-yildizlar');
+    if (oyuncuYildizlar) {
+        oyuncuYildizlar.innerHTML = '';
+        for (let i = 0; i < oyuncuPuani; i++) {
+            const yildiz = document.createElement('span');
+            yildiz.className = 'yildiz';
+            yildiz.innerHTML = '★';
+            oyuncuYildizlar.appendChild(yildiz);
+        }
+    }
+    
+    // Bot yıldızları
+    Object.keys(botPuanlari).forEach(botId => {
+        const botYildizlar = document.getElementById(`bot${botId}-yildizlar`);
+        if (botYildizlar) {
+            botYildizlar.innerHTML = '';
+            for (let i = 0; i < botPuanlari[botId]; i++) {
+                const yildiz = document.createElement('span');
+                yildiz.className = 'yildiz';
+                yildiz.innerHTML = '★';
+                botYildizlar.appendChild(yildiz);
+            }
+        }
+    });
+}
+
 // Oyunu başlat
 async function oyunuBaslat() {
     try {
@@ -294,6 +342,9 @@ async function oyunuBaslat() {
                 botKartlariniGoster(i, 14); // Her bot 14 kart ile başlar
             }
             
+            // Açık kartı göster
+            acikKartiGoster(oyunDurumu.acikKart);
+            
             // Kalan kart sayısını güncelle
             const kalanKartElement = document.getElementById('kalan-kart');
             if (kalanKartElement) {
@@ -305,6 +356,9 @@ async function oyunuBaslat() {
             if (durumMesajiElement) {
                 durumMesajiElement.textContent = "Sıra sizde. Desteden kart çekin veya açık kartı alın.";
             }
+            
+            // Yıldızları güncelle
+            yildizlariGuncelle(oyunDurumu.oyuncuPuani, oyunDurumu.botPuanlari);
             
             // Butonları güncelle
             butonlariGuncelle();
@@ -326,6 +380,89 @@ function createElement() {
     if (!window.ELEMENT_VERILERI && elementVerileri.length > 0) {
         window.ELEMENT_VERILERI = elementVerileri;
     }
+}
+
+// Oyun durumunu güncelle
+function oyunDurumunuGuncelle() {
+    if (!oyun) return;
+    
+    const oyunDurumu = oyun.oyunDurumuGetir();
+    
+    // Kalan kart
+    const kalanKartElement = document.getElementById('kalan-kart');
+    if (kalanKartElement) {
+        kalanKartElement.textContent = oyunDurumu.kalanKart;
+    }
+    
+    // Açık kart
+    acikKartiGoster(oyunDurumu.acikKart);
+    
+    // Oyuncu kartları
+    oyuncuKartlariniGoster(oyunDurumu.oyuncuKartlari);
+    
+    // Bot kartları
+    Object.keys(oyunDurumu.botKartlariSayisi).forEach(botId => {
+        botKartlariniGoster(botId, oyunDurumu.botKartlariSayisi[botId]);
+    });
+    
+    // Yıldızları güncelle
+    yildizlariGuncelle(oyunDurumu.oyuncuPuani, oyunDurumu.botPuanlari);
+    
+    // Durum mesajı
+    const durumMesajiElement = document.getElementById('durum-mesaji');
+    if (durumMesajiElement) {
+        if (oyunDurumu.aktifOyuncu === 0) {
+            durumMesajiElement.textContent = "Sıra sizde. Desteden kart çekin veya açık kartı alın.";
+        } else {
+            durumMesajiElement.textContent = `Bot ${oyunDurumu.aktifOyuncu} oynuyor...`;
+        }
+    }
+    
+    // Oyun sonu kontrolü
+    if (oyunDurumu.oyunDurumu === 'bitti' && oyunDurumu.kazananOyuncu !== null) {
+        oyunSonuGoster(oyunDurumu.kazananOyuncu, oyunDurumu.oyuncuPuani, oyunDurumu.botPuanlari);
+    }
+    
+    // Butonları güncelle
+    butonlariGuncelle();
+}
+
+// Oyun sonu ekranını göster
+function oyunSonuGoster(kazananId, oyuncuPuani, botPuanlari) {
+    // Sonuç mesajı
+    const sonucMesaji = document.getElementById('sonuc-mesaji');
+    if (sonucMesaji) {
+        if (kazananId === 0) {
+            sonucMesaji.textContent = "Tebrikler! Oyunu kazandınız!";
+            sonucMesaji.className = "sonuc-mesaj kazanan";
+        } else {
+            sonucMesaji.textContent = `Üzgünüm! Bot ${kazananId} oyunu kazandı.`;
+            sonucMesaji.className = "sonuc-mesaj kaybeden";
+        }
+    }
+    
+    // Skor tablosu
+    const skorListe = document.getElementById('skor-liste');
+    if (skorListe) {
+        skorListe.innerHTML = '';
+        
+        // Oyuncu skoru
+        const oyuncuSkor = document.createElement('div');
+        oyuncuSkor.className = kazananId === 0 ? "skor-satir skor-kazanan" : "skor-satir";
+        oyuncuSkor.innerHTML = `<span>${OYUN_AYARLARI.oyuncuIsmi}</span> <span>${oyuncuPuani} yıldız</span>`;
+        skorListe.appendChild(oyuncuSkor);
+        
+        // Bot skorları
+        Object.keys(botPuanlari).forEach(botId => {
+            const botSkor = document.createElement('div');
+            botSkor.className = parseInt(botId) === kazananId ? "skor-satir skor-kazanan" : "skor-satir";
+            botSkor.innerHTML = `<span>Bot ${botId}</span> <span>${botPuanlari[botId]} yıldız</span>`;
+            skorListe.appendChild(botSkor);
+        });
+    }
+    
+    // Oyun sonu ekranını göster
+    ekraniGoster('oyun-sonu-screen');
 }
 
 // Sayfa yüklendiğinde çalış
@@ -406,6 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (kombinasyonSonuc) {
                 alert("Tebrikler! Geçerli bir kombinasyon oluşturdunuz.");
                 seciliKartlar = [];
+                oyunDurumunuGuncelle();
             } else {
                 alert("Geçersiz kombinasyon. Lütfen aynı grupta veya periyotta olan kartları seçin.");
             }
@@ -416,8 +554,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (oyun) {
             try {
                 const cekilenKart = oyun.kartiCek();
-                oyuncuKartlariniGoster(oyun.oyuncuKartlari);
                 document.getElementById('durum-mesaji').textContent = "Kart çektiniz. Şimdi bir kart atın.";
+                oyunDurumunuGuncelle();
             } catch (error) {
                 alert(error.message);
             }
@@ -428,8 +566,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (oyun) {
             try {
                 const alinanKart = oyun.acikKartiAl();
-                oyuncuKartlariniGoster(oyun.oyuncuKartlari);
                 document.getElementById('durum-mesaji').textContent = "Açık kartı aldınız. Şimdi bir kart atın.";
+                oyunDurumunuGuncelle();
             } catch (error) {
                 alert(error.message);
             }
@@ -446,8 +584,13 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 oyun.kartVer(seciliKartlar[0]);
                 seciliKartlar = [];
-                oyuncuKartlariniGoster(oyun.oyuncuKartlari);
                 document.getElementById('durum-mesaji').textContent = "Kart attınız. Sıra botlarda...";
+                oyunDurumunuGuncelle();
+                
+                // Bot hamlelerini kontrol et (botlar hamle yaptıktan sonra)
+                setTimeout(function() {
+                    oyunDurumunuGuncelle();
+                }, 2000);
             } catch (error) {
                 alert(error.message);
             }
@@ -459,12 +602,21 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const sonuc = oyun.sonKartiBotaVer();
                 seciliKartlar = [];
-                oyuncuKartlariniGoster(oyun.oyuncuKartlari);
                 document.getElementById('durum-mesaji').textContent = "Son kartınızı verdiniz ve bir yıldız kazandınız!";
+                oyunDurumunuGuncelle();
             } catch (error) {
                 alert(error.message);
             }
         }
+    });
+    
+    // Oyun sonu butonları
+    document.getElementById('btn-tekrar-oyna')?.addEventListener('click', function() {
+        oyunuBaslat();
+    });
+    
+    document.getElementById('btn-ana-menuye-don')?.addEventListener('click', function() {
+        ekraniGoster('menu-screen');
     });
     
     // İlk ekranı göster

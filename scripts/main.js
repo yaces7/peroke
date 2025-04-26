@@ -89,39 +89,20 @@ function varsayilanElementleriGetir() {
     return varsayilanElementler;
 }
     
-// Ekranları gösterme/gizleme
-function ekraniGoster(ekranId) {
-    // Tüm ekranları gizle
-    document.querySelectorAll('.yukleniyor-ekrani, .menu-container, #oyunEkrani, #nasilOynanirEkrani, #yapimcilarEkrani').forEach(ekran => {
-        ekran.classList.add('gizli');
+    // Ekranları gösterme/gizleme
+    function ekraniGoster(ekranId) {
+    console.log("Ekran değiştiriliyor: " + ekranId);
+        document.querySelectorAll('.ekran').forEach(ekran => {
+            ekran.classList.add('gizli');
+        ekran.style.display = 'none';
     });
-    
-    // İstenilen ekranı göster
-    document.getElementById(ekranId).classList.remove('gizli');
-}
-
-// Menü ekranına geçiş
-function menuEkraniniGoster() {
-    ekraniGoster('menuEkrani');
-}
-
-// Oyun ekranına geçiş
-function oyunEkraniniGoster() {
-    ekraniGoster('oyunEkrani');
-    // Oyun başlatılmadıysa başlat
-    if (!window.oyun || !window.oyun.oyunDurumuGetir().devamEdiyor) {
-        oyunuBaslat();
+    const ekran = document.getElementById(ekranId);
+    if (ekran) {
+        ekran.classList.remove('gizli');
+        ekran.style.display = 'block';
+    } else {
+        console.error(`Ekran bulunamadı: ${ekranId}`);
     }
-}
-
-// Nasıl Oynanır ekranına geçiş
-function nasilOynanirEkraniniGoster() {
-    ekraniGoster('nasilOynanirEkrani');
-}
-
-// Yapımcılar ekranına geçiş
-function yapimcilarEkraniniGoster() {
-    ekraniGoster('yapimcilarEkrani');
 }
 
 // Element kartı oluşturma
@@ -225,13 +206,15 @@ function butonlariGuncelle() {
         return;
     }
     
-    // Kontrol et butonu her zaman aktif olmalı (sıra bizdeyken)
-    if (btnKontrolEt) btnKontrolEt.disabled = false;
-    
     // Kart çekilmiş mi kontrolü
     const kartCekilmis = oyun && oyun.oyuncuKartCekildi;
     
-    // Kart çekilmişse VE bir kart seçiliyse kart ver butonu aktif olmalı
+    if (seciliKartlar.length >= 3) {
+        if (btnKontrolEt) btnKontrolEt.disabled = false;
+    } else {
+        if (btnKontrolEt) btnKontrolEt.disabled = true;
+    }
+    
     if (seciliKartlar.length === 1 && kartCekilmis) {
         if (btnKartVer) btnKartVer.disabled = false;
     } else {
@@ -421,7 +404,7 @@ function aktifOyuncuyuGuncelle(aktifOyuncuIndex) {
         // Oyuncunun sırası geldiğinde butonları etkinleştir
         document.getElementById('btn-desteyi-ac').disabled = false;
         document.getElementById('btn-acik-karti-al').disabled = false;
-    } else {
+        } else {
         const botAlan = document.getElementById(`bot${aktifOyuncuIndex}-alan`);
         if (botAlan) {
             botAlan.classList.add('aktif-oyuncu');
@@ -644,67 +627,173 @@ function oyunSonuGoster(kazananId, oyuncuPuani, botPuanlari) {
 
 // Sayfa yüklendiğinde çalış
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Periyodik Okey oyunu yükleniyor...');
-    
-    // Yükleme ekranını gizle, menü ekranını göster
-    document.getElementById('yukleniyorEkrani').classList.add('gizli');
-    document.getElementById('menuEkrani').classList.remove('gizli');
+    console.log('Periyodik Okey oyunu başlatılıyor...');
     
     // Ana menü butonları
-    document.getElementById('baslatButonu')?.addEventListener('click', function() {
-        document.getElementById('menuEkrani').classList.add('gizli');
-        document.getElementById('yukleniyorEkrani').classList.remove('gizli');
+    document.getElementById('btn-oyuna-basla')?.addEventListener('click', function() {
+        ekraniGoster('oyun-baslangic-screen');
+    });
+    
+    document.getElementById('btn-ayarlar')?.addEventListener('click', function() {
+        ekraniGoster('ayarlar-screen');
+    });
+    
+    // Oyun başlangıç ekranı
+    document.getElementById('btn-oyunu-baslat')?.addEventListener('click', function() {
+        // Seçilen ayarları al
+        const botSayisiButonu = document.querySelector('.secim-buton.secili[data-value="1"], .secim-buton.secili[data-value="2"], .secim-buton.secili[data-value="3"]');
+        const zorlukButonu = document.querySelector('.secim-buton.secili[data-value="kolay"], .secim-buton.secili[data-value="orta"], .secim-buton.secili[data-value="zor"]');
         
-        // Elementleri yükle ve oyunu başlat
-        setTimeout(function() {
-            oyunuBaslat();
-        }, 1500);
-    });
-    
-    document.getElementById('nasilOynanirButonu')?.addEventListener('click', function() {
-        document.getElementById('menuEkrani').classList.add('gizli');
-        document.getElementById('nasilOynanirEkrani').classList.remove('gizli');
-    });
-    
-    document.getElementById('yapimcilarButonu')?.addEventListener('click', function() {
-        document.getElementById('menuEkrani').classList.add('gizli');
-        document.getElementById('yapimcilarEkrani').classList.remove('gizli');
-    });
-    
-    // Geri butonları
-    document.querySelectorAll('.geri-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            // Tüm ekranları gizle
-            document.getElementById('nasilOynanirEkrani').classList.add('gizli');
-            document.getElementById('yapimcilarEkrani').classList.add('gizli');
-            document.getElementById('oyunEkrani').classList.add('gizli');
+        if (botSayisiButonu) {
+            OYUN_AYARLARI.botSayisi = parseInt(botSayisiButonu.dataset.value);
+        }
+        
+        if (zorlukButonu) {
+            OYUN_AYARLARI.zorlukSeviyesi = zorlukButonu.dataset.value;
+        }
+        
+        const oyuncuIsmiInput = document.getElementById('baslangic-oyuncu-ismi');
+        if (oyuncuIsmiInput) {
+            OYUN_AYARLARI.oyuncuIsmi = oyuncuIsmiInput.value || 'Oyuncu';
+        }
+        
+        // Yükleme ekranını göster
+        ekraniGoster('yukleme-screen');
+        
+        // Yükleme animasyonunu başlat
+        const yuklemeIlerleyis = document.querySelector('.yukleme-ilerleyis');
+        if (yuklemeIlerleyis) {
+            yuklemeIlerleyis.style.width = '0%';
             
-            // Ana menüyü göster
-            document.getElementById('menuEkrani').classList.remove('gizli');
-        });
+            let yuklemeYuzdesi = 0;
+            const yuklemeInterval = setInterval(function() {
+                yuklemeYuzdesi += 2;
+                yuklemeIlerleyis.style.width = yuklemeYuzdesi + '%';
+                
+                if (yuklemeYuzdesi >= 100) {
+                    clearInterval(yuklemeInterval);
+                    // Oyunu başlat
+                    setTimeout(function() {
+                        oyunuBaslat();
+                    }, 500);
+                }
+            }, 50);
+        } else {
+            // İlerleyiş çubuğu yoksa direkt başlat
+            setTimeout(function() {
+                oyunuBaslat();
+            }, 2000);
+        }
     });
     
-    // ... Diğer event listener'lar devam ediyor ...
-});
-
-// Kontrol Et düğmesinin olay dinleyicisi
-document.getElementById('kontrolButonu').addEventListener('click', function() {
-    if (!oyun || !oyun.oyunBasladi) {
-        bilgiMesajiGoster('Önce oyunu başlatmalısınız!', 'hata');
-        return;
-    }
+    document.getElementById('btn-baslangic-iptal')?.addEventListener('click', function() {
+        ekraniGoster('menu-screen');
+    });
     
-    const sonuc = oyun.tumKartlariKontrolEt();
+    // Oyun butonları
+    document.getElementById('btn-kontrol-et')?.addEventListener('click', function() {
+        if (oyun) {
+            // Artık seçili kartları değil, tüm kartları kontrol ediyoruz
+            const kombinasyonSonuc = oyun.tumKartlariKontrolEt();
+            
+            if (kombinasyonSonuc) {
+                // Başarılı kombinasyon - kartlar otomatik çıkarıldı
+                seciliKartlar = []; // Seçili kartları temizle
+                oyunDurumunuGuncelle();
+                
+                // Başarılı mesajı göster
+                const durumMesaji = document.getElementById('durum-mesaji');
+                if (durumMesaji) {
+                    durumMesaji.textContent = "Kombinasyon başarılı!";
+                    durumMesaji.style.color = "#4CAF50";
+                    
+                    // 2 saniye sonra eski haline getir
+        setTimeout(() => {
+                        durumMesaji.style.color = "";
+                        if (oyun.oyunDurumuGetir().aktifOyuncu === 0) {
+                            durumMesaji.textContent = "Sıra sizde. Desteden kart çekin veya açık kartı alın.";
+                        }
+                    }, 2000);
+                }
+            } else {
+                // Başarısız kombinasyon
+                alert("Geçerli bir kombinasyon bulunamadı veya çok fazla kart kalıyor!");
+            }
+        }
+    });
     
-    if (sonuc.basarili) {
-        // Kombinasyon başarılı
-        bilgiMesajiGoster(sonuc.mesaj, 'basari');
-        kartlariGoster(); // Kartları güncelle
-    } else {
-        // Kombinasyon başarısız
-        bilgiMesajiGoster(sonuc.mesaj, 'hata');
-    }
-});
+    document.getElementById('btn-desteyi-ac')?.addEventListener('click', function() {
+        if (oyun) {
+        try {
+            const cekilenKart = oyun.kartiCek();
+                document.getElementById('durum-mesaji').textContent = "Kart çektiniz. Şimdi bir kart atın.";
+                oyunDurumunuGuncelle();
+        } catch (error) {
+            alert(error.message);
+            }
+        }
+    });
+    
+    document.getElementById('btn-acik-karti-al')?.addEventListener('click', function() {
+        if (oyun) {
+        try {
+            const alinanKart = oyun.acikKartiAl();
+                document.getElementById('durum-mesaji').textContent = "Açık kartı aldınız. Şimdi bir kart atın.";
+                oyunDurumunuGuncelle();
+        } catch (error) {
+            alert(error.message);
+            }
+        }
+    });
+    
+    document.getElementById('btn-kart-ver')?.addEventListener('click', function() {
+        if (seciliKartlar.length !== 1) {
+            alert("Lütfen atmak için bir kart seçin!");
+            return;
+        }
+        
+        if (oyun) {
+            try {
+                oyun.kartVer(seciliKartlar[0]);
+                seciliKartlar = [];
+                document.getElementById('durum-mesaji').textContent = "Kart attınız. Sıra botlarda...";
+                oyunDurumunuGuncelle();
+                
+                // Bot hamlelerini kontrol et (botlar hamle yaptıktan sonra)
+                setTimeout(function() {
+                    oyunDurumunuGuncelle();
+                }, 2000);
+        } catch (error) {
+            alert(error.message);
+        }
+        }
+    });
+    
+    document.getElementById('btn-son-karti-ver')?.addEventListener('click', function() {
+        if (oyun && oyun.oyuncuKartlari.length === 1) {
+            try {
+                const sonuc = oyun.sonKartiBotaVer();
+                seciliKartlar = [];
+                document.getElementById('durum-mesaji').textContent = "Son kartınızı verdiniz ve bir yıldız kazandınız!";
+                oyunDurumunuGuncelle();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    });
+    
+    // Oyun sonu butonları
+    document.getElementById('btn-tekrar-oyna')?.addEventListener('click', function() {
+                oyunuBaslat();
+    });
+    
+    document.getElementById('btn-ana-menuye-don')?.addEventListener('click', function() {
+        ekraniGoster('menu-screen');
+    });
+    
+    // İlk ekranı göster
+        ekraniGoster('menu-screen');
+    });
 
 // Botların sıra geçişi sırasında takılma sorununu engellemek için güvenlik mekanizması
 let sonAktifOyuncu = 0;
@@ -776,58 +865,3 @@ function botSirasiGuvenligi() {
 
 // Periyodik olarak bot sırası kontrolü yap (her saniye)
 setInterval(botSirasiGuvenligi, 1000);
-
-// DOM elemanlarını seçme
-document.addEventListener("DOMContentLoaded", function() {
-    // Mevcut seçiciler...
-    
-    // Menü düğmeleri
-    const baslatButonu = document.getElementById('baslatButonu');
-    const nasilOynanirButonu = document.getElementById('nasilOynanirButonu');
-    const yapimcilarButonu = document.getElementById('yapimcilarButonu');
-    const geriButonlari = document.querySelectorAll('.geri-btn');
-    
-    // Ekranlar
-    const menuEkrani = document.getElementById('menuEkrani');
-    const nasilOynanirEkrani = document.getElementById('nasilOynanirEkrani');
-    const yapimcilarEkrani = document.getElementById('yapimcilarEkrani');
-    const oyunEkrani = document.getElementById('oyunEkrani');
-    
-    // Menü butonları event dinleyicileri
-    baslatButonu.addEventListener('click', function() {
-        menuEkrani.classList.add('gizli');
-        oyunEkrani.classList.remove('gizli');
-        oyunuBaslat();
-    });
-    
-    nasilOynanirButonu.addEventListener('click', function() {
-        menuEkrani.classList.add('gizli');
-        nasilOynanirEkrani.classList.remove('gizli');
-    });
-    
-    yapimcilarButonu.addEventListener('click', function() {
-        menuEkrani.classList.add('gizli');
-        yapimcilarEkrani.classList.remove('gizli');
-    });
-    
-    // Geri butonları için event dinleyicileri
-    geriButonlari.forEach(button => {
-        button.addEventListener('click', function() {
-            // Tüm ekranları gizle
-            nasilOynanirEkrani.classList.add('gizli');
-            yapimcilarEkrani.classList.add('gizli');
-            oyunEkrani.classList.add('gizli');
-            
-            // Ana menüyü göster
-            menuEkrani.classList.remove('gizli');
-            
-            // Eğer oyun ekranından dönüldüyse oyunu sıfırla
-            if (!oyunEkrani.classList.contains('gizli')) {
-                // Oyun sıfırlama işlemleri eklenebilir
-                console.log("Oyun sıfırlanıyor...");
-            }
-        });
-    });
-    
-    // ... Mevcut event dinleyicileri devam ediyor
-});

@@ -288,7 +288,7 @@ class PeriyodikOkey {
         if (kartIndex === -1) {
             throw new Error("Kart bulunamadı!");
         }
-        
+
         // Kartı çıkar
         const atilanKart = this.oyuncuKartlari.splice(kartIndex, 1)[0];
         this.acikKart = atilanKart;
@@ -625,159 +625,161 @@ class PeriyodikOkey {
     }
 
     /**
-     * Oyuncunun tüm kartlarını kontrol eden ve otomatik kombinasyonları çıkaran metod
+     * Tüm kartları otomatik olarak kontrol eder ve geriye 1 kart kalıyorsa başarılı sayar
+     * @returns {boolean} İşlem başarılı oldu mu
      */
     tumKartlariKontrolEt() {
-        // Oyuncu aktif değilse veya oyuncu kartları yoksa işlem yapma
-        if (this.aktifOyuncu !== 0 || !this.oyuncuKartlari || this.oyuncuKartlari.length === 0) {
-            console.warn("tumKartlariKontrolEt: Sıra oyuncuda değil veya kartlar boş");
+        // Oyuncu kartlarını kopyala
+        const oyuncuKartlariKopya = [...this.oyuncuKartlari];
+        
+        // Kartları atom_no'ya göre sırala
+        oyuncuKartlariKopya.sort((a, b) => {
+            if (a.isJoker) return -1; // Jokerler önce
+            if (b.isJoker) return 1;
+            return a.atom_no - b.atom_no;
+        });
+        
+        // Gruplara ayır (periyot bazlı ve grup bazlı)
+        const periyotGruplari = {};
+        const grupGruplari = {};
+        
+        // Normal kartlar için
+        const normalKartlar = oyuncuKartlariKopya.filter(kart => !kart.isJoker);
+        normalKartlar.forEach(kart => {
+            // Periyot bazlı gruplama
+            if (!periyotGruplari[kart.periyot]) {
+                periyotGruplari[kart.periyot] = [];
+            }
+            periyotGruplari[kart.periyot].push(kart);
+            
+            // Grup bazlı gruplama
+            if (!grupGruplari[kart.grup]) {
+                grupGruplari[kart.grup] = [];
+            }
+            grupGruplari[kart.grup].push(kart);
+        });
+        
+        // Jokerler
+        const jokerler = oyuncuKartlariKopya.filter(kart => kart.isJoker);
+        console.log(`Joker sayısı: ${jokerler.length}`);
+        
+        // Geçerli kombinasyonları bul
+        const gecerliKombinasyonlar = [];
+        
+        // Periyot bazlı kombinasyonlar
+        for (const periyot in periyotGruplari) {
+            const kartlar = periyotGruplari[periyot];
+            
+            // En az 3 kart varsa (jokerler olmadan)
+            if (kartlar.length >= 3) {
+                gecerliKombinasyonlar.push([...kartlar]);
+            }
+            // 2 kart varsa ve 1 joker varsa
+            else if (kartlar.length === 2 && jokerler.length >= 1) {
+                gecerliKombinasyonlar.push([...kartlar, jokerler[0]]);
+            }
+            // 1 kart varsa ve 2 joker varsa
+            else if (kartlar.length === 1 && jokerler.length >= 2) {
+                gecerliKombinasyonlar.push([...kartlar, jokerler[0], jokerler[1]]);
+            }
+        }
+        
+        // Grup bazlı kombinasyonlar
+        for (const grup in grupGruplari) {
+            const kartlar = grupGruplari[grup];
+            
+            // En az 3 kart varsa (jokerler olmadan)
+            if (kartlar.length >= 3) {
+                gecerliKombinasyonlar.push([...kartlar]);
+            }
+            // 2 kart varsa ve 1 joker varsa
+            else if (kartlar.length === 2 && jokerler.length >= 1) {
+                // Eğer bu joker henüz kullanılmadıysa
+                if (jokerler.length > 0 && !gecerliKombinasyonlar.some(k => k.includes(jokerler[0]))) {
+                    gecerliKombinasyonlar.push([...kartlar, jokerler[0]]);
+                }
+            }
+            // 1 kart varsa ve 2 joker varsa
+            else if (kartlar.length === 1 && jokerler.length >= 2) {
+                // Eğer bu jokerler henüz kullanılmadıysa
+                const kullanilabilirJokerler = jokerler.filter(j => 
+                    !gecerliKombinasyonlar.some(k => k.includes(j))
+                );
+                if (kullanilabilirJokerler.length >= 2) {
+                    gecerliKombinasyonlar.push([...kartlar, kullanilabilirJokerler[0], kullanilabilirJokerler[1]]);
+                }
+            }
+        }
+        
+        // Sıralı atom numarası kombinasyonları
+        // Atom numaralarını sırala
+        const sıraliAtomNolar = [...new Set(normalKartlar.map(k => k.atom_no))].sort((a, b) => a - b);
+        
+        // Ardışık 3 veya daha fazla atom numarası var mı kontrol et
+        for (let i = 0; i < sıraliAtomNolar.length - 2; i++) {
+            if (sıraliAtomNolar[i + 1] === sıraliAtomNolar[i] + 1 && 
+                sıraliAtomNolar[i + 2] === sıraliAtomNolar[i] + 2) {
+                // Ardışık 3 atom numarası bulundu
+                const ardisikKartlar = normalKartlar.filter(k => 
+                    k.atom_no === sıraliAtomNolar[i] || 
+                    k.atom_no === sıraliAtomNolar[i + 1] || 
+                    k.atom_no === sıraliAtomNolar[i + 2]
+                );
+                gecerliKombinasyonlar.push(ardisikKartlar);
+            }
+        }
+        
+        // Eğer hiç geçerli kombinasyon bulunamadıysa ve sadece jokerler varsa
+        if (gecerliKombinasyonlar.length === 0 && jokerler.length >= 3) {
+            gecerliKombinasyonlar.push(jokerler.slice(0, 3));
+        }
+        
+        // Eğer hiç geçerli kombinasyon yoksa başarısız
+        if (gecerliKombinasyonlar.length === 0) {
+            console.log("Geçerli kombinasyon bulunamadı");
             return false;
         }
         
-        // Tüm kartları alt kümelerine ayırarak olası kombinasyonları bul
-        const tumKartlar = [...this.oyuncuKartlari];
-        const gruplar = [];
+        console.log(`${gecerliKombinasyonlar.length} geçerli kombinasyon bulundu`);
         
-        // Kartları kombinasyonlara ayır
-        while (tumKartlar.length > 0) {
-            const bulunanKombinasyon = this.enIyiKombinasyonuBul(tumKartlar);
-            
-            if (bulunanKombinasyon && bulunanKombinasyon.length >= 3) {
-                gruplar.push(bulunanKombinasyon);
-                // Bulunan kombinasyondaki kartları tumKartlar'dan çıkar
-                for (const kart of bulunanKombinasyon) {
-                    const index = tumKartlar.findIndex(k => k.id === kart.id);
-                    if (index !== -1) {
-                        tumKartlar.splice(index, 1);
-                    }
-                }
-            } else {
-                // Eğer yeni bir kombinasyon bulunamazsa döngüden çık
-                break;
-            }
+        // Kullanılacak kartları belirle
+        const kullanilacakKartlar = new Set();
+        gecerliKombinasyonlar.forEach(kombinasyon => {
+            kombinasyon.forEach(kart => {
+                kullanilacakKartlar.add(kart.id);
+            });
+        });
+        
+        // Kartların tümünü kontrol et ve sadece 1 kart kalıyor mu bak
+        const kullanilacakKartSayisi = kullanilacakKartlar.size;
+        if (kullanilacakKartSayisi < this.oyuncuKartlari.length - 1) {
+            console.log(`Kullanılacak kart sayısı: ${kullanilacakKartSayisi}, Toplam: ${this.oyuncuKartlari.length}`);
+            console.log("Çok fazla kart kalıyor, başarısız");
+            return false;
         }
         
-        // Kalan kart sayısı 1 veya 0 ise başarılı, değilse başarısız
-        if (tumKartlar.length <= 1) {
-            console.log("Geçerli kombinasyonlar bulundu, kalan kart sayısı:", tumKartlar.length);
-            
-            // Bulunan tüm kombinasyonları oyuncunun elinden çıkar
-            for (const grup of gruplar) {
-                for (const kart of grup) {
-                    const index = this.oyuncuKartlari.findIndex(k => k.id === kart.id);
-                    if (index !== -1) {
-                        this.oyuncuKartlari.splice(index, 1);
-                    }
-                }
+        // Kullanılacak kartları oyuncunun elinden çıkar
+        const kullanilacakKartIdleri = Array.from(kullanilacakKartlar);
+        kullanilacakKartIdleri.forEach(kartId => {
+            const kartIndex = this.oyuncuKartlari.findIndex(kart => kart.id === kartId);
+                if (kartIndex !== -1) {
+                this.oyuncuKartlari.splice(kartIndex, 1);
             }
+        });
+        
+        // Eğer hiç kart kalmadıysa, oyuncu kazandı
+        if (this.oyuncuKartlari.length === 0) {
+            this.oyunDurumu = 'bitti';
+            this.kazananOyuncu = 0;
+            this.oyuncuPuani += 1;
             
-            // Eğer tam 1 kart kaldıysa ve sıra daha önceden bize geçtiyse, son kartı da ver
-            if (tumKartlar.length === 1 && this.oyuncuKartCekildi) {
-                this.kartVer(tumKartlar[0].id);
-                // Oyunu bitir
-                this.oyunuBitir(0); // 0 = oyuncu
-                return true;
-            }
-            
-            return true;
+            // Yeni el başlat
+            setTimeout(() => {
+                this.yeniElBaslat();
+            }, 1500);
         }
         
-        console.log("Geçerli kombinasyonlar yeterli değil, kalan kart sayısı:", tumKartlar.length);
-        return false;
-    }
-
-    // En iyi kombinasyonu bulan yardımcı fonksiyon
-    enIyiKombinasyonuBul(kartlar) {
-        if (!kartlar || kartlar.length < 3) return null;
-        
-        // Kartları önce elementlerine göre grupla
-        const elementGruplari = {};
-        const sayiGruplari = {};
-        
-        for (const kart of kartlar) {
-            // Element grupları
-            if (!elementGruplari[kart.element]) {
-                elementGruplari[kart.element] = [];
-            }
-            elementGruplari[kart.element].push(kart);
-            
-            // Sayı grupları
-            if (!sayiGruplari[kart.deger]) {
-                sayiGruplari[kart.deger] = [];
-            }
-            sayiGruplari[kart.deger].push(kart);
-        }
-        
-        // En iyi kombinasyonu bul (en çok kartı olan)
-        let enIyiKombinasyon = null;
-        let enIyiKombinasyonUzunlugu = 0;
-        
-        // Element gruplarını kontrol et
-        for (const element in elementGruplari) {
-            const grup = elementGruplari[element];
-            if (grup.length >= 3) {
-                // Sayıya göre sırala
-                grup.sort((a, b) => a.deger - b.deger);
-                
-                // Ardışık sayıları bul
-                const siraliGruplar = this.ardisikGruplariOlustur(grup);
-                
-                for (const ardisikGrup of siraliGruplar) {
-                    if (ardisikGrup.length > enIyiKombinasyonUzunlugu) {
-                        enIyiKombinasyon = ardisikGrup;
-                        enIyiKombinasyonUzunlugu = ardisikGrup.length;
-                    }
-                }
-            }
-        }
-        
-        // Sayı gruplarını kontrol et
-        for (const sayi in sayiGruplari) {
-            const grup = sayiGruplari[sayi];
-            if (grup.length >= 3) {
-                if (grup.length > enIyiKombinasyonUzunlugu) {
-                    enIyiKombinasyon = grup;
-                    enIyiKombinasyonUzunlugu = grup.length;
-                }
-            }
-        }
-        
-        return enIyiKombinasyon;
-    }
-
-    // Ardışık grupları oluşturan yardımcı fonksiyon
-    ardisikGruplariOlustur(kartlar) {
-        // Kartları sayıya göre sırala
-        kartlar.sort((a, b) => a.deger - b.deger);
-        
-        const gruplar = [];
-        let aktifGrup = [kartlar[0]];
-        
-        for (let i = 1; i < kartlar.length; i++) {
-            const oncekiKart = kartlar[i-1];
-            const simdikiKart = kartlar[i];
-            
-            // Aynı sayıyı tekrar ekleme
-            if (simdikiKart.deger === oncekiKart.deger) continue;
-            
-            // Ardışık sayı mı kontrol et
-            if (simdikiKart.deger === oncekiKart.deger + 1) {
-                aktifGrup.push(simdikiKart);
-            } else {
-                // Ardışık değilse, mevcut grubu bitir ve yeni başlat
-                if (aktifGrup.length >= 3) {
-                    gruplar.push(aktifGrup);
-                }
-                aktifGrup = [simdikiKart];
-            }
-        }
-        
-        // Son grubu da ekle
-        if (aktifGrup.length >= 3) {
-            gruplar.push(aktifGrup);
-        }
-        
-        return gruplar;
+        return true;
     }
 }
 

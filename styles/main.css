@@ -212,6 +212,15 @@ h2 {
     min-height: 80px;
 }
 
+/* Bot kartları için özel ölçekleme */
+.bot-kartlar .element-kart {
+    width: 32px; /* %70 küçültülmüş */
+    height: 42px; /* %70 küçültülmüş */
+    margin: 1px;
+    transform: scale(0.7);
+    transform-origin: center;
+}
+
 /* Kontroller */
 .kontroller {
     display: flex;

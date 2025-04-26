@@ -10,6 +10,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Butonları kontrol et
     butonlariKontrolEt();
     
+    // Global değişkenler
+    let botSayisi = 2; // Varsayılan bot sayısı
+    let oyuncuYildizlari = 0;
+    let botYildizlari = [0, 0]; // 2 bot için yıldız sayıları
+    let kalanKartSayisi = 56; // Toplam kart sayısı (14 kart x 4 oyuncu = 56)
+    
+    // Bot sayısını ayarla
+    const botSayisiSelect = document.getElementById('bot-sayisi');
+    if (botSayisiSelect) {
+        botSayisiSelect.addEventListener('change', function() {
+            botSayisi = parseInt(this.value);
+            console.log(`Bot sayısı ${botSayisi} olarak ayarlandı`);
+            
+            // Bot alanlarını güncelle
+            guncelleBotAlanlari(botSayisi);
+        });
+    }
+    
+    /**
+     * Bot alanlarını günceller
+     * @param {number} sayi - Gösterilecek bot sayısı
+     */
+    function guncelleBotAlanlari(sayi) {
+        // Tüm bot alanlarını gizle
+        document.querySelectorAll('.bot-alani').forEach((alan, indeks) => {
+            if (indeks < sayi) {
+                alan.style.display = 'block';
+            } else {
+                alan.style.display = 'none';
+            }
+        });
+    }
+    
     // Ses Yöneticisi Sınıfı
     class SesYoneticisi {
         constructor() {
@@ -488,187 +521,6 @@ document.addEventListener('DOMContentLoaded', () => {
             hedef.addEventListener('dragleave', handleDragLeave);
             hedef.addEventListener('drop', handleDrop);
         });
-    }
-    
-    // Global değişkenler
-    let oyuncuYildizlari = 0;
-    let botYildizlari = [0, 0, 0]; // 3 bot için yıldız sayıları
-    let kalanKartSayisi = 56; // Toplam kart sayısı (14 kart x 4 oyuncu = 56)
-    
-    /**
-     * Test amaçlı belirli grup ve periyot örüntüsüne sahip kartlar oluşturur
-     */
-    function testKartlariOlustur() {
-        console.log("Test kartları oluşturuluyor...");
-        
-        // Hata yönetimi
-        try {
-            if (typeof ELEMENT_VERILERI_OKEY === 'undefined') {
-                console.error("ELEMENT_VERILERI_OKEY tanımlı değil");
-                // Direkt olarak global scope'ta al
-                const elementVerileri = window.ELEMENT_VERILERI_OKEY || [
-                    { atom_no: 1, sembol: "H", isim: "Hidrojen", grup: 1, periyot: 1, element_turu: "Ametal" },
-                    { atom_no: 2, sembol: "He", isim: "Helyum", grup: 18, periyot: 1, element_turu: "Soy Gaz" },
-                    { atom_no: 3, sembol: "Li", isim: "Lityum", grup: 1, periyot: 2, element_turu: "Alkali Metal" },
-                    { atom_no: 8, sembol: "O", isim: "Oksijen", grup: 16, periyot: 2, element_turu: "Ametal" },
-                    { atom_no: 11, sembol: "Na", isim: "Sodyum", grup: 1, periyot: 3, element_turu: "Alkali Metal" },
-                    { atom_no: 19, sembol: "K", isim: "Potasyum", grup: 1, periyot: 4, element_turu: "Alkali Metal" }
-                ];
-                // Global scope'a kaydet
-                window.ELEMENT_VERILERI_OKEY = elementVerileri;
-            }
-            
-            const elementVerileri = window.ELEMENT_VERILERI_OKEY;
-            console.log(`Kullanılabilir ${elementVerileri.length} element var`);
-            
-            // Oyuncu kartları alanını bul
-            const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
-            if (!oyuncuKartlari) {
-                console.error("Oyuncu kartları alanı bulunamadı!");
-                return;
-            }
-
-            // Oyuncu kartlarını temizle
-            oyuncuKartlari.innerHTML = '';
-
-            // Belirli gruba ait kartlar oluştur - grup 1 (Alkali metaller)
-            const grup1Elementleri = elementVerileri.filter(e => e.grup === 1).slice(0, 3);
-            console.log(`Grup 1'den ${grup1Elementleri.length} element seçildi`);
-            
-            // Belirli periyota ait kartlar oluştur - periyot 2 (Li, Be, B, C, N, O, F, Ne)
-            const periyot2Elementleri = elementVerileri.filter(e => e.periyot === 2).slice(0, 4);
-            console.log(`Periyot 2'den ${periyot2Elementleri.length} element seçildi`);
-
-            // Rastgele diğer kartlar
-            const digerElementler = elementVerileri.filter(e => 
-                !(grup1Elementleri.includes(e) || periyot2Elementleri.includes(e))
-            ).sort(() => Math.random() - 0.5).slice(0, 7);
-            console.log(`Diğer rastgele ${digerElementler.length} element seçildi`);
-
-            // Tüm kartları birleştir (toplam 14 kart)
-            const tumKartlar = [...grup1Elementleri, ...periyot2Elementleri, ...digerElementler];
-            console.log(`Toplam ${tumKartlar.length} kart oluşturulacak`);
-            
-            // Kartları oluştur ve ekle
-            tumKartlar.forEach(element => {
-                try {
-                    // ElementKartiSinifi constructor olmadığı durumda
-                    // Basit bir obje oluştur ve kart olarak ekle
-                    if (typeof ElementKartiSinifi !== 'function') {
-                        console.warn("ElementKartiSinifi tanımlı değil, basit obje kullanılacak");
-                        const kartDiv = document.createElement('div');
-                        kartDiv.className = 'element-kart';
-                        kartDiv.style.backgroundColor = '#A0FFA0';
-                        kartDiv.style.color = '#000000';
-                        
-                        // Sembol
-                        const sembolDiv = document.createElement('div');
-                        sembolDiv.className = 'sembol';
-                        sembolDiv.textContent = element.sembol;
-                        kartDiv.appendChild(sembolDiv);
-                        
-                        // İsim
-                        const isimDiv = document.createElement('div');
-                        isimDiv.className = 'isim';
-                        isimDiv.textContent = element.isim;
-                        kartDiv.appendChild(isimDiv);
-                        
-                        // Grup ve periyot
-                        const gpDiv = document.createElement('div');
-                        gpDiv.className = 'grup-periyot';
-                        gpDiv.textContent = `G:${element.grup} P:${element.periyot}`;
-                        kartDiv.appendChild(gpDiv);
-                        
-                        // Dataset özellikleri
-                        kartDiv.dataset.atomNo = element.atom_no;
-                        kartDiv.dataset.sembol = element.sembol;
-                        kartDiv.dataset.grup = element.grup;
-                        kartDiv.dataset.periyot = element.periyot;
-                        
-                        // Seçim özelliği
-                        kartDiv.addEventListener('click', function() {
-                            document.querySelectorAll('.element-kart.secili').forEach(k => {
-                                k.classList.remove('secili');
-                            });
-                            this.classList.toggle('secili');
-                        });
-                        
-                        oyuncuKartlari.appendChild(kartDiv);
-                    } else {
-                        const kart = elementKartiOlusturDOM(element);
-                        oyuncuKartlari.appendChild(kart);
-                    }
-                } catch (err) {
-                    console.error(`Kart oluşturulurken hata: ${err.message}`);
-                }
-            });
-            
-            // Bot kartlarını oluştur (gizli)
-            for (let i = 1; i <= 2; i++) {
-                const botKartlari = document.getElementById(`bot${i}-kartlar`);
-                if (!botKartlari) {
-                    console.error(`Bot ${i} kartları alanı bulunamadı!`);
-                    continue;
-                }
-                
-                botKartlari.innerHTML = '';
-                
-                // Her bota 14 kart ekle
-                for (let j = 0; j < 14; j++) {
-                    const gizliKart = document.createElement('div');
-                    gizliKart.className = 'element-kart arka-yuz';
-                    gizliKart.style.width = '40px';
-                    gizliKart.style.height = '60px';
-                    gizliKart.style.margin = '2px';
-                    botKartlari.appendChild(gizliKart);
-                }
-            }
-            
-            // Açık kart oluştur
-            const acikKartAlani = document.getElementById('acik-kart');
-            if (acikKartAlani) {
-                acikKartAlani.innerHTML = '';
-                
-                // Rastgele bir element seç
-                const randomIndex = Math.floor(Math.random() * elementVerileri.length);
-                
-                // ElementKartiSinifi yoksa basit bir kart oluştur
-                if (typeof ElementKartiSinifi !== 'function') {
-                    const element = elementVerileri[randomIndex];
-                    const kartDiv = document.createElement('div');
-                    kartDiv.className = 'element-kart';
-                    kartDiv.style.backgroundColor = '#A0FFA0';
-                    kartDiv.style.color = '#000000';
-                    
-                    // Sembol
-                    const sembolDiv = document.createElement('div');
-                    sembolDiv.className = 'sembol';
-                    sembolDiv.textContent = element.sembol;
-                    kartDiv.appendChild(sembolDiv);
-                    
-                    // İsim
-                    const isimDiv = document.createElement('div');
-                    isimDiv.className = 'isim';
-                    isimDiv.textContent = element.isim;
-                    kartDiv.appendChild(isimDiv);
-                    
-                    acikKartAlani.appendChild(kartDiv);
-                } else {
-                    const acikKart = elementKartiOlusturDOM(elementVerileri[randomIndex]);
-                    acikKartAlani.appendChild(acikKart);
-                }
-            }
-            
-            // Kalan kart sayısını güncelle
-            const kalanKartSpan = document.getElementById('kalan-kart');
-            if (kalanKartSpan) {
-                kalanKartSayisi = 100; // Demo için sabit değer
-                kalanKartSpan.textContent = `Kalan: ${kalanKartSayisi}`;
-            }
-        } catch (error) {
-            console.error("Test kartları oluşturulurken hata:", error);
-            alert("Kartlar oluşturulurken bir hata oluştu: " + error.message);
-        }
     }
     
     /**
@@ -1195,8 +1047,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('ana-menu-ekrani').classList.add('gizli');
         document.getElementById('oyun-ekrani').classList.remove('gizli');
         
-        // Test kartlarını oluştur
-        testKartlariOlustur();
+        // Kartları oluştur
+        kartlariOlustur();
         
         // İlk tur başlat
         turBaslat();

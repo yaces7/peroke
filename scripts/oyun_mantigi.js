@@ -41,7 +41,7 @@ class PeriyodikOkey {
         this.oyuncu = {
             kartlar: [],
             kombinasyonlar: [],
-            puan: 0,
+            yildiz: 0,
             sirada: false
         };
         
@@ -51,7 +51,7 @@ class PeriyodikOkey {
                 id: i + 1,
                 kartlar: [],
                 kombinasyonlar: [],
-                puan: 0,
+                yildiz: 0,
                 sirada: false
             });
         }
@@ -267,9 +267,7 @@ class PeriyodikOkey {
         this.acikKart = null;
         
         // Oyuncunun elini kontrol et
-        this.kombinasyonlariKontrolEt();
-        
-        return true;
+        return this.kombinasyonlariKontrolEt();
     }
     
     /**
@@ -293,9 +291,7 @@ class PeriyodikOkey {
         this.oyuncu.kartlar.push(yeniKart);
         
         // Oyuncunun elini kontrol et
-        this.kombinasyonlariKontrolEt();
-        
-        return true;
+        return this.kombinasyonlariKontrolEt();
     }
     
     /**
@@ -313,8 +309,30 @@ class PeriyodikOkey {
         const gecerliGruplar = this.gruplariKontrolEt(kartlar);
         const gecerliPeriyotlar = this.periyotlariKontrolEt(kartlar);
         
+        // Hem grup hem de periyot kombinasyonu varsa yıldız kazandır
+        if (gecerliGruplar.length > 0 && gecerliPeriyotlar.length > 0) {
+            this.oyuncu.yildiz += 1;
+            
+            // Tüm kartları sil (sadece bir kart kalsın)
+            const kalacakKart = kartlar[0];
+            kartlar.length = 0;
+            kartlar.push(kalacakKart);
+            
+            // Oyun sonu kontrolü
+            if (this.oyuncu.yildiz >= 3) {
+                this.mevcutDurum = this.durumlar.OYUN_SONU;
+                return { 
+                    gecerli: true, 
+                    gruplar: gecerliGruplar, 
+                    periyotlar: gecerliPeriyotlar,
+                    oyunSonu: true,
+                    kazanan: 'oyuncu' 
+                };
+            }
+        }
+        
         return {
-            gecerli: gecerliGruplar.length > 0 || gecerliPeriyotlar.length > 0,
+            gecerli: gecerliGruplar.length > 0 && gecerliPeriyotlar.length > 0,
             gruplar: gecerliGruplar,
             periyotlar: gecerliPeriyotlar
         };
@@ -440,11 +458,11 @@ class PeriyodikOkey {
                 }
             }
             
-            // Botun elini kontrol et
-            const kombinasyonlar = this.kombinasyonlariKontrolEt(bot.kartlar);
+            // Botun kombinasyonlarını kontrol et
+            const kombinasyonSonucu = this.botKombinasyonKontrol(bot);
             
             // Bot kazandı mı kontrolü
-            if (bot.kartlar.length === 0) {
+            if (kombinasyonSonucu.gecerli && bot.yildiz >= 3) {
                 this.mevcutDurum = this.durumlar.OYUN_SONU;
                 return;
             }
@@ -455,27 +473,27 @@ class PeriyodikOkey {
     }
     
     /**
-     * Puan hesaplama
-     * @param {Object} kombinasyonlar Kombinasyonlar
-     * @returns {number} Toplam puan
+     * Bot için kombinasyon kontrolü
+     * @param {Object} bot Kontrol edilecek bot
+     * @returns {Object} Kombinasyon sonucu
      */
-    puanHesapla(kombinasyonlar) {
-        let puan = 0;
+    botKombinasyonKontrol(bot) {
+        // Rastgele kombinasyon olasılığı (zorluk seviyesine göre ayarlanabilir)
+        const kombinasyonOlasiligi = 0.15; // %15
         
-        // Grup puanları: Her grup 10 puan
-        puan += kombinasyonlar.gruplar.length * 10;
-        
-        // Periyot puanları: Her periyot 5 puan
-        puan += kombinasyonlar.periyotlar.length * 5;
-        
-        // Joker kontrolü: Son kart joker ise puan 2 katına çıkar
-        const sonKartJoker = false; // TODO: Son kart kontrolü eklenecek
-        
-        if (sonKartJoker) {
-            puan *= 2;
+        if (Math.random() < kombinasyonOlasiligi) {
+            // Bot kombinasyon yaptı
+            bot.yildiz += 1;
+            
+            // Kartların çoğunu sil (sadece 1-2 kart kalsın)
+            const kalacakKartSayisi = Math.min(2, bot.kartlar.length);
+            const kalacakKartlar = bot.kartlar.slice(0, kalacakKartSayisi);
+            bot.kartlar = kalacakKartlar;
+            
+            return { gecerli: true, yildiz: bot.yildiz };
         }
         
-        return puan;
+        return { gecerli: false, yildiz: bot.yildiz };
     }
 }
 

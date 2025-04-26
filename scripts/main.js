@@ -783,19 +783,53 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 // Botların sıra geçişi sırasında takılma sorununu engellemek için güvenlik mekanizması
+let sonAktifOyuncu = 0;
+let ayniOyuncudaKalmaSuresi = 0;
+
 function botSirasiGuvenligi() {
-    // Eğer aktif oyuncu bot ise ve 10 saniyeden fazla zaman geçtiyse
-    if (oyun && oyun.aktifOyuncu > 0 && oyun.oyunDurumu === 'devam') {
-        console.log("Bot sırası güvenlik kontrolü");
-        
-        // Aktif oyuncuyu oyuncuya çevir
-        oyun.aktifOyuncu = 0;
-        oyun.oyuncuKartCekildi = false;
-        
-        // Oyun durumunu güncelle
-        oyunDurumunuGuncelle();
+    if (!oyun || oyun.oyunDurumu !== 'devam') {
+        return;
     }
+    
+    const aktifOyuncu = oyun.oyunDurumuGetir().aktifOyuncu;
+    
+    // Eğer hala aynı bot aktifse ve botsa
+    if (aktifOyuncu === sonAktifOyuncu && aktifOyuncu > 0) {
+        ayniOyuncudaKalmaSuresi += 1;
+        console.log(`Bot ${aktifOyuncu} hala oynuyor... (${ayniOyuncudaKalmaSuresi}s)`);
+        
+        // Eğer 5 saniyeden fazla aynı botta kalındıysa, sırayı ilerlet
+        if (ayniOyuncudaKalmaSuresi >= 5) {
+            console.warn(`Bot ${aktifOyuncu} takıldı! Sırayı ilerletiyorum.`);
+            
+            // Bot 2'de özel sorun varsa
+            if (aktifOyuncu === 2) {
+                console.log("Bot 2 takılma sorunu tespit edildi, düzeltiliyor...");
+            }
+            
+            // Bir sonraki bota geç
+            oyun.aktifOyuncu = (aktifOyuncu < oyun.botSayisi) ? aktifOyuncu + 1 : 0;
+            oyun.oyuncuKartCekildi = false;
+            
+            // Botların sırasını yeniden başlat
+            if (oyun.aktifOyuncu > 0) {
+                oyun.botlarinSirasiniIsle();
+            }
+            
+            // Durumu sıfırla
+            ayniOyuncudaKalmaSuresi = 0;
+            
+            // Oyun durumunu güncelle
+            oyunDurumunuGuncelle();
+        }
+    } else {
+        // Farklı oyuncuya geçildiyse, sayacı sıfırla
+        ayniOyuncudaKalmaSuresi = 0;
+    }
+    
+    // Aktif oyuncuyu güncelle
+    sonAktifOyuncu = aktifOyuncu;
 }
 
-// Periyodik olarak bot sırası kontrolü yap
-setInterval(botSirasiGuvenligi, 10000); // 10 saniyede bir kontrol et
+// Periyodik olarak bot sırası kontrolü yap (daha sık)
+setInterval(botSirasiGuvenligi, 1000); // 1 saniyede bir kontrol et

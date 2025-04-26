@@ -801,8 +801,9 @@ let ayniOyuncudaKalmaSuresi = 0;
 let botSiraBekleme = false;
 
 function botSirasiGuvenligi() {
-    if (!oyun || oyun.oyunDurumu !== 'devam') {
-        // Oyun yoksa veya bittiyse işlem yapma
+    // Oyun yoksa veya devam etmiyorsa işlem yapma
+    if (!oyun || oyun.oyunDurumuGetir().oyunDurumu !== 'devam') {
+        // Sayaçları sıfırla
         ayniOyuncudaKalmaSuresi = 0;
         sonAktifOyuncu = 0;
         botSiraBekleme = false;
@@ -811,13 +812,13 @@ function botSirasiGuvenligi() {
     
     const aktifOyuncu = oyun.oyunDurumuGetir().aktifOyuncu;
     
-    // Eğer hala aynı bot aktifse
-    if (aktifOyuncu === sonAktifOyuncu && aktifOyuncu > 0) {
+    // Eğer hala aynı bot aktifse ve bot sırası bekleme modunda değilse
+    if (aktifOyuncu === sonAktifOyuncu && aktifOyuncu > 0 && !botSiraBekleme) {
         ayniOyuncudaKalmaSuresi += 1;
         console.log(`Bot ${aktifOyuncu} hala oynuyor... (${ayniOyuncudaKalmaSuresi}s)`);
         
         // Eğer 3 saniyeden fazla aynı botta kalındıysa, sırayı ilerlet
-        if (ayniOyuncudaKalmaSuresi >= 3 && !botSiraBekleme) {
+        if (ayniOyuncudaKalmaSuresi >= 3) {
             console.warn(`Bot ${aktifOyuncu} takıldı! Sırayı ilerletiyorum.`);
             botSiraBekleme = true;
             
@@ -830,14 +831,18 @@ function botSirasiGuvenligi() {
                 if (yeniBotId === 0) {
                     oyun.oyuncuKartCekildi = false;
                     console.log("Takılma nedeniyle sıra oyuncuya geçti");
+                    botSiraBekleme = false;
                 } else {
                     // Botların sırasını yeniden başlat
                     setTimeout(() => {
                         console.log(`Sıra Bot ${yeniBotId}'e geçti, bot sırasını işliyorum...`);
-                        botSiraBekleme = false;
                         oyun.botlarinSirasiniIsle();
+                        botSiraBekleme = false;
                     }, 500);
                 }
+                
+                // Oyun durumunu güncelle
+                oyunDurumunuGuncelle();
             } catch (err) {
                 console.error("Bot sırası düzeltilirken hata:", err);
                 // Hata olursa direkt oyuncuya geç
@@ -848,14 +853,10 @@ function botSirasiGuvenligi() {
             
             // Durumu sıfırla
             ayniOyuncudaKalmaSuresi = 0;
-            
-            // Oyun durumunu güncelle
-            oyunDurumunuGuncelle();
         }
-    } else {
+    } else if (aktifOyuncu !== sonAktifOyuncu) {
         // Farklı oyuncuya geçildiyse, sayacı sıfırla
         ayniOyuncudaKalmaSuresi = 0;
-        botSiraBekleme = false;
     }
     
     // Aktif oyuncuyu güncelle

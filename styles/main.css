@@ -33,6 +33,7 @@ body {
 /* Ana Menü Stili */
 #menu-screen {
     text-align: center;
+    position: relative;
 }
 
 #menu-screen h1 {
@@ -46,6 +47,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 250px;
 }
 
 .btn-ana {
@@ -62,6 +64,98 @@ body {
 .btn-ana:hover {
     background-color: #45a049;
     transform: scale(1.05);
+}
+
+.versiyon {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 0.8em;
+    color: #888;
+}
+
+/* Ayarlar Ekranı */
+#ayarlar-screen h2 {
+    font-size: 2.2em;
+    margin-bottom: 30px;
+    color: #4CAF50;
+}
+
+.ayarlar-form {
+    background-color: #2a2a2a;
+    padding: 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.ayar-grup {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ayar-grup label {
+    flex: 1;
+    font-size: 1.1em;
+}
+
+.ayar-grup select, 
+.ayar-grup input[type="text"] {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: none;
+    background-color: #3a3a3a;
+    color: white;
+    font-size: 1em;
+}
+
+.checkbox-grup {
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.checkbox-grup input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #4CAF50;
+}
+
+.ayar-butonlar {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-ayar {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#btn-ayarlari-kaydet {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#btn-ayarlari-kaydet:hover {
+    background-color: #45a049;
+}
+
+#btn-ayarlari-iptal {
+    background-color: #f44336;
+    color: white;
+}
+
+#btn-ayarlari-iptal:hover {
+    background-color: #d32f2f;
 }
 
 /* Oyun Ekranı Stili */
@@ -97,14 +191,24 @@ body {
     gap: 5px;
 }
 
+.bot-alan.gizli {
+    display: none;
+}
+
 .bot-bilgi {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+.bot-isim {
+    font-weight: bold;
+}
+
 .bot-kartlar {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 5px;
     min-height: 100px;
 }
@@ -144,8 +248,15 @@ body {
     gap: 10px;
 }
 
+.oyuncu-isim {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
 .oyuncu-kartlari {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 10px;
     min-height: 140px;
     padding: 10px;
@@ -202,9 +313,23 @@ body {
     padding: 0 5px;
 }
 
+.element-kart .grup-periyot {
+    font-size: 0.7em;
+    margin-top: 10px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
 .element-kart.arka-yuz {
     background: linear-gradient(45deg, #2a2a2a 25%, #333 25%, #333 50%, #2a2a2a 50%, #2a2a2a 75%, #333 75%);
     background-size: 20px 20px;
+}
+
+.element-kart.joker {
+    background-color: #fff2cc;
+    color: #333;
 }
 
 /* Buton Stilleri */
@@ -236,4 +361,129 @@ button:disabled {
 .yildiz {
     color: #FFD700;
     font-size: 1.2em;
+}
+
+/* Oyun Sonu Ekranı */
+#oyun-sonu-screen {
+    text-align: center;
+}
+
+#oyun-sonu-screen h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #4CAF50;
+}
+
+.sonuc-mesaj {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+    padding: 10px 20px;
+    background-color: rgba(76, 175, 80, 0.2);
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.skor-tablosu {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.skor-tablosu h3 {
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.skor-liste {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skor-satir {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.skor-kazanan {
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+/* Oyun Kontrolleri Paneli */
+#kontroller-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.kontroller-icerik {
+    background-color: #2a2a2a;
+    padding: 25px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.kontroller-icerik h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #4CAF50;
+}
+
+.kontroller-icerik ul {
+    list-style-type: none;
+    margin-bottom: 20px;
+}
+
+.kontroller-icerik li {
+    padding: 8px 0;
+    border-bottom: 1px solid #444;
+}
+
+.btn-kapat {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .bot-alanlari {
+        flex-direction: column;
+    }
+    
+    .orta-alan {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .oyuncu-butonlar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .element-kart {
+        width: 80px;
+        height: 112px;
+    }
+    
+    .element-kart .sembol {
+        font-size: 1.5em;
+    }
 }

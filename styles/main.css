@@ -95,6 +95,9 @@ h2 {
 .durum-mesaji {
     font-weight: bold;
     color: #4cc9f0;
+    font-size: 18px;
+    text-align: center;
+    min-height: 24px;
 }
 
 /* Bot Alanları */
@@ -123,6 +126,19 @@ h2 {
     font-weight: bold;
 }
 
+.bot-puan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.bot-puan::before {
+    content: '⭐';
+    margin-right: 5px;
+}
+
 /* Orta Alan */
 .orta-alan {
     display: flex;
@@ -141,36 +157,6 @@ h2 {
 .kalan-kart {
     margin-top: 10px;
     font-weight: bold;
-}
-
-/* Kombinasyon alanı */
-.kombinasyon-alani {
-    background-color: rgba(31, 64, 104, 0.7);
-    border: 2px solid #4895ef;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.kombinasyon-baslik {
-    font-weight: bold;
-    margin-bottom: 5px;
-    text-align: center;
-    color: #4cc9f0;
-}
-
-.kombinasyon-icerik {
-    background-color: rgba(31, 64, 104, 0.5);
-    min-height: 140px;
-    border-radius: 5px;
-    border: 1px dashed #4895ef;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 5px;
-    overflow-x: auto;
 }
 
 /* Oyuncu Alanı */
@@ -192,16 +178,37 @@ h2 {
     font-size: 18px;
 }
 
+.oyuncu-puan {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    color: #ffd700;
+}
+
+.oyuncu-puan::before {
+    content: '⭐';
+    margin-right: 5px;
+}
+
 /* Oyuncu kartları için özel stil */
 .oyuncu-kartlari {
-    min-height: 120px;
+    min-height: 200px;
     background-color: rgba(31, 64, 104, 0.5);
     border-radius: 5px;
     padding: 10px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+}
+
+/* Bot kartları */
+.bot-kartlar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 80px;
 }
 
 /* Kontroller */
@@ -213,8 +220,8 @@ h2 {
 
 /* Element Kartları */
 .element-kart {
-    width: 70px;
-    height: 100px;
+    width: 85px;
+    height: 120px;
     margin: 5px;
     border: 1px solid #4895ef;
     border-radius: 5px;
@@ -227,19 +234,21 @@ h2 {
     position: relative;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s ease;
     color: #e6e6e6;
 }
 
 .element-kart:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
 }
 
 .element-kart.secili {
-    border: 2px solid #ff0000;
+    border: 3px solid #ff0000;
     transform: translateY(-10px);
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    z-index: 20;
 }
 
 .element-kart .atom-no {
@@ -300,14 +309,90 @@ h2 {
     background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
 }
 
-/* Sürükleme Stilleri */
-.surukle-hedef {
-    transition: all 0.2s ease;
+/* Yıldız Animasyonu */
+@keyframes yildizAnimasyon {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(2) translateY(-50px);
+    }
 }
 
-.surukle-uzerinde {
-    background-color: rgba(255, 230, 190, 0.8);
-    border: 2px dashed #ff9900;
+.yildiz-animasyon {
+    position: absolute;
+    font-size: 60px;
+    color: #ffd700;
+    text-shadow: 0 0 20px #ffd700;
+    z-index: 1000;
+    pointer-events: none;
+    animation: yildizAnimasyon 2s ease-out forwards;
+}
+
+/* Kart Silme Animasyonu */
+@keyframes kartYokEt {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+.silinen-kart {
+    animation: kartYokEt 0.7s ease-out forwards;
+}
+
+/* Sürükle-Bırak Stilleri */
+.element-kart.sürükleniyor {
+    opacity: 0.4;
+}
+
+.uzerine-surukle {
+    background-color: #e0f7fa !important;
+    border: 2px dashed #00bcd4 !important;
+}
+
+/* Durum Mesajı İyileştirmeleri */
+.durum-mesaji {
+    flex-grow: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    min-height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Duyarlı Tasarım */
+@media (max-width: 768px) {
+    .bot-alanlari {
+        flex-direction: column;
+    }
+    
+    .bot-alani {
+        margin: 10px 0;
+    }
+    
+    .orta-alan {
+        gap: 20px;
+    }
+    
+    .kontroller {
+        flex-wrap: wrap;
+    }
 }
 
 /* İstatistikler */
@@ -357,89 +442,4 @@ h2 {
 .sonuc-detay {
     font-size: 18px;
     margin-top: 15px;
-}
-
-/* Duyarlı Tasarım */
-@media (max-width: 768px) {
-    .bot-alanlari {
-        flex-direction: column;
-    }
-    
-    .bot-alani {
-        margin: 10px 0;
-    }
-    
-    .orta-alan {
-        gap: 20px;
-    }
-    
-    .kontroller {
-        flex-wrap: wrap;
-    }
-}
-
-/* Sürükle-Bırak ile ilgili stillemeler */
-.element-kart.sürükleniyor {
-    opacity: 0.4;
-}
-
-.surukle-hedef {
-    min-height: 150px;
-}
-
-.uzerine-surukle {
-    background-color: #e0f7fa !important;
-    border: 2px dashed #00bcd4 !important;
-}
-
-/* Element Kartı İyileştirmeleri */
-.element-kart {
-    width: 100px;
-    height: 140px;
-    background-color: #f8f9fa;
-    border: 2px solid #333;
-    border-radius: 8px;
-    margin: 5px;
-    padding: 5px;
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    user-select: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.element-kart.secili {
-    border: 3px solid #ff0000;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-    transform: translateY(-5px);
-}
-
-/* Durum Mesajı İyileştirmeleri */
-.durum-mesaji {
-    flex-grow: 1;
-    text-align: center;
-    padding: 8px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    min-height: 40px;
-}
-
-/* Kombinasyon Alanı İyileştirmeleri */
-.kombinasyon-icerik {
-    min-height: 150px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    border: 2px dashed #3498db;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.7);
-    transition: all 0.3s ease;
-}
-
-.kombinasyon-icerik.uzerine-surukle {
-    background-color: #d1ecf1;
-    border-color: #0275d8;
 }

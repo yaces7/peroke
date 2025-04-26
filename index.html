@@ -115,21 +115,21 @@
 
         <!-- Bot Alanları -->
         <div class="bot-alanlari">
-            <div class="bot-alan">
+            <div class="bot-alan" id="bot1-alan">
                 <div class="bot-bilgi">
                     <span class="bot-isim">Bot 1</span>
                     <span class="bot-yildizlar" id="bot1-yildizlar"></span>
                 </div>
                 <div class="bot-kartlar" id="bot1-kartlar"></div>
             </div>
-            <div class="bot-alan bot2">
+            <div class="bot-alan bot2" id="bot2-alan">
                 <div class="bot-bilgi">
                     <span class="bot-isim">Bot 2</span>
                     <span class="bot-yildizlar" id="bot2-yildizlar"></span>
                 </div>
                 <div class="bot-kartlar" id="bot2-kartlar"></div>
             </div>
-            <div class="bot-alan bot3">
+            <div class="bot-alan bot3" id="bot3-alan">
                 <div class="bot-bilgi">
                     <span class="bot-isim">Bot 3</span>
                     <span class="bot-yildizlar" id="bot3-yildizlar"></span>
@@ -140,6 +140,9 @@
 
         <!-- Orta Alan -->
         <div class="orta-alan">
+            <div class="son-atilan-kart-alani" id="son-atilan-kart-alani">
+                <!-- Önceki oyuncudan gelen kart burada gösterilecek -->
+            </div>
             <div class="deste-alani">
                 <button id="btn-desteyi-ac" class="element-kart arka-yuz">Çek</button>
             </div>
@@ -150,7 +153,7 @@
         </div>
 
         <!-- Oyuncu Alanı -->
-        <div class="oyuncu-alani">
+        <div class="oyuncu-alani" id="oyuncu-alan">
             <div class="oyuncu-bilgi">
                 <span class="oyuncu-isim" id="oyuncu-isim-goster">Oyuncu</span>
                 <span class="oyuncu-yildizlar" id="oyuncu-yildizlar"></span>
@@ -159,7 +162,7 @@
             <div class="oyuncu-butonlar">
                 <button id="btn-kontrol-et">Kontrol Et</button>
                 <button id="btn-acik-karti-al">Açık Kartı Al</button>
-                <button id="btn-kart-ver">Kartı At</button>
+                <button id="btn-kart-ver" disabled>Kartı At</button>
                 <button id="btn-son-karti-ver" class="gizli">Son Kartı Bota Ver</button>
             </div>
         </div>

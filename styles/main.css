@@ -391,7 +391,7 @@ body {
 
 /* Oyun Ekranı */
 #oyun-screen {
-    display: block;
+    display: flex;
     flex-direction: column;
     padding: 10px;
     height: 100vh;
@@ -406,9 +406,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    background-color: #333;
-    border-radius: 8px;
+    padding: 8px;
+    background-color: rgba(51, 51, 51, 0.7);
+    border-radius: 6px;
 }
 
 /* Bot Alanları */
@@ -429,6 +429,7 @@ body {
     background: rgba(34, 34, 34, 0.7);
     border-radius: 6px;
     width: 30%;
+    position: relative;
 }
 
 .bot-alan.gizli {
@@ -463,30 +464,36 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1px;
+    gap: 3px;
     overflow-x: hidden;
-    min-height: 50px;
+    min-height: 60px;
 }
 
 .bot-kartlar .element-kart.arka-yuz {
-    transform: scale(0.5);
-    margin: -10px;
+    transform: scale(0.6);
+    margin: -5px;
     display: inline-block;
     transform-origin: center center;
     position: relative;
-    width: 25px;
-    height: 40px;
+    width: 30px;
+    height: 45px;
 }
 
-/* Bot kart düzeni için - kompakt düzen */
-.bot-kart-satiri {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0;
-    margin-bottom: 0;
+/* Aktif oyuncu göstergesi */
+.aktif-oyuncu::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 12px;
+    height: 12px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #4CAF50;
+    animation: pulse 2s infinite;
 }
 
+/* Orta Alan - Güncelleme */
 .orta-alan {
     display: flex;
     flex-direction: row;
@@ -496,36 +503,53 @@ body {
     background-color: rgba(51, 51, 51, 0.7);
     border-radius: 8px;
     margin: 10px 0;
-    gap: 15px;
+    gap: 20px;
     position: relative;
 }
 
-.deste-alani, .acik-kart-alani {
+.deste-alani, .acik-kart-alani, .son-atilan-kart-alani {
     min-width: 80px;
     min-height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
-.acik-kart-alani .element-kart {
-    transform: none;
-    margin: 0;
+.son-atilan-kart-alani::before {
+    content: "Son atılan";
+    position: absolute;
+    top: -20px;
+    font-size: 0.7em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.acik-kart-alani::before {
+    content: "Açık kart";
+    position: absolute;
+    top: -20px;
+    font-size: 0.7em;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .element-kart.arka-yuz {
-    background: linear-gradient(45deg, #333, #444);
+    background: linear-gradient(135deg, #333, #444);
     color: #8a2be2;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     position: relative;
+    width: 30px;
+    height: 45px;
 }
 
 .element-kart.arka-yuz::before {
     content: "PO";
-    font-size: 24px;
-    color: #8a2be2;
+    font-size: 16px;
+    color: rgba(138, 43, 226, 0.8);
     font-weight: bold;
     position: absolute;
     top: 50%;
@@ -805,23 +829,27 @@ button:disabled {
 
 /* Responsive Tasarım */
 @media (max-width: 768px) {
-    .oyuncu-butonlar {
-        flex-wrap: wrap;
-        justify-content: center;
+    .bot-alanlari {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .bot-alan {
+        width: 100%;
     }
     
     .element-kart {
-        width: 65px;
-        height: 100px;
+        width: 60px;
+        height: 90px;
     }
     
     .element-kart .sembol {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
     
-    .element-kart.arka-yuz {
-        width: 35px;
-        height: 50px;
+    .bot-kartlar .element-kart.arka-yuz {
+        transform: scale(0.4);
+        margin: -12px;
     }
 }
 

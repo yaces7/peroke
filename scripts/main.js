@@ -88,12 +88,12 @@ function varsayilanElementleriGetir() {
     
     return varsayilanElementler;
 }
-
-// Ekranları gösterme/gizleme
-function ekraniGoster(ekranId) {
+    
+    // Ekranları gösterme/gizleme
+    function ekraniGoster(ekranId) {
     console.log("Ekran değiştiriliyor: " + ekranId);
-    document.querySelectorAll('.ekran').forEach(ekran => {
-        ekran.classList.add('gizli');
+        document.querySelectorAll('.ekran').forEach(ekran => {
+            ekran.classList.add('gizli');
         ekran.style.display = 'none';
     });
     const ekran = document.getElementById(ekranId);
@@ -107,53 +107,53 @@ function ekraniGoster(ekranId) {
 
 // Element kartı oluşturma
 function elementKartiOlustur(element, boyut = 1.0) {
-    const kart = document.createElement('div');
-    kart.className = 'element-kart';
+        const kart = document.createElement('div');
+        kart.className = 'element-kart';
     kart.dataset.id = element.id;
-    
-    if (element.isJoker) {
-        kart.classList.add('joker');
         
-        const sembol = document.createElement('div');
-        sembol.className = 'sembol';
-        sembol.textContent = 'J';
-        kart.appendChild(sembol);
-        
-        const isim = document.createElement('div');
-        isim.className = 'isim';
-        isim.textContent = 'JOKER';
-        kart.appendChild(isim);
-        
-        kart.style.backgroundColor = "#fff2cc";
-        kart.style.color = "#333";
-    } else {
-        // Atom Numarası
-        const atomNo = document.createElement('div');
-        atomNo.className = 'atom-no';
-        atomNo.textContent = element.atom_no;
-        kart.appendChild(atomNo);
-        
-        // Sembol
-        const sembol = document.createElement('div');
-        sembol.className = 'sembol';
-        sembol.textContent = element.sembol;
-        kart.appendChild(sembol);
-        
-        // İsim
-        const isim = document.createElement('div');
-        isim.className = 'isim';
-        isim.textContent = element.isim;
-        kart.appendChild(isim);
-        
-        // Grup-Periyot bilgisi
-        const grupPeriyot = document.createElement('div');
-        grupPeriyot.className = 'grup-periyot';
-        grupPeriyot.textContent = `G:${element.grup} P:${element.periyot}`;
-        kart.appendChild(grupPeriyot);
-        
-        // Renk
+        if (element.isJoker) {
+            kart.classList.add('joker');
+            
+            const sembol = document.createElement('div');
+            sembol.className = 'sembol';
+            sembol.textContent = 'J';
+            kart.appendChild(sembol);
+            
+            const isim = document.createElement('div');
+            isim.className = 'isim';
+            isim.textContent = 'JOKER';
+            kart.appendChild(isim);
+            
+            kart.style.backgroundColor = "#fff2cc";
+            kart.style.color = "#333";
+        } else {
+            // Atom Numarası
+            const atomNo = document.createElement('div');
+            atomNo.className = 'atom-no';
+            atomNo.textContent = element.atom_no;
+            kart.appendChild(atomNo);
+            
+            // Sembol
+            const sembol = document.createElement('div');
+            sembol.className = 'sembol';
+            sembol.textContent = element.sembol;
+            kart.appendChild(sembol);
+            
+            // İsim
+            const isim = document.createElement('div');
+            isim.className = 'isim';
+            isim.textContent = element.isim;
+            kart.appendChild(isim);
+            
+            // Grup-Periyot bilgisi
+            const grupPeriyot = document.createElement('div');
+            grupPeriyot.className = 'grup-periyot';
+            grupPeriyot.textContent = `G:${element.grup} P:${element.periyot}`;
+            kart.appendChild(grupPeriyot);
+            
+            // Renk
         const renk = ELEMENT_RENKLERI[element.grup] || "#ffffff";
-        kart.style.backgroundColor = renk;
+            kart.style.backgroundColor = renk;
     }
     
     // Boyut ayarla (botlar için daha küçük)
@@ -169,10 +169,10 @@ function elementKartiOlustur(element, boyut = 1.0) {
             kartiSec(this);
         });
     }
+        
+        return kart;
+    }
     
-    return kart;
-}
-
 // Kart seçimi
 function kartiSec(kartElement) {
     const kartId = kartElement.dataset.id;
@@ -196,13 +196,26 @@ function butonlariGuncelle() {
     const btnKartVer = document.getElementById('btn-kart-ver');
     const btnSonKartiVer = document.getElementById('btn-son-karti-ver');
     
+    // Oyuncu aktif değilse tüm butonları devre dışı bırak
+    const oyuncuAktif = oyun && oyun.oyunDurumuGetir().aktifOyuncu === 0;
+    
+    if (!oyuncuAktif) {
+        if (btnKontrolEt) btnKontrolEt.disabled = true;
+        if (btnKartVer) btnKartVer.disabled = true;
+        if (btnSonKartiVer) btnSonKartiVer.disabled = true;
+        return;
+    }
+    
+    // Kart çekilmiş mi kontrolü
+    const kartCekilmis = oyun && oyun.oyuncuKartCekildi;
+    
     if (seciliKartlar.length >= 3) {
         if (btnKontrolEt) btnKontrolEt.disabled = false;
     } else {
         if (btnKontrolEt) btnKontrolEt.disabled = true;
     }
     
-    if (seciliKartlar.length === 1) {
+    if (seciliKartlar.length === 1 && kartCekilmis) {
         if (btnKartVer) btnKartVer.disabled = false;
     } else {
         if (btnKartVer) btnKartVer.disabled = true;
@@ -358,6 +371,52 @@ function acikKartiGoster(kart) {
     }
 }
 
+// Son atılan kartı göster
+function sonAtilanKartiGoster(kart) {
+    const sonAtilanKartAlani = document.getElementById('son-atilan-kart-alani');
+    if (sonAtilanKartAlani) {
+        sonAtilanKartAlani.innerHTML = '';
+        
+        if (kart) {
+            const kartElement = elementKartiOlustur(kart, 1.0);
+            kartElement.classList.add('son-atilan-kart');
+            sonAtilanKartAlani.appendChild(kartElement);
+        } else {
+            const bosKart = document.createElement('div');
+            bosKart.className = 'element-kart bos-kart';
+            bosKart.textContent = '-';
+            sonAtilanKartAlani.appendChild(bosKart);
+        }
+    }
+}
+
+// Aktif oyuncuyu göster
+function aktifOyuncuyuGuncelle(aktifOyuncuIndex) {
+    // Tüm aktif sınıfları temizle
+    document.querySelectorAll('.bot-alan, .oyuncu-alani').forEach(alan => {
+        alan.classList.remove('aktif-oyuncu');
+    });
+    
+    // Aktif oyuncuya sınıf ekle
+    if (aktifOyuncuIndex === 0) {
+        document.getElementById('oyuncu-alan').classList.add('aktif-oyuncu');
+        
+        // Oyuncunun sırası geldiğinde butonları etkinleştir
+        document.getElementById('btn-desteyi-ac').disabled = false;
+        document.getElementById('btn-acik-karti-al').disabled = false;
+    } else {
+        const botAlan = document.getElementById(`bot${aktifOyuncuIndex}-alan`);
+        if (botAlan) {
+            botAlan.classList.add('aktif-oyuncu');
+        }
+        
+        // Bot sırasında butonları devre dışı bırak
+        document.getElementById('btn-desteyi-ac').disabled = true;
+        document.getElementById('btn-acik-karti-al').disabled = true;
+        document.getElementById('btn-kart-ver').disabled = true;
+    }
+}
+
 // Yıldızları güncelle
 function yildizlariGuncelle(oyuncuPuani, botPuanlari) {
     // Oyuncu yıldızları
@@ -482,6 +541,13 @@ function oyunDurumunuGuncelle() {
     // Açık kart
     acikKartiGoster(oyunDurumu.acikKart);
     
+    // Son atılan kart (eğer varsa)
+    if (oyunDurumu.sonAtilanKart) {
+        sonAtilanKartiGoster(oyunDurumu.sonAtilanKart);
+    } else {
+        sonAtilanKartiGoster(null);
+    }
+    
     // Oyuncu kartları
     oyuncuKartlariniGoster(oyunDurumu.oyuncuKartlari);
     
@@ -495,6 +561,9 @@ function oyunDurumunuGuncelle() {
             setTimeout(() => botMesajiGoster(botId), 500);
         }
     });
+    
+    // Aktif oyuncu göstergesi
+    aktifOyuncuyuGuncelle(oyunDurumu.aktifOyuncu);
     
     // Yıldızları güncelle
     yildizlariGuncelle(oyunDurumu.oyuncuPuani, oyunDurumu.botPuanlari);
@@ -530,10 +599,10 @@ function oyunSonuGoster(kazananId, oyuncuPuani, botPuanlari) {
             sonucMesaji.textContent = `Üzgünüm! Bot ${kazananId} oyunu kazandı.`;
             sonucMesaji.className = "sonuc-mesaj kaybeden";
         }
-    }
-    
+        }
+        
     // Skor tablosu
-    const skorListe = document.getElementById('skor-liste');
+        const skorListe = document.getElementById('skor-liste');
     if (skorListe) {
         skorListe.innerHTML = '';
         
@@ -647,8 +716,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const cekilenKart = oyun.kartiCek();
                 document.getElementById('durum-mesaji').textContent = "Kart çektiniz. Şimdi bir kart atın.";
                 oyunDurumunuGuncelle();
-            } catch (error) {
-                alert(error.message);
+        } catch (error) {
+            alert(error.message);
             }
         }
     });
@@ -682,9 +751,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(function() {
                     oyunDurumunuGuncelle();
                 }, 2000);
-            } catch (error) {
-                alert(error.message);
-            }
+        } catch (error) {
+            alert(error.message);
+        }
         }
     });
     
@@ -703,7 +772,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Oyun sonu butonları
     document.getElementById('btn-tekrar-oyna')?.addEventListener('click', function() {
-        oyunuBaslat();
+                oyunuBaslat();
     });
     
     document.getElementById('btn-ana-menuye-don')?.addEventListener('click', function() {
@@ -711,5 +780,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // İlk ekranı göster
-    ekraniGoster('menu-screen');
-}); 
+        ekraniGoster('menu-screen');
+    });

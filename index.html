@@ -18,6 +18,52 @@
         <div class="versiyon">v1.0.0</div>
     </div>
 
+    <!-- Oyun Başlangıç Ekranı -->
+    <div id="oyun-baslangic-screen" class="ekran gizli">
+        <h2>Oyun Ayarları</h2>
+        <div class="baslangic-form">
+            <div class="form-grup">
+                <label for="baslangic-bot-sayisi">Bot Sayısı:</label>
+                <div class="secim-butonlar">
+                    <button data-value="1" class="secim-buton">1 Bot</button>
+                    <button data-value="2" class="secim-buton">2 Bot</button>
+                    <button data-value="3" class="secim-buton secili">3 Bot</button>
+                </div>
+            </div>
+            <div class="form-grup">
+                <label for="baslangic-zorluk">Zorluk Seviyesi:</label>
+                <div class="secim-butonlar">
+                    <button data-value="kolay" class="secim-buton">Kolay</button>
+                    <button data-value="orta" class="secim-buton secili">Orta</button>
+                    <button data-value="zor" class="secim-buton">Zor</button>
+                </div>
+            </div>
+            <div class="form-grup">
+                <label for="baslangic-oyuncu-ismi">Oyuncu İsmi:</label>
+                <input type="text" id="baslangic-oyuncu-ismi" value="Oyuncu" maxlength="15">
+            </div>
+            <div class="baslangic-butonlar">
+                <button id="btn-oyunu-baslat" class="btn-ana">Oyunu Başlat</button>
+                <button id="btn-baslangic-iptal" class="btn-ana iptal">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yükleme Ekranı -->
+    <div id="yukleme-screen" class="ekran gizli">
+        <div class="yukleme-animasyon">
+            <div class="atom">
+                <div class="elektron"></div>
+                <div class="elektron"></div>
+                <div class="elektron"></div>
+            </div>
+        </div>
+        <h3 class="yukleme-mesaj">Oyun yükleniyor...</h3>
+        <div class="yukleme-bar">
+            <div class="yukleme-ilerleyis"></div>
+        </div>
+    </div>
+
     <!-- Ayarlar Ekranı -->
     <div id="ayarlar-screen" class="ekran gizli">
         <h2>Oyun Ayarları</h2>

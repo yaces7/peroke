@@ -66,12 +66,224 @@ body {
     transform: scale(1.05);
 }
 
+.btn-ana.iptal {
+    background-color: #f44336;
+}
+
+.btn-ana.iptal:hover {
+    background-color: #d32f2f;
+}
+
 .versiyon {
     position: absolute;
     bottom: 20px;
     right: 20px;
     font-size: 0.8em;
     color: #888;
+}
+
+/* Oyun Başlangıç Ekranı */
+#oyun-baslangic-screen h2 {
+    font-size: 2.2em;
+    margin-bottom: 30px;
+    color: #4CAF50;
+}
+
+.baslangic-form {
+    background-color: #2a2a2a;
+    padding: 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.form-grup {
+    margin-bottom: 20px;
+}
+
+.form-grup label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.secim-butonlar {
+    display: flex;
+    gap: 10px;
+}
+
+.secim-buton {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a3a;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.secim-buton:hover {
+    background-color: #4c4c4c;
+}
+
+.secim-buton.secili {
+    background-color: #4CAF50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+#baslangic-oyuncu-ismi {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a3a;
+    color: white;
+    font-size: 1em;
+}
+
+.baslangic-butonlar {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.baslangic-butonlar button {
+    flex: 1;
+}
+
+/* Yükleme Ekranı */
+#yukleme-screen {
+    text-align: center;
+}
+
+.yukleme-animasyon {
+    margin-bottom: 40px;
+}
+
+.atom {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+.atom::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #4CAF50;
+}
+
+.elektron {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
+
+.elektron::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ffffff;
+}
+
+.elektron:nth-child(1) {
+    transform: rotate(120deg);
+}
+
+.elektron:nth-child(2) {
+    transform: rotate(60deg) scaleX(0.8);
+}
+
+.elektron:nth-child(3) {
+    transform: rotate(0deg) scaleY(0.8);
+}
+
+.elektron:nth-child(1)::after {
+    top: -6px;
+    left: calc(50% - 6px);
+    animation: orbit1 3s linear infinite;
+}
+
+.elektron:nth-child(2)::after {
+    top: -6px;
+    left: calc(50% - 6px);
+    animation: orbit2 4s linear infinite;
+}
+
+.elektron:nth-child(3)::after {
+    top: -6px;
+    left: calc(50% - 6px);
+    animation: orbit3 5s linear infinite;
+}
+
+@keyframes orbit1 {
+    0% { transform: rotate(0deg) translateX(45px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(45px) rotate(-360deg); }
+}
+
+@keyframes orbit2 {
+    0% { transform: rotate(0deg) translateX(45px) rotate(0deg); }
+    100% { transform: rotate(-360deg) translateX(45px) rotate(360deg); }
+}
+
+@keyframes orbit3 {
+    0% { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.yukleme-mesaj {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #4CAF50;
+}
+
+.yukleme-bar {
+    width: 80%;
+    max-width: 400px;
+    height: 10px;
+    background-color: #3a3a3a;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.yukleme-ilerleyis {
+    height: 100%;
+    width: 0%;
+    background-color: #4CAF50;
+    border-radius: 5px;
+    animation: yukleme 3s ease-in-out forwards;
+}
+
+@keyframes yukleme {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    80% { width: 90%; }
+    100% { width: 100%; }
 }
 
 /* Ayarlar Ekranı */
@@ -485,5 +697,9 @@ button:disabled {
     
     .element-kart .sembol {
         font-size: 1.5em;
+    }
+    
+    .secim-butonlar {
+        flex-direction: column;
     }
 }

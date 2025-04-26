@@ -287,172 +287,180 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // DOM tabanlı kart oluşturucu (sınıf kullanmadan doğrudan DOM elementleri oluşturur)
-    function elementKartiOlusturDOM(element, takim = 1, joker = false) {
-        // ElementKartiSinifi sınıfını kullanarak kart nesnesi oluştur
-        const elementKarti = new ElementKartiSinifi(element, takim, joker);
-        
-        // Kart HTML elementini oluştur
-        const kartDiv = elementKarti.htmlOlustur(false);
-        
-        // Karta tıklama işlevi ekle
-        kartDiv.addEventListener('click', function(e) {
-            // Diğer seçili kartları temizle
-            document.querySelectorAll('.element-kart.secili').forEach(kart => {
-                kart.classList.remove('secili');
-            });
+    // ElementKartiSinifi sınıfı tanımı
+    class ElementKartiSinifi {
+        constructor(elementData) {
+            if (!elementData) {
+                console.error("ElementKartiSinifi: Element verisi tanımlanmamış!");
+                return;
+            }
             
-            // Bu kartı seçili yap
-            this.classList.toggle('secili');
-        });
-        
-        // Kartı sürüklenebilir yap
-        kartDiv.setAttribute('draggable', 'true');
-        kartDiv.addEventListener('dragstart', handleDragStart);
-        kartDiv.addEventListener('dragend', handleDragEnd);
-        
-        // Kart verilerini dataset'e ekle (kombinasyon kontrolü için)
-        kartDiv.dataset.atomNo = element.atom_no || 0;
-        kartDiv.dataset.sembol = element.sembol || 'J';
-        kartDiv.dataset.grup = element.grup || 0;
-        kartDiv.dataset.periyot = element.periyot || 0;
-        kartDiv.dataset.joker = joker;
-        kartDiv.dataset.takim = takim;
-        
-        return kartDiv;
-    }
-    
-    // Hex rengin koyuluğunu hesapla (0-255 arası, 0: siyah, 255: beyaz)
-    function hexRenkKoyulugu(hex) {
-        // hex rengi #rrggbb formatında olmalı
-        let r = 0, g = 0, b = 0;
-        
-        // # ile başlıyorsa kaldır
-        if (hex.startsWith('#')) {
-            hex = hex.substring(1);
+            this.id = elementData.id || elementData.atom_no || 0;
+            this.sembol = elementData.sembol || "?";
+            this.isim = elementData.isim || "Bilinmeyen";
+            this.atomNumarasi = elementData.atomNumarasi || elementData.atom_no || 0;
+            this.grupNumarasi = elementData.grupNumarasi || elementData.grup || 0;
+            this.periyotNumarasi = elementData.periyotNumarasi || elementData.periyot || 0;
+            this.grupTuru = elementData.grupTuru || elementData.element_turu || "Bilinmiyor";
+            this.joker = elementData.joker || false;
         }
         
-        // 3 haneli hex ise 6 haneliye dönüştür
-        if (hex.length === 3) {
-            r = parseInt(hex.charAt(0) + hex.charAt(0), 16);
-            g = parseInt(hex.charAt(1) + hex.charAt(1), 16);
-            b = parseInt(hex.charAt(2) + hex.charAt(2), 16);
-        } 
-        // 6 haneli hex ise doğrudan dönüştür
-        else if (hex.length === 6) {
-            r = parseInt(hex.substring(0, 2), 16);
-            g = parseInt(hex.substring(2, 4), 16);
-            b = parseInt(hex.substring(4, 6), 16);
+        /**
+         * Kartın HTML temsilini oluşturur
+         * @returns {HTMLElement} Kart div elementi
+         */
+        htmlOlustur(arkaYuz = false) {
+            const kartDiv = document.createElement('div');
+            kartDiv.className = 'element-kart' + (this.joker ? ' joker' : '') + (arkaYuz ? ' arka-yuz' : '');
+            
+            if (arkaYuz) {
+                return kartDiv;
+            }
+            
+            // Kart ID'si
+            kartDiv.id = `kart-${this.id}-${Date.now().toString().slice(-4)}`;
+            
+            // Kart içeriği
+            let renk = this.grupRenginiAl();
+            kartDiv.style.backgroundColor = renk;
+            kartDiv.style.color = this.kontrastRengiHesapla(renk);
+            
+            // Atom numarası
+            const atomNoSpan = document.createElement('span');
+            atomNoSpan.className = 'atom-no';
+            atomNoSpan.textContent = this.atomNumarasi;
+            kartDiv.appendChild(atomNoSpan);
+            
+            // Element sembolü
+            const sembolDiv = document.createElement('div');
+            sembolDiv.className = 'sembol';
+            sembolDiv.textContent = this.sembol;
+            kartDiv.appendChild(sembolDiv);
+            
+            // Element ismi
+            const isimDiv = document.createElement('div');
+            isimDiv.className = 'isim';
+            isimDiv.textContent = this.isim;
+            kartDiv.appendChild(isimDiv);
+            
+            // Grup ve periyot bilgisi
+            const grupPeriyotDiv = document.createElement('div');
+            grupPeriyotDiv.className = 'grup-periyot';
+            grupPeriyotDiv.textContent = `G:${this.grupNumarasi} P:${this.periyotNumarasi}`;
+            kartDiv.appendChild(grupPeriyotDiv);
+            
+            // Veri özelliklerini ekle
+            kartDiv.dataset.atomNo = this.atomNumarasi;
+            kartDiv.dataset.sembol = this.sembol;
+            kartDiv.dataset.grup = this.grupNumarasi;
+            kartDiv.dataset.periyot = this.periyotNumarasi;
+            kartDiv.dataset.joker = this.joker;
+            
+            return kartDiv;
         }
         
-        // Parlaklığı hesapla (0-255 arası)
-        return (r * 0.299 + g * 0.587 + b * 0.114);
+        /**
+         * Grup türüne göre renk kodu
+         * @returns {string} Renk kodu
+         */
+        grupRenginiAl() {
+            const renkler = {
+                'Ametal': '#A0FFA0', // Açık yeşil
+                'Soy Gaz': '#80FFFF', // Açık turkuaz
+                'Alkali Metal': '#FF6666', // Açık kırmızı
+                'Toprak Alkali Metal': '#FFDEAD', // Bej
+                'Yarı Metal': '#CCCC99', // Açık kahverengi
+                'Halojen': '#FFFF99', // Açık sarı
+                'Metal': '#BFC7D5', // Açık gri
+                'Geçiş Metali': '#FF9999', // Pembe
+                'Lantanit': '#FFBFFF', // Mor
+                'Aktinit': '#FF99CC', // Koyu pembe
+                'Bilinmiyor': '#E8E8E8', // Gri
+                'Joker': '#FFFFFF'  // Beyaz
+            };
+            
+            return renkler[this.grupTuru] || '#CCCCCC';
+        }
+        
+        /**
+         * Arka plan rengine göre kontrast rengi hesaplar
+         * @param {string} renk Hex renk kodu
+         * @returns {string} Kontrast renk
+         */
+        kontrastRengiHesapla(renk) {
+            // Hex rengini RGB'ye dönüştür
+            let r = 0, g = 0, b = 0;
+            // # ile başlıyorsa kaldır
+            if (renk.startsWith('#')) {
+                renk = renk.slice(1);
+            }
+            
+            if (renk.length === 3) {
+                r = parseInt(renk[0] + renk[0], 16);
+                g = parseInt(renk[1] + renk[1], 16);
+                b = parseInt(renk[2] + renk[2], 16);
+            } else if (renk.length === 6) {
+                r = parseInt(renk.slice(0, 2), 16);
+                g = parseInt(renk.slice(2, 4), 16);
+                b = parseInt(renk.slice(4, 6), 16);
+            }
+            
+            // Kontrast değerini hesapla (YIQ formülü)
+            const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return (yiq >= 128) ? '#000000' : '#FFFFFF';
+        }
     }
     
     // Sürükleme ile ilgili değişkenler
     let suruklenenKart = null;
     
-    // Sürükleme olayları
+    // Sürükleme işlevleri
     function handleDragStart(e) {
         this.classList.add('sürükleniyor');
-        
-        // Sürüklenen kartın bilgilerini depola
+        e.dataTransfer.setData('text/plain', e.target.id);
         e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/html', this.outerHTML);
-        
-        // Sürüklenen kartın verilerini dataset olarak aktar
-        const kartVerileri = {
-            atomNo: this.dataset.atomNo,
-            sembol: this.dataset.sembol,
-            grup: this.dataset.grup,
-            periyot: this.dataset.periyot,
-            joker: this.dataset.joker === 'true',
-            takim: this.dataset.takim
-        };
-        
-        e.dataTransfer.setData('application/json', JSON.stringify(kartVerileri));
     }
     
     function handleDragEnd(e) {
         this.classList.remove('sürükleniyor');
     }
     
-    function handleDragOver(e) {
-        if (e.preventDefault) {
-            e.preventDefault(); // Varsayılan işlemi engelle
-        }
+    // Kartları bırakma alanı işlevleri
+    function setupDropZones() {
+        const oyuncuEliAlani = document.getElementById('oyuncu-eli');
+        const oyunAlani = document.getElementById('oyun-alani');
         
-        e.dataTransfer.dropEffect = 'move';
-        return false;
-    }
-    
-    function handleDragEnter(e) {
-        this.classList.add('uzerine-surukle');
-    }
-    
-    function handleDragLeave(e) {
-        this.classList.remove('uzerine-surukle');
-    }
-    
-    function handleDrop(e) {
-        if (e.stopPropagation) {
-            e.stopPropagation(); // Olayın yayılmasını engelle
-        }
-        
-        // Sürüklenen veriyi al
-        const html = e.dataTransfer.getData('text/html');
-        const kartVerileriJSON = e.dataTransfer.getData('application/json');
-        
-        // Sürüklenen kartı oluştur
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        const sürüklenenKart = tempDiv.firstChild;
-        
-        // Kartın veri özelliklerini sakla
-        if (kartVerileriJSON) {
-            try {
-                const kartVerileri = JSON.parse(kartVerileriJSON);
-                sürüklenenKart.dataset.atomNo = kartVerileri.atomNo;
-                sürüklenenKart.dataset.sembol = kartVerileri.sembol;
-                sürüklenenKart.dataset.grup = kartVerileri.grup;
-                sürüklenenKart.dataset.periyot = kartVerileri.periyot;
-                sürüklenenKart.dataset.joker = kartVerileri.joker;
-                sürüklenenKart.dataset.takim = kartVerileri.takim;
-            } catch (e) {
-                console.error("Kart verilerini ayrıştırma hatası:", e);
-            }
-        }
-        
-        // Tüm sürükleme sınıflarını temizle
-        this.classList.remove('uzerine-surukle');
-        
-        // Orijinal kartı sil (sadece kart bu alana taşınırsa)
-        const orijinalKartId = sürüklenenKart.id;
-        if (orijinalKartId) {
-            const orijinalKart = document.getElementById(orijinalKartId);
-            if (orijinalKart && orijinalKart.parentNode) {
-                orijinalKart.parentNode.removeChild(orijinalKart);
-            }
-        }
-        
-        // Kartı bu alana ekle
-        this.appendChild(sürüklenenKart);
-        
-        // Kartı sürüklenebilir yap ve olayları ekle
-        sürüklenenKart.setAttribute('draggable', 'true');
-        sürüklenenKart.addEventListener('dragstart', handleDragStart);
-        sürüklenenKart.addEventListener('dragend', handleDragEnd);
-        sürüklenenKart.addEventListener('click', function(e) {
-            // Diğer seçili kartları temizle
-            document.querySelectorAll('.element-kart.secili').forEach(kart => {
-                kart.classList.remove('secili');
-            });
-            
-            // Bu kartı seçili yap
-            this.classList.toggle('secili');
+        // Oyuncu eli drop zone
+        oyuncuEliAlani.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
         });
         
-        return false;
+        oyuncuEliAlani.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const kartId = e.dataTransfer.getData('text/plain');
+            const kart = document.getElementById(kartId);
+            
+            if (kart && !oyuncuEliAlani.contains(kart)) {
+                oyuncuEliAlani.appendChild(kart);
+            }
+        });
+        
+        // Oyun alanı drop zone
+        oyunAlani.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+        
+        oyunAlani.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const kartId = e.dataTransfer.getData('text/plain');
+            const kart = document.getElementById(kartId);
+            
+            if (kart && !oyunAlani.contains(kart)) {
+                oyunAlani.appendChild(kart);
+            }
+        });
     }
     
     // Kart çekme durumu
@@ -1159,4 +1167,96 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     console.log("Periyodik Okey oyunu hazır!");
+}); 
+
+// DOM tabanlı kart oluşturucu
+function elementKartiOlusturDOM(element, takim = 1, joker = false) {
+    if (!element) {
+        console.error("elementKartiOlusturDOM: Element verisi tanımlanmamış!");
+        return document.createElement('div');
+    }
+    
+    // ElementKartiSinifi sınıfını kullanarak kart nesnesi oluştur
+    const elementKarti = new ElementKartiSinifi(element);
+    
+    // Kart HTML elementini oluştur
+    const kartDiv = elementKarti.htmlOlustur(false);
+    
+    // Karta tıklama işlevi ekle
+    kartDiv.addEventListener('click', function(e) {
+        // Diğer seçili kartları temizle
+        document.querySelectorAll('.element-kart.secili').forEach(kart => {
+            kart.classList.remove('secili');
+        });
+        
+        // Bu kartı seçili yap
+        this.classList.toggle('secili');
+    });
+    
+    // Kartı sürüklenebilir yap
+    kartDiv.setAttribute('draggable', 'true');
+    kartDiv.addEventListener('dragstart', handleDragStart);
+    kartDiv.addEventListener('dragend', handleDragEnd);
+    
+    // Takım bilgisini ekle
+    kartDiv.dataset.takim = takim;
+    
+    return kartDiv;
+}
+
+// Oyunu başlat
+function oyunuBaslat() {
+    // DOM elementlerini seç
+    const oyuncuEliAlani = document.getElementById('oyuncu-eli');
+    const oyunAlani = document.getElementById('oyun-alani');
+    
+    // Alanları temizle
+    oyuncuEliAlani.innerHTML = '';
+    oyunAlani.innerHTML = '';
+    
+    // Kartları karıştır ve dağıt
+    const karisikElementler = karistir([...ELEMENT_VERILERI]);
+    
+    // Oyuncuya 7 kart dağıt
+    for (let i = 0; i < 7; i++) {
+        if (karisikElementler.length > 0) {
+            const element = karisikElementler.pop();
+            const kart = elementKartiOlusturDOM(element);
+            oyuncuEliAlani.appendChild(kart);
+        }
+    }
+    
+    // Jokerleri ekle
+    const jokerSayisi = 2;
+    const karisikJokerler = karistir([...JOKER_VERILERI]);
+    for (let i = 0; i < jokerSayisi; i++) {
+        if (karisikJokerler.length > 0 && karisikElementler.length > 0) {
+            // Jokeri rastgele bir pozisyona ekle
+            const randomIndex = Math.floor(Math.random() * karisikElementler.length);
+            karisikElementler.splice(randomIndex, 0, karisikJokerler[i]);
+        }
+    }
+    
+    // Drop zone ayarlarını yap
+    setupDropZones();
+}
+
+// Diziyi karıştırma yardımcı fonksiyon
+function karistir(dizi) {
+    for (let i = dizi.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [dizi[i], dizi[j]] = [dizi[j], dizi[i]];
+    }
+    return dizi;
+}
+
+// Sayfa yüklendiğinde oyunu başlat
+document.addEventListener('DOMContentLoaded', function() {
+    oyunuBaslat();
+    
+    // Yeni oyun başlatma düğmesi
+    const yeniOyunBtn = document.getElementById('yeni-oyun-btn');
+    if (yeniOyunBtn) {
+        yeniOyunBtn.addEventListener('click', oyunuBaslat);
+    }
 }); 

@@ -20,11 +20,12 @@ body {
 
 /* Ekran Stilleri */
 .ekran {
+    display: block;
     padding: 20px;
 }
 
 .gizli {
-    display: none;
+    display: none !important;
 }
 
 /* Başlık */

@@ -7,6 +7,134 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Periyodik Okey oyunu başlatılıyor...");
     
+    // Ses Yöneticisi Sınıfı
+    class SesYoneticisi {
+        constructor() {
+            this.sesler = {};
+            this.muzikCaliyor = false;
+            this.sesEfektleriAcik = true;
+            this.muzikAcik = true;
+        }
+        
+        sesEkle(sesAdi, sesDosyasi) {
+            if (!this.sesler[sesAdi]) {
+                this.sesler[sesAdi] = new Audio(sesDosyasi);
+            }
+        }
+        
+        sesCal(sesAdi) {
+            if (this.sesEfektleriAcik && this.sesler[sesAdi]) {
+                this.sesler[sesAdi].currentTime = 0;
+                this.sesler[sesAdi].play();
+                return true;
+            }
+            return false;
+        }
+        
+        sesKapat(sesAdi) {
+            if (this.sesler[sesAdi]) {
+                this.sesler[sesAdi].pause();
+                this.sesler[sesAdi].currentTime = 0;
+            }
+        }
+        
+        sesAyarla(sesAdi, ozellik, deger) {
+            if (this.sesler[sesAdi]) {
+                this.sesler[sesAdi][ozellik] = deger;
+            }
+        }
+        
+        sesEfektleriniAc(durum) {
+            this.sesEfektleriAcik = durum;
+        }
+        
+        muzikAc(durum) {
+            this.muzikAcik = durum;
+            if (this.muzikCaliyor) {
+                if (!durum) {
+                    this.sesKapat('arkaplan_muzik');
+                } else {
+                    this.sesCal('arkaplan_muzik');
+                }
+            }
+        }
+    }
+    
+    // Ses yöneticisi oluştur
+    const sesYoneticisi = new SesYoneticisi();
+    
+    // Global sesCal fonksiyonu tanımla
+    window.sesCal = function(sesAdi) {
+        return sesYoneticisi.sesCal(sesAdi);
+    };
+    
+    // TEST: Butona doğrudan tıklama ekle - bu satırı daha sonra silebilirsiniz
+    setTimeout(() => {
+        console.log("TEST: Tüm butonları kontrol ediyorum...");
+        
+        // Ana menüdeki butonları kontrol et
+        const butonlar = {
+            'yeni-oyun-btn': document.getElementById('yeni-oyun-btn'),
+            'istatistikler-btn': document.getElementById('istatistikler-btn'),
+            'ayarlar-btn': document.getElementById('ayarlar-btn'),
+            'nasil-oynanir-btn': document.getElementById('nasil-oynanir-btn')
+        };
+        
+        // Butonları logla
+        for (const [id, btn] of Object.entries(butonlar)) {
+            console.log(`Buton ID: ${id}, Buton var mı: ${btn !== null}`);
+            
+            // Event listener'ları doğrudan ekle
+            if (btn) {
+                btn.onclick = function() {
+                    console.log(`${id} butonuna tıklandı!`);
+                    
+                    // Ekran geçişleri
+                    if (id === 'yeni-oyun-btn') {
+                        document.getElementById('ana-menu-ekrani').classList.add('gizli');
+                        document.getElementById('oyun-ekrani').classList.remove('gizli');
+                        testKartlariOlustur();
+                        turBaslat();
+                    } else if (id === 'istatistikler-btn') {
+                        document.getElementById('ana-menu-ekrani').classList.add('gizli');
+                        document.getElementById('istatistikler-ekrani').classList.remove('gizli');
+                    } else if (id === 'ayarlar-btn') {
+                        document.getElementById('ana-menu-ekrani').classList.add('gizli');
+                        document.getElementById('ayarlar-ekrani').classList.remove('gizli');
+                    } else if (id === 'nasil-oynanir-btn') {
+                        document.getElementById('ana-menu-ekrani').classList.add('gizli');
+                        document.getElementById('nasil-oynanir-ekrani').classList.remove('gizli');
+                    }
+                };
+            }
+        }
+        
+        // Geri dönüş butonlarını kontrol et
+        const geriButonlar = {
+            'nasil-oynanir-geri-btn': document.getElementById('nasil-oynanir-geri-btn'),
+            'istatistik-geri-btn': document.getElementById('istatistik-geri-btn'),
+            'ayarlar-geri-btn': document.getElementById('ayarlar-geri-btn')
+        };
+        
+        // Geri butonlarını logla
+        for (const [id, btn] of Object.entries(geriButonlar)) {
+            console.log(`Geri buton ID: ${id}, Buton var mı: ${btn !== null}`);
+            
+            // Event listener'ları doğrudan ekle
+            if (btn) {
+                btn.onclick = function() {
+                    console.log(`${id} butonuna tıklandı!`);
+                    
+                    // Ekran geçişleri - tümü ana menüye dönüş
+                    document.querySelectorAll('.ekran').forEach(ekran => {
+                        ekran.classList.add('gizli');
+                    });
+                    document.getElementById('ana-menu-ekrani').classList.remove('gizli');
+                };
+            }
+        }
+    }, 1000); // 1 saniye bekletiyorum, DOM tamamen yüklensin
+    
     // Oyun versiyonu
     const VERSION = "0.1.0";
     console.log(`Versiyon: ${VERSION}`);
@@ -16,19 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error(`HATA: ${message} - ${source}:${lineno}:${colno}`);
         return true;
     };
-    
-    // Alternatif ses yönetici oluştur (hiçbir ses dosyasını yükleme)
-    const sesYoneticisi = new SesYoneticisi();
-    
-    // Ses çalma fonksiyonu (devre dışı)
-    function sesEfektiCal(sesAdi) {
-        // Ses devre dışı, hiçbir şey yapma
-        console.log(`Ses efekti çalma devre dışı: ${sesAdi}`);
-        return false;
-    }
-    
-    // Global sesCal fonksiyonu tanımla (oyun mekanikleri için)
-    window.sesCal = sesEfektiCal;
     
     // Varsayılan Ayarlar
     const varsayilanAyarlar = {

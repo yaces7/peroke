@@ -161,78 +161,110 @@ class PeriyodikOkey {
     }
 
     /**
-     * Kartı çek (desteden)
+     * Kartı çek
      */
-    kartiCek() {
-        // Sıra kontrolü - oyuncu için aktifOyuncu kontrolü
-        if (this.aktifOyuncu !== 0 && this.fazlaKartiOlanOyuncu === null) {
-            throw new Error("Şu anda sizin sıranız değil!");
+    kartiCek(oyuncuId = 0) {
+        console.log(`Kart çekme isteği: Oyuncu ${oyuncuId}, Aktif oyuncu: ${this.aktifOyuncu}`);
+        
+        // Oyun durumu kontrolü
+        if (this.oyunDurumu !== 'devam') {
+            console.error('Oyun devam etmiyor, kart çekilemez!');
+            return false;
         }
         
-        // Destede kart var mı?
-        if (this.kalanKartlar.length === 0) {
-            throw new Error("Destede kart kalmadı!");
+        // Aktif oyuncu kontrolü
+        if (this.aktifOyuncu !== oyuncuId) {
+            console.error(`Sıra Oyuncu ${oyuncuId}'de değil!`);
+            return false;
         }
         
-        // Kart çek
-        const cekilenKart = this.kalanKartlar.pop();
+        // Deste boşsa veya 1 karttan az kaldıysa, açık kartları desteye ekle ve karıştır
+        if (this.deste.length <= 1) {
+            console.log('Deste bitmek üzere, açık kartlar desteye ekleniyor');
+            if (this.acikKartlar.length > 0) {
+                // Son açık kartı tut, diğerlerini desteye ekle
+                const sonAcikKart = this.acikKartlar.pop();
+                this.deste = [...this.deste, ...this.acikKartlar];
+                this.acikKartlar = sonAcikKart ? [sonAcikKart] : [];
+                this.desteKaristir();
+            } else if (this.deste.length === 0) {
+                console.error('Deste tamamen bitti, oyun bitmiş olmalı!');
+                this.oyunDurumu = 'bitti';
+                return false;
+            }
+        }
         
-        // Oyuncu mu çekiyor yoksa bot mu?
-        if (this.aktifOyuncu === 0) {
-            this.oyuncuKartlari.push(cekilenKart);
-            this.fazlaKartiOlanOyuncu = 0; // Oyuncunun fazla kartı var
-            this.oyuncuKartCekildi = true; // Oyuncu kart çekti
-            
-            // Kartları sırala (daha kolay görüntülemek için)
-            this.kartlariSirala();
+        // Kartı çek
+        const kart = this.deste.pop();
+        if (!kart) {
+            console.error('Deste boş, kart çekilemedi!');
+            return false;
+        }
+        
+        // Kartı oyuncuya ekle
+        if (oyuncuId === 0) {
+            this.oyuncuKartlari.push(kart);
+            this.oyuncuKartCekildi = true;
         } else {
-            // Bot çekiyor
-            const botId = this.aktifOyuncu;
-            this.botKartlari[botId].push(cekilenKart);
-            this.fazlaKartiOlanOyuncu = botId; // Botun fazla kartı var
-            this.oyuncuKartCekildi = true; // Bot kart çekti
+            const botIndeks = oyuncuId - 1;
+            if (!this.botKartlari[botIndeks]) {
+                this.botKartlari[botIndeks] = [];
+            }
+            this.botKartlari[botIndeks].push(kart);
         }
         
-        return cekilenKart;
+        // Fazla kartı olan oyuncu
+        this.fazlaKartiOlanOyuncu = oyuncuId;
+        
+        console.log(`Kart çekildi: ${kart.element} ${kart.deger}`);
+        return true;
     }
-
+    
     /**
      * Açık kartı al
      */
-    acikKartiAl() {
-        // Sıra kontrolü - oyuncu için aktifOyuncu kontrolü
-        if (this.aktifOyuncu !== 0 && this.fazlaKartiOlanOyuncu === null) {
-            throw new Error("Şu anda sizin sıranız değil!");
+    acikKartiAl(oyuncuId = 0) {
+        console.log(`Açık kart alma isteği: Oyuncu ${oyuncuId}, Aktif oyuncu: ${this.aktifOyuncu}`);
+        
+        // Oyun durumu kontrolü
+        if (this.oyunDurumu !== 'devam') {
+            console.error('Oyun devam etmiyor, açık kart alınamaz!');
+            return false;
         }
         
-        // Açık kart var mı?
+        // Aktif oyuncu kontrolü
+        if (this.aktifOyuncu !== oyuncuId) {
+            console.error(`Sıra Oyuncu ${oyuncuId}'de değil!`);
+            return false;
+        }
+        
+        // Açık kart var mı kontrolü
         if (!this.acikKart) {
-            throw new Error("Açık kart yok!");
+            console.error('Açık kart yok!');
+            return false;
         }
         
-        // Açık kartı al
-        const acikKart = this.acikKart;
-        
-        // Oyuncu mu çekiyor yoksa bot mu?
-        if (this.aktifOyuncu === 0) {
-            this.oyuncuKartlari.push(acikKart);
-            this.fazlaKartiOlanOyuncu = 0; // Oyuncunun fazla kartı var
-            this.oyuncuKartCekildi = true; // Oyuncu kart çekti (açık karttan da olsa)
-            
-            // Kartları sırala
-            this.kartlariSirala();
-        } else {
-            // Bot çekiyor
-            const botId = this.aktifOyuncu;
-            this.botKartlari[botId].push(acikKart);
-            this.fazlaKartiOlanOyuncu = botId; // Botun fazla kartı var
-            this.oyuncuKartCekildi = true; // Bot kart çekti
-        }
-        
-        // Açık kartı sıfırla
+        // Kartı al
+        const kart = this.acikKart;
         this.acikKart = null;
         
-        return acikKart;
+        // Kartı oyuncuya ekle
+        if (oyuncuId === 0) {
+            this.oyuncuKartlari.push(kart);
+            this.oyuncuKartCekildi = true;
+        } else {
+            const botIndeks = oyuncuId - 1;
+            if (!this.botKartlari[botIndeks]) {
+                this.botKartlari[botIndeks] = [];
+            }
+            this.botKartlari[botIndeks].push(kart);
+        }
+        
+        // Fazla kartı olan oyuncu
+        this.fazlaKartiOlanOyuncu = oyuncuId;
+        
+        console.log(`Açık kart alındı: ${kart.element} ${kart.deger}`);
+        return true;
     }
 
     /**
@@ -363,232 +395,84 @@ class PeriyodikOkey {
     }
 
     /**
-     * Tek bir bot hamlesi yap ve sonucunu döndür
-     * @param {number} botId - Bot ID'si
-     * @returns {string} Sonuç
+     * Bot için tek hamle yap
+     * @param {number} botId - Bot ID
+     * @returns {string} - Hamle sonucu
      */
     tekBotHamlesiYap(botId) {
-        if (this.oyunDurumu !== 'devam') return false;
-        if (botId <= 0 || botId > this.botSayisi) return false;
-        
-        // Bot ID'si ve aktif oyuncu kontrolü
+        // Aktif oyuncu bu bot değilse hata
         if (this.aktifOyuncu !== botId) {
-            console.error(`Hata: Aktif oyuncu Bot ${botId} değil, aktif oyuncu: ${this.aktifOyuncu}`);
+            console.error(`Hata: Aktif oyuncu (${this.aktifOyuncu}) Bot ${botId} değil!`);
             return "hatali_sira";
         }
         
-        const botSeviye = this.botZorlukSeviyesi;
-        const botKartlari = this.botKartlari[botId];
-        
-        console.log(`Bot ${botId} (Seviye: ${botSeviye}) hamlesi yapılıyor. Kart sayısı: ${botKartlari.length}`);
-        
-        // 1. Adım: Kart çek
-        if (!this.oyuncuKartCekildi) {
-            // Stratejik olarak açık kart veya kapalı kart çek
-            const acikKart = this.acikKart;
-            let kartCekildi = false;
+        try {
+            console.log(`Bot ${botId} hamlesi yapılıyor...`);
             
-            try {
-                if (botSeviye === 'zor' && acikKart) {
-                    // Zor bot için açık kartın değerli olup olmadığını kontrol et
-                    const acikKartFaydali = this.botIcinKartFaydaliMi(botId, acikKart);
-                    
-                    if (acikKartFaydali) {
-                        console.log(`Bot ${botId} açık kartı alıyor:`, acikKart);
-                        this.aktifOyuncu = botId; // Aktif oyuncuyu güncelle
-                        this.acikKartiAl();
-                        kartCekildi = true;
+            // Bot zorluğuna göre kart seçim stratejisi
+            const zorluk = this.botZorlukSeviyesi || 1;
+            
+            // Açık kart varsa ve bot zorluğuna göre uygunsa açık kartı al
+            if (this.acikKart && this.botAcikKartiDegerlendirme(botId, zorluk)) {
+                if (this.acikKartiAl(botId) === false) {
+                    // Açık kart alamadıysa normal kart çek
+                    console.log(`Bot ${botId} açık kart alamadı, normal kart çekiyor`);
+                    if (this.kartiCek(botId) === false) {
+                        console.error(`Bot ${botId} kart çekemedi!`);
+                        return "kart_cekme_hatasi";
                     }
                 }
-                
-                // Açık kart alınmadıysa kapalı kart çek
-                if (!kartCekildi) {
-                    console.log(`Bot ${botId} kapalı kart çekiyor`);
-                    this.aktifOyuncu = botId; // Aktif oyuncuyu güncelle
-                    this.kartiCek();
-                }
-                
-                this.oyuncuKartCekildi = true;
-            } catch (error) {
-                console.error(`Bot ${botId} kart çekerken hata:`, error);
-                return "kart_cekme_hatasi";
-            }
-        }
-        
-        // Kısa bir bekleme simüle et (stratejik düşünme)
-        // 2. Adım: Kart at
-        try {
-            let atilacakKartIndeks = -1;
-            
-            if (botSeviye === 'zor') {
-                atilacakKartIndeks = this.botZorHamleYap(botId);
             } else {
-                atilacakKartIndeks = this.botKolayHamleYap(botId);
-            }
-            
-            // Eğer strateji başarısız olursa rastgele kart at
-            if (atilacakKartIndeks === -1 || atilacakKartIndeks >= botKartlari.length) {
-                console.log(`Bot ${botId} için uygun strateji bulunamadı, rastgele kart atılıyor`);
-                atilacakKartIndeks = Math.floor(Math.random() * botKartlari.length);
-            }
-            
-            // Kart at
-            const atilacakKart = botKartlari[atilacakKartIndeks];
-            console.log(`Bot ${botId} kartı atıyor:`, atilacakKart);
-            
-            // Atılacak kartı açık kart olarak ayarla ve botun elinden çıkar
-            this.acikKart = atilacakKart;
-            botKartlari.splice(atilacakKartIndeks, 1);
-            
-            // Kart çekme durumunu sıfırla
-            this.oyuncuKartCekildi = false;
-            
-            // El bitti mi kontrol et
-            if (botKartlari.length === 0) {
-                console.log(`Bot ${botId} oyunu kazandı!`);
-                this.oyunuBitir(botId);
-                return "kazandi";
-            }
-            
-            return "hamle_yapildi";
-        } catch (error) {
-            console.error(`Bot ${botId} kart atarken hata:`, error);
-            
-            // Hata olursa rastgele bir kart at
-            if (botKartlari.length > 0) {
-                const rastgeleIndeks = Math.floor(Math.random() * botKartlari.length);
-                const rastgeleKart = botKartlari[rastgeleIndeks];
-                
-                console.log(`Bot ${botId} hata sonrası rastgele kart atıyor:`, rastgeleKart);
-                this.acikKart = rastgeleKart;
-                botKartlari.splice(rastgeleIndeks, 1);
-                
-                this.oyuncuKartCekildi = false;
-                
-                // El bitti mi kontrol et
-                if (botKartlari.length === 0) {
-                    this.oyunuBitir(botId);
-                    return "kazandi";
+                // Açık kart yoksa veya tercih etmiyorsa normal kart çek
+                if (this.kartiCek(botId) === false) {
+                    console.error(`Bot ${botId} kart çekemedi!`);
+                    return "kart_cekme_hatasi";
                 }
-                
-                return "acil_hamle_yapildi";
             }
             
+            return "basarili";
+        } catch (error) {
+            console.error(`Bot ${botId} hamlesi yapılırken hata:`, error);
             return "hata";
         }
     }
-
+    
     /**
-     * Bot için kartın faydalı olup olmadığını kontrol et
-     * @param {number} botId - Bot ID'si
-     * @param {Object} kart - Çekilen kart
-     * @returns {boolean} Kart faydalı mı
+     * Bot'un açık kartı değerlendirmesi
+     * @param {number} botId - Bot ID
+     * @param {number} zorluk - Bot zorluk seviyesi
+     * @returns {boolean} - Açık kartı alması gerekip gerekmediği
      */
-    botIcinKartFaydaliMi(botId, kart) {
-        if (!kart) return false;
+    botAcikKartiDegerlendirme(botId, zorluk) {
+        if (!this.acikKart) return false;
         
-        const botKartlari = this.botKartlari[botId];
+        // Bota ait kartlar
+        const botKartlari = this.botKartlari[botId - 1];
+        if (!botKartlari || botKartlari.length === 0) return true; // Kartsızsa mutlaka al
         
-        // Kart Joker ise her zaman faydalı
-        if (kart.isJoker) return true;
-        
-        // Aynı renkten kart sayısını hesapla
-        const ayniRenkKartlar = botKartlari.filter(k => k.renk === kart.renk);
-        if (ayniRenkKartlar.length >= 2) return true;
-        
-        // Aynı elementten kart sayısını hesapla
-        const ayniElementKartlar = botKartlari.filter(k => k.element === kart.element);
-        if (ayniElementKartlar.length >= 2) return true;
-        
-        // Sıralı dizi oluşturup oluşturmadığını kontrol et
-        const sayisalDegerler = botKartlari
-            .filter(k => k.renk === kart.renk && k.element !== 'Joker')
-            .map(k => this.elementSayisalDeger(k.element));
-        
-        sayisalDegerler.push(this.elementSayisalDeger(kart.element));
-        sayisalDegerler.sort((a, b) => a - b);
-        
-        for (let i = 0; i < sayisalDegerler.length - 2; i++) {
-            if (sayisalDegerler[i + 1] === sayisalDegerler[i] + 1 && 
-                sayisalDegerler[i + 2] === sayisalDegerler[i] + 2) {
-                return true;
-            }
+        // Basit seviyeler için rastgele karar ver
+        if (zorluk === 1) {
+            return Math.random() > 0.4; // %60 ihtimalle açık kartı al
         }
         
-        return false;
-    }
-
-    /**
-     * Element sayısal değerini al (Su:1, Toprak:2, Hava:3, Ateş:4)
-     * @param {string} element - Element ismi
-     * @returns {number} Elementin sayısal değeri
-     */
-    elementSayisalDeger(element) {
-        const degerler = { 'Su': 1, 'Toprak': 2, 'Hava': 3, 'Ateş': 4 };
-        return degerler[element] || 0;
-    }
-
-    /**
-     * Kolay bot için hamle stratejisi
-     * @param {number} botId - Bot ID'si
-     * @returns {number} Atılacak kartın indeksi
-     */
-    botKolayHamleYap(botId) {
-        const botKartlari = this.botKartlari[botId];
-        if (botKartlari.length === 0) return -1;
+        // Orta ve üstü seviyeler için stratejik karar
+        const acikKartElement = this.acikKart.element;
+        const acikKartDeger = this.acikKart.deger;
         
-        // Basit strateji: Rastgele kart at
-        return Math.floor(Math.random() * botKartlari.length);
-    }
-
-    /**
-     * Zor bot için hamle stratejisi
-     * @param {number} botId - Bot ID'si
-     * @returns {number} Atılacak kartın indeksi
-     */
-    botZorHamleYap(botId) {
-        const botKartlari = this.botKartlari[botId];
-        if (botKartlari.length === 0) return -1;
+        // Aynı elementten kaç kart var
+        const ayniElementKartSayisi = botKartlari.filter(k => k.element === acikKartElement).length;
         
-        // İleri strateji: En az faydalı kartı at
+        // Aynı değerden kaç kart var
+        const ayniDegerKartSayisi = botKartlari.filter(k => k.deger === acikKartDeger).length;
         
-        // 1. Joker'leri elde tut
-        const jokerOlmayanKartlar = botKartlari.filter(k => k.isJoker === false);
-        if (jokerOlmayanKartlar.length === 0) {
-            // Sadece Joker'ler kaldıysa birini at
-            return botKartlari.findIndex(k => k.isJoker === true);
+        // Zorluk seviyesine göre karar stratejisi
+        if (zorluk >= 3) {
+            // Zor seviye: Akıllıca değerlendir
+            return (ayniElementKartSayisi >= 2 || ayniDegerKartSayisi >= 2);
+        } else {
+            // Orta seviye: Biraz daha basit değerlendirme
+            return (ayniElementKartSayisi >= 1 || ayniDegerKartSayisi >= 1);
         }
-        
-        // 2. Her kart için bir "fayda puanı" hesapla
-        const kartFaydaPuanlari = botKartlari.map((kart, indeks) => {
-            if (kart.isJoker) return { indeks, puan: 100 }; // Joker'ler çok değerli
-            
-            let puan = 0;
-            
-            // Aynı renkteki kartları kontrol et
-            const ayniRenkKartlar = botKartlari.filter(k => k.renk === kart.renk && k !== kart);
-            puan += ayniRenkKartlar.length * 10;
-            
-            // Aynı elementteki kartları kontrol et
-            const ayniElementKartlar = botKartlari.filter(k => k.element === kart.element && k !== kart);
-            puan += ayniElementKartlar.length * 5;
-            
-            // Sıralı kartları kontrol et
-            const kartDegeri = this.elementSayisalDeger(kart.element);
-            const ardisilKartlar = botKartlari.filter(k => 
-                k.renk === kart.renk && 
-                k !== kart && 
-                Math.abs(this.elementSayisalDeger(k.element) - kartDegeri) === 1
-            );
-            
-            puan += ardisilKartlar.length * 15;
-            
-            return { indeks, puan };
-        });
-        
-        // En düşük fayda puanına sahip kartı bul
-        kartFaydaPuanlari.sort((a, b) => a.puan - b.puan);
-        return kartFaydaPuanlari[0].indeks;
     }
 
     /**

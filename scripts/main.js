@@ -337,11 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
             this.classList.toggle('secili');
         });
         
-        // Eğer kart kombinasyon alanına taşınıyorsa, kombinasyondaki kartlar listesine ekle
-        if (this.id === 'kombinasyon-icerik') {
-            kombinasyondakiKartlar.push(sürüklenenKart);
-        }
-        
         return false;
     }
     
@@ -367,7 +362,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Global değişkenler
-    let kombinasyondakiKartlar = [];
     let oyuncuYildizlari = 0;
     let botYildizlari = [0, 0, 0]; // 3 bot için yıldız sayıları
     let kalanKartSayisi = 56; // Toplam kart sayısı (14 kart x 4 oyuncu = 56)
@@ -702,8 +696,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Kart çekme durumunu güncelle
                 kartCekildi = true;
                 durumMesajiGoster('Kart çektiniz. Şimdi bir kartı atın veya kombinasyonları kontrol edin.', '#000000');
-                
-                // Kalan kart sayısını güncelle
+            
+            // Kalan kart sayısını güncelle
                 kalanKartSayisiniGuncelle(-1);
             }
         }).catch(error => {

@@ -13,6 +13,7 @@ class PeriyodikOkey {
         this.oyuncuYildizlari = new Map(); // Oyuncu ve botların yıldızları
         this.oyunDurumu = 'bekliyor'; // bekliyor, devam, bitti
         this.kartCekildi = false;
+        this.botZorlukSeviyesi = 'orta'; // kolay, orta, zor
     }
 
     // Oyunu başlat
@@ -92,7 +93,24 @@ class PeriyodikOkey {
 
         const cekilenKart = this.deste.pop();
         this.kartCekildi = true;
+        
+        // Oyuncunun kartı kalmazsa otomatik kart ver
+        if (this.oyuncuKartlari.length === 0) {
+            this.oyuncuKartlari.push(cekilenKart);
+            return this.kartiCek(); // Tekrar kart çek
+        }
+        
+        this.oyuncuKartlari.push(cekilenKart);
         return cekilenKart;
+    }
+
+    // Desteyi yenile
+    desteyiYenile() {
+        console.log("Deste yenileniyor...");
+        // Bu fonksiyon ilerde eklenecek
+        // Şimdilik yeni deste oluştur
+        this.desteOlustur();
+        this.desteyiKaristir();
     }
 
     // Açık kartı al
@@ -100,10 +118,15 @@ class PeriyodikOkey {
         if (this.kartCekildi) {
             throw new Error("Bu turda zaten kart çektiniz!");
         }
-
+        
+        if (!this.acikKart) {
+            throw new Error("Açık kart bulunmuyor!");
+        }
+        
         const alinanKart = this.acikKart;
         this.acikKart = null;
         this.kartCekildi = true;
+        this.oyuncuKartlari.push(alinanKart);
         return alinanKart;
     }
 
@@ -130,25 +153,42 @@ class PeriyodikOkey {
         if (kartlar.length < 3) return false;
 
         // Aynı grup kontrolü
-        const ayniGrup = kartlar.every(k => k.grup === kartlar[0].grup);
+        const ayniGrup = this.ayniGrupKontrolu(kartlar);
         
         // Aynı periyot kontrolü
-        const ayniPeriyot = kartlar.every(k => k.periyot === kartlar[0].periyot);
-
-        // Joker kartlar her yere uyar
-        const jokerSayisi = kartlar.filter(k => k.isJoker).length;
-        const normalKartlar = kartlar.filter(k => !k.isJoker);
-
-        if (jokerSayisi > 0) {
-            // Jokerli kombinasyonları kontrol et
-            if (normalKartlar.length >= 2) {
-                const ayniGrupJokerli = normalKartlar.every(k => k.grup === normalKartlar[0].grup);
-                const ayniPeriyotJokerli = normalKartlar.every(k => k.periyot === normalKartlar[0].periyot);
-                if (ayniGrupJokerli || ayniPeriyotJokerli) return true;
-            }
-        }
+        const ayniPeriyot = this.ayniPeriyotKontrolu(kartlar);
 
         return ayniGrup || ayniPeriyot;
+    }
+    
+    // Aynı grup kontrolü
+    ayniGrupKontrolu(kartlar) {
+        // Joker olmayan kartları ve jokerleri ayır
+        const jokerler = kartlar.filter(k => k.isJoker);
+        const normalKartlar = kartlar.filter(k => !k.isJoker);
+        
+        if (normalKartlar.length === 0) return true; // Hepsi joker ise geçerli
+        
+        const referansGrup = normalKartlar[0].grup;
+        const uyumsuzKartSayisi = normalKartlar.filter(k => k.grup !== referansGrup).length;
+        
+        // Joker sayısı, uyumsuz kart sayısına eşit veya büyükse kombinasyon geçerli
+        return uyumsuzKartSayisi <= jokerler.length;
+    }
+    
+    // Aynı periyot kontrolü
+    ayniPeriyotKontrolu(kartlar) {
+        // Joker olmayan kartları ve jokerleri ayır
+        const jokerler = kartlar.filter(k => k.isJoker);
+        const normalKartlar = kartlar.filter(k => !k.isJoker);
+        
+        if (normalKartlar.length === 0) return true; // Hepsi joker ise geçerli
+        
+        const referansPeriyot = normalKartlar[0].periyot;
+        const uyumsuzKartSayisi = normalKartlar.filter(k => k.periyot !== referansPeriyot).length;
+        
+        // Joker sayısı, uyumsuz kart sayısına eşit veya büyükse kombinasyon geçerli
+        return uyumsuzKartSayisi <= jokerler.length;
     }
 
     // Yıldız ekle
@@ -175,24 +215,189 @@ class PeriyodikOkey {
         const botId = `bot${this.siradakiOyuncu}`;
         const botKartlari = this.botKartlari.get(botId);
 
-        // Basit bot stratejisi: Rastgele kart çek ve at
+        if (!botKartlari || botKartlari.length === 0) {
+            // Botun kartı yoksa yeni kart çekilir
+            if (this.deste.length === 0) {
+                this.desteyiYenile();
+            }
+            botKartlari.push(this.deste.pop());
+        }
+
+        // Zorluk seviyesine göre bot stratejisini belirle
+        switch (this.botZorlukSeviyesi) {
+            case 'kolay':
+                this.kolayBotHamlesi(botId, botKartlari);
+                break;
+            case 'zor':
+                this.zorBotHamlesi(botId, botKartlari);
+                break;
+            default:
+                this.ortaBotHamlesi(botId, botKartlari);
+                break;
+        }
+
+        // Bot kombinasyon kontrolü
+        this.botKombinasyonKontrolEt(botId);
+
+        this.siradakiOyuncuyaGec();
+    }
+    
+    // Kolay bot stratejisi - Tamamen rastgele kararlar
+    kolayBotHamlesi(botId, botKartlari) {
+        // Rastgele kart çekme veya açık kartı alma
         if (Math.random() < 0.5 && this.acikKart) {
-            // Açık kartı al
             botKartlari.push(this.acikKart);
             this.acikKart = null;
         } else {
-            // Desteden çek
+            if (this.deste.length === 0) {
+                this.desteyiYenile();
+            }
             botKartlari.push(this.deste.pop());
         }
 
         // Rastgele bir kart at
         const atilacakKartIndex = Math.floor(Math.random() * botKartlari.length);
         this.acikKart = botKartlari.splice(atilacakKartIndex, 1)[0];
-
-        // Bot kombinasyon kontrolü
-        this.botKombinasyonKontrolEt(botId);
-
-        this.siradakiOyuncuyaGec();
+    }
+    
+    // Orta bot stratejisi - Bazı basit stratejik kararlar
+    ortaBotHamlesi(botId, botKartlari) {
+        let kartCekildi = false;
+        
+        // Açık kartın grup veya periyotuna sahip bir kart varsa, açık kartı al
+        if (this.acikKart && !this.acikKart.isJoker) {
+            const benzerKartVar = botKartlari.some(k => 
+                !k.isJoker && (k.grup === this.acikKart.grup || k.periyot === this.acikKart.periyot)
+            );
+            
+            if (benzerKartVar) {
+                botKartlari.push(this.acikKart);
+                this.acikKart = null;
+                kartCekildi = true;
+            }
+        }
+        
+        // Açık kart joker ise her zaman al
+        if (!kartCekildi && this.acikKart && this.acikKart.isJoker) {
+            botKartlari.push(this.acikKart);
+            this.acikKart = null;
+            kartCekildi = true;
+        }
+        
+        // Eğer açık kart alınmadıysa, desteden çek
+        if (!kartCekildi) {
+            if (this.deste.length === 0) {
+                this.desteyiYenile();
+            }
+            botKartlari.push(this.deste.pop());
+        }
+        
+        // En az faydalı kartı at (az benzerliği olan)
+        const atilacakKartIndex = this.enAzFaydaliKartiBul(botKartlari);
+        this.acikKart = botKartlari.splice(atilacakKartIndex, 1)[0];
+    }
+    
+    // Zor bot stratejisi - Daha karmaşık ve etkili kararlar
+    zorBotHamlesi(botId, botKartlari) {
+        // Mevcut kartlarla hangi grup ve periyotlardan kartlar var analiz et
+        const grupAnalizi = this.botKartlariniAnalizeEt(botKartlari, 'grup');
+        const periyotAnalizi = this.botKartlariniAnalizeEt(botKartlari, 'periyot');
+        
+        let kartCekildi = false;
+        
+        // Açık kartın mevcut gruplardaki veya periyotlardaki kart sayısına göre değerlendir
+        if (this.acikKart && !this.acikKart.isJoker) {
+            const acikKartGrupSayisi = grupAnalizi[this.acikKart.grup] || 0;
+            const acikKartPeriyotSayisi = periyotAnalizi[this.acikKart.periyot] || 0;
+            
+            // Eğer açık kart, mevcut 2 veya daha fazla karta uyuyorsa al
+            if (acikKartGrupSayisi >= 2 || acikKartPeriyotSayisi >= 2) {
+                botKartlari.push(this.acikKart);
+                this.acikKart = null;
+                kartCekildi = true;
+            }
+        }
+        
+        // Açık kart joker ise her zaman al
+        if (!kartCekildi && this.acikKart && this.acikKart.isJoker) {
+            botKartlari.push(this.acikKart);
+            this.acikKart = null;
+            kartCekildi = true;
+        }
+        
+        // Eğer açık kart alınmadıysa, desteden çek
+        if (!kartCekildi) {
+            if (this.deste.length === 0) {
+                this.desteyiYenile();
+            }
+            botKartlari.push(this.deste.pop());
+        }
+        
+        // En az faydalı kartı at (grup ve periyot analizine göre)
+        const atilacakKartIndex = this.enAzFaydaliKartiBul(botKartlari, true);
+        this.acikKart = botKartlari.splice(atilacakKartIndex, 1)[0];
+    }
+    
+    // Bot kartlarını analiz et
+    botKartlariniAnalizeEt(botKartlari, ozellik) {
+        const analiz = {};
+        
+        botKartlari.forEach(kart => {
+            if (!kart.isJoker) {
+                const deger = kart[ozellik];
+                analiz[deger] = (analiz[deger] || 0) + 1;
+            }
+        });
+        
+        return analiz;
+    }
+    
+    // En az faydalı kartı bul
+    enAzFaydaliKartiBul(botKartlari, gelismisAnaliz = false) {
+        // Joker kartları asla atma
+        const jokerOlmayanKartlar = botKartlari.filter(k => !k.isJoker);
+        
+        if (jokerOlmayanKartlar.length === 0) {
+            // Tüm kartlar joker ise (çok nadir durum), rastgele birini at
+            return Math.floor(Math.random() * botKartlari.length);
+        }
+        
+        if (!gelismisAnaliz) {
+            // Basit analiz - her kartın grup ve periyot benzerliklerini kontrol et
+            const kartFaydalari = jokerOlmayanKartlar.map((kart, index) => {
+                let benzerlikSayisi = 0;
+                
+                jokerOlmayanKartlar.forEach((digerKart, digerIndex) => {
+                    if (index !== digerIndex) {
+                        if (kart.grup === digerKart.grup || kart.periyot === digerKart.periyot) {
+                            benzerlikSayisi++;
+                        }
+                    }
+                });
+                
+                return { index: botKartlari.indexOf(kart), benzerlik: benzerlikSayisi };
+            });
+            
+            // En az benzerliği olan kartı bul
+            kartFaydalari.sort((a, b) => a.benzerlik - b.benzerlik);
+            return kartFaydalari[0].index;
+        } else {
+            // Gelişmiş analiz - grup ve periyot dağılımlarını analiz et
+            const grupAnalizi = this.botKartlariniAnalizeEt(botKartlari, 'grup');
+            const periyotAnalizi = this.botKartlariniAnalizeEt(botKartlari, 'periyot');
+            
+            const kartFaydalari = jokerOlmayanKartlar.map(kart => {
+                const grupFaydasi = grupAnalizi[kart.grup] || 0;
+                const periyotFaydasi = periyotAnalizi[kart.periyot] || 0;
+                const toplamFayda = grupFaydasi + periyotFaydasi;
+                
+                return { kart, toplamFayda };
+            });
+            
+            // En az faydalı kartı seç
+            kartFaydalari.sort((a, b) => a.toplamFayda - b.toplamFayda);
+            return botKartlari.indexOf(kartFaydalari[0].kart);
+        }
     }
 
     // Bot kombinasyon kontrolü
@@ -202,6 +407,8 @@ class PeriyodikOkey {
         // Grup ve periyotlara göre kartları grupla
         const gruplar = new Map();
         const periyotlar = new Map();
+        const jokerler = botKartlari.filter(k => k.isJoker);
+        const jokerSayisi = jokerler.length;
 
         botKartlari.forEach(kart => {
             if (!kart.isJoker) {
@@ -217,16 +424,46 @@ class PeriyodikOkey {
 
         // 3 veya daha fazla aynı grup/periyot varsa yıldız kazan
         let kombinasyonVar = false;
-        gruplar.forEach(kartlar => {
-            if (kartlar.length >= 3) kombinasyonVar = true;
+        let kombinasyonKartlari = [];
+        
+        // Önce grupları kontrol et
+        gruplar.forEach((kartlar, grup) => {
+            if (kartlar.length + jokerSayisi >= 3 && kartlar.length >= 2) {
+                kombinasyonVar = true;
+                kombinasyonKartlari = [...kartlar];
+                // Gerektiği kadar joker ekle
+                const gerekliJokerSayisi = Math.min(3 - kartlar.length, jokerSayisi);
+                kombinasyonKartlari = [...kombinasyonKartlari, ...jokerler.slice(0, gerekliJokerSayisi)];
+            }
         });
-        periyotlar.forEach(kartlar => {
-            if (kartlar.length >= 3) kombinasyonVar = true;
-        });
-
-        if (kombinasyonVar) {
-            this.yildizEkle(botId);
+        
+        // Kombinasyon bulunamadıysa periyotları kontrol et
+        if (!kombinasyonVar) {
+            periyotlar.forEach((kartlar, periyot) => {
+                if (kartlar.length + jokerSayisi >= 3 && kartlar.length >= 2) {
+                    kombinasyonVar = true;
+                    kombinasyonKartlari = [...kartlar];
+                    // Gerektiği kadar joker ekle
+                    const gerekliJokerSayisi = Math.min(3 - kartlar.length, jokerSayisi);
+                    kombinasyonKartlari = [...kombinasyonKartlari, ...jokerler.slice(0, gerekliJokerSayisi)];
+                }
+            });
         }
+
+        if (kombinasyonVar && kombinasyonKartlari.length >= 3) {
+            // Kombinasyon yapılan kartları elden çıkar
+            kombinasyonKartlari.forEach(kart => {
+                const kartIndex = botKartlari.findIndex(k => k.id === kart.id);
+                if (kartIndex !== -1) {
+                    botKartlari.splice(kartIndex, 1);
+                }
+            });
+            
+            this.yildizEkle(botId);
+            return true;
+        }
+        
+        return false;
     }
 }
 

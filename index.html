@@ -25,17 +25,17 @@
             <div class="form-grup">
                 <label for="baslangic-bot-sayisi">Bot Sayısı:</label>
                 <div class="secim-butonlar">
-                    <button data-value="1" class="secim-buton">1 Bot</button>
-                    <button data-value="2" class="secim-buton">2 Bot</button>
-                    <button data-value="3" class="secim-buton secili">3 Bot</button>
+                    <button data-value="1" class="secim-buton" onclick="this.classList.add('secili'); this.nextElementSibling.classList.remove('secili'); this.nextElementSibling.nextElementSibling.classList.remove('secili');">1 Bot</button>
+                    <button data-value="2" class="secim-buton" onclick="this.classList.add('secili'); this.previousElementSibling.classList.remove('secili'); this.nextElementSibling.classList.remove('secili');">2 Bot</button>
+                    <button data-value="3" class="secim-buton secili" onclick="this.classList.add('secili'); this.previousElementSibling.classList.remove('secili'); this.previousElementSibling.previousElementSibling.classList.remove('secili');">3 Bot</button>
                 </div>
             </div>
             <div class="form-grup">
                 <label for="baslangic-zorluk">Zorluk Seviyesi:</label>
                 <div class="secim-butonlar">
-                    <button data-value="kolay" class="secim-buton">Kolay</button>
-                    <button data-value="orta" class="secim-buton secili">Orta</button>
-                    <button data-value="zor" class="secim-buton">Zor</button>
+                    <button data-value="kolay" class="secim-buton" onclick="this.classList.add('secili'); this.nextElementSibling.classList.remove('secili'); this.nextElementSibling.nextElementSibling.classList.remove('secili');">Kolay</button>
+                    <button data-value="orta" class="secim-buton secili" onclick="this.classList.add('secili'); this.previousElementSibling.classList.remove('secili'); this.nextElementSibling.classList.remove('secili');">Orta</button>
+                    <button data-value="zor" class="secim-buton" onclick="this.classList.add('secili'); this.previousElementSibling.classList.remove('secili'); this.previousElementSibling.previousElementSibling.classList.remove('secili');">Zor</button>
                 </div>
             </div>
             <div class="form-grup">

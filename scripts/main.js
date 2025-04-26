@@ -49,7 +49,7 @@ const OYUN_AYARLARI = {
 };
 
 // Sayfa tam olarak yüklendiğinde başla
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     console.log("Periyodik Okey oyunu başlatılıyor...");
     
     // Oyun nesnesi
@@ -63,13 +63,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Ekranları gösterme/gizleme
     function ekraniGoster(ekranId) {
+        console.log("Ekran değiştiriliyor: " + ekranId);
         document.querySelectorAll('.ekran').forEach(ekran => {
             ekran.classList.add('gizli');
             ekran.style.display = 'none';
         });
         const ekran = document.getElementById(ekranId);
-        ekran.classList.remove('gizli');
-        ekran.style.display = 'block';
+        if (ekran) {
+            ekran.classList.remove('gizli');
+            ekran.style.display = 'block';
+        } else {
+            console.error(`Ekran bulunamadı: ${ekranId}`);
+        }
     }
     
     // Element kartı oluşturma fonksiyonu
@@ -118,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             kart.appendChild(grupPeriyot);
             
             // Renk
-            const renk = elementRengiGetir(element);
+            const renk = ELEMENT_RENKLERI[element.grup] || "#ffffff";
             kart.style.backgroundColor = renk;
             
             // Yazı rengini ayarla
@@ -179,8 +184,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Botları ayarla
     function botlariAyarla() {
         // Bot alanlarını göster/gizle
-        document.querySelector('.bot2').classList.toggle('gizli', OYUN_AYARLARI.botSayisi < 2);
-        document.querySelector('.bot3').classList.toggle('gizli', OYUN_AYARLARI.botSayisi < 3);
+        const bot2 = document.querySelector('.bot2');
+        const bot3 = document.querySelector('.bot3');
+        
+        if (bot2) bot2.classList.toggle('gizli', OYUN_AYARLARI.botSayisi < 2);
+        if (bot3) bot3.classList.toggle('gizli', OYUN_AYARLARI.botSayisi < 3);
     }
     
     // Yardım sayfasını göster
@@ -255,6 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Oyunu başlat
     function oyunuBaslat() {
+        console.log('Oyun başlatılıyor...');
+        
         // Oyun nesnesini oluştur
         oyun = new PeriyodikOkey();
         
@@ -265,7 +275,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const oyunDurumu = oyun.oyunuBaslat(OYUN_AYARLARI.botSayisi);
         
         // Oyuncu adını göster
-        document.getElementById('oyuncu-isim-goster').textContent = OYUN_AYARLARI.oyuncuIsmi;
+        const oyuncuIsimElement = document.getElementById('oyuncu-isim-goster');
+        if (oyuncuIsimElement) {
+            oyuncuIsimElement.textContent = OYUN_AYARLARI.oyuncuIsmi;
+        }
         
         // Bot alanlarını güncelle
         botlariAyarla();
@@ -273,14 +286,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Oyuncu kartlarını göster
         gosterOyuncuKartlari(oyunDurumu.oyuncuKartlari);
         
-        // Bot kartlarının sayısını göster
-        gosterBotKartlari(oyunDurumu.botKartSayilari);
-        
         // Kalan kart sayısını güncelle
-        document.getElementById('kalan-kart').textContent = oyunDurumu.kalanKart;
+        const kalanKartElement = document.getElementById('kalan-kart');
+        if (kalanKartElement) {
+            kalanKartElement.textContent = oyunDurumu.kalanKart;
+        }
         
         // Durum mesajını güncelle
-        document.getElementById('durum-mesaji').textContent = "Sıra sizde. Desteden kart çekin veya açık kartı alın.";
+        const durumMesajiElement = document.getElementById('durum-mesaji');
+        if (durumMesajiElement) {
+            durumMesajiElement.textContent = "Sıra sizde. Desteden kart çekin veya açık kartı alın.";
+        }
         
         // Butonların durumunu güncelle
         document.getElementById('btn-kontrol-et').disabled = false;
@@ -413,47 +429,63 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Kart çekme
     function kartCek() {
-        if (!oyuncuSirasi) {
-            alert("Şu an sizin sıranız değil!");
-            return;
-        }
+        console.log('Kart çekiliyor...');
         
-        const kartCekildi = oyun.destektenKartCek();
-        
-        if (kartCekildi) {
-            document.getElementById('btn-kart-cek').disabled = true;
-            document.getElementById('btn-acik-kart-al').disabled = true;
+        try {
+            const cekilenKart = oyun.kartiCek();
+            console.log('Çekilen kart:', cekilenKart);
             
-            // UI güncelle
-            oyuncuEliniGuncelle();
-            ortaAlaniGuncelle();
+            // Oyuncu elini güncelle
+            gosterOyuncuKartlari(oyun.oyuncuKartlari);
             
-            // Kart atma butonunu etkinleştir
-            document.getElementById('btn-kart-at').disabled = (secilenKart === null);
-        } else {
-            alert("Destede kart kalmadı!");
+            // Durum mesajını güncelle
+            const durumMesajiElement = document.getElementById('durum-mesaji');
+            if (durumMesajiElement) {
+                durumMesajiElement.textContent = "Kart çektiniz. Şimdi bir kart atın.";
+            }
+            
+            // Kartı at butonunu aktif et
+            const btnKartVer = document.getElementById('btn-kart-ver');
+            if (btnKartVer) {
+                btnKartVer.disabled = false;
+            }
+            
+        } catch (error) {
+            const durumMesajiElement = document.getElementById('durum-mesaji');
+            if (durumMesajiElement) {
+                durumMesajiElement.textContent = error.message;
+            }
         }
     }
     
     // Açık kart alma
     function acikKartAl() {
-        if (!oyuncuSirasi) {
-            alert("Şu an sizin sıranız değil!");
-            return;
-        }
+        console.log('Açık kart alınıyor...');
         
-        const kartAlindi = oyun.acikKartiAl();
-        
-        if (kartAlindi) {
-            document.getElementById('btn-kart-cek').disabled = true;
-            document.getElementById('btn-acik-kart-al').disabled = true;
+        try {
+            const alinanKart = oyun.acikKartiAl();
+            console.log('Alınan kart:', alinanKart);
             
-            // UI güncelle
-            oyuncuEliniGuncelle();
-            ortaAlaniGuncelle();
+            // Oyuncu elini güncelle
+            gosterOyuncuKartlari(oyun.oyuncuKartlari);
             
-            // Kart atma butonunu etkinleştir
-            document.getElementById('btn-kart-at').disabled = (secilenKart === null);
+            // Durum mesajını güncelle
+            const durumMesajiElement = document.getElementById('durum-mesaji');
+            if (durumMesajiElement) {
+                durumMesajiElement.textContent = "Açık kartı aldınız. Şimdi bir kart atın.";
+            }
+            
+            // Kartı at butonunu aktif et
+            const btnKartVer = document.getElementById('btn-kart-ver');
+            if (btnKartVer) {
+                btnKartVer.disabled = false;
+            }
+            
+        } catch (error) {
+            const durumMesajiElement = document.getElementById('durum-mesaji');
+            if (durumMesajiElement) {
+                durumMesajiElement.textContent = error.message;
+            }
         }
     }
     

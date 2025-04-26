@@ -3,7 +3,7 @@
  * Oyun başlangıcı ve genel kontroller
  */
 
-// Element verileri
+// Temel Element Verileri
 const ELEMENT_VERILERI = [
     { atom_no: 1, sembol: "H", isim: "Hidrojen", grup: 1, periyot: 1 },
     { atom_no: 2, sembol: "He", isim: "Helyum", grup: 18, periyot: 1 },
@@ -27,16 +27,16 @@ const ELEMENT_VERILERI = [
     { atom_no: 20, sembol: "Ca", isim: "Kalsiyum", grup: 2, periyot: 4 }
 ];
 
-// Element renkleri - grup bazında
+// Element renkleri
 const ELEMENT_RENKLERI = {
-    1: "#ff9aa2", // Alkali Metaller
-    2: "#ffb7b2", // Toprak Alkali Metaller
-    13: "#ffdac1", // Boron Grubu
-    14: "#e2f0cb", // Karbon Grubu
-    15: "#b5ead7", // Nitrojen Grubu
-    16: "#c7ceea", // Oksijen Grubu
-    17: "#9fd8df", // Halojenler
-    18: "#f2a2e8", // Soy Gazlar
+    1: "#ff9aa2", 
+    2: "#ffb7b2", 
+    13: "#ffdac1", 
+    14: "#e2f0cb", 
+    15: "#b5ead7", 
+    16: "#c7ceea", 
+    17: "#9fd8df", 
+    18: "#f2a2e8"
 };
 
 // Oyun ayarları
@@ -47,6 +47,11 @@ const OYUN_AYARLARI = {
     sesEfektleri: true,
     muzik: true
 };
+
+// Oyun değişkenleri
+let oyun;
+let secilenKart = null;
+let oyuncuSirasi = true;
 
 // Sürükle-bırak işlemleri için gerekli değişkenler
 let sürüklenenKart = null;
@@ -113,14 +118,11 @@ function hedefAlanlarıAyarla() {
     });
 }
 
-// Sayfa tam olarak yüklendiğinde başla
+// Sayfa yüklendiğinde çalıştırılacak
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Periyodik Okey oyunu başlatılıyor...");
+    console.log("Periyodik Okey oyunu yükleniyor...");
     
-    // Oyun nesnesi
-    let oyun = null;
-    
-    // Hata yakalama
+    // JavaScript hata yakalamayı etkinleştir
     window.onerror = function(message, source, lineno, colno, error) {
         console.error(`HATA: ${message} - ${source}:${lineno}:${colno}`);
         return true;
@@ -341,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error("Element verileri yüklenemedi!");
             }
             
-            // Oyun nesnesini oluştur ve yüklenen verileri ayarla
+            // Oyun nesnesi
             oyun = new PeriyodikOkey();
             oyun.elementVerileri = elementVerileri;
             
@@ -1234,8 +1236,8 @@ function kartiGeriKoy() {
     secilenKart = null;
 }
 
-// Görünürlük sorunu düzeltmesi için başlangıçta ana menüyü göster
-ekraniGoster('menu-screen');
-
-// Olay dinleyicilerini ekle
-document.addEventListener('DOMContentLoaded', eventListenerleriEkle); 
+// Olay dinleyicilerini ekle ve başlangıç ekranını göster
+document.addEventListener('DOMContentLoaded', function() {
+    eventListenerleriEkle();
+    ekraniGoster('menu-screen');
+}); 

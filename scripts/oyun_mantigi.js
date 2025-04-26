@@ -144,21 +144,29 @@ class PeriyodikOkey {
         return verilenKart;
     }
 
-    // Kombinasyon kontrolü
+    // Kombinasyon kontrolü - Yeni kurallar
     kombinasyonKontrolEt(kartIdListesi) {
         const kartlar = kartIdListesi.map(id => 
             this.oyuncuKartlari.find(k => k.id === id)
         ).filter(k => k !== undefined);
 
+        // En az 3 kart gerekli
         if (kartlar.length < 3) return false;
 
-        // Aynı grup kontrolü
+        // Farklı periyot sayısı kontrolü - en az 4 farklı periyot olmalı
+        const farkliPeriyotlar = new Set(kartlar.filter(k => !k.isJoker).map(k => k.periyot));
+        const yeterliPeriyot = farkliPeriyotlar.size >= 4;
+
+        // Farklı grup sayısı kontrolü - en az 3 farklı grup olmalı
+        const farkliGruplar = new Set(kartlar.filter(k => !k.isJoker).map(k => k.grup));
+        const yeterliGrup = farkliGruplar.size >= 3;
+
+        // Aynı grup veya aynı periyot kontrolü
         const ayniGrup = this.ayniGrupKontrolu(kartlar);
-        
-        // Aynı periyot kontrolü
         const ayniPeriyot = this.ayniPeriyotKontrolu(kartlar);
 
-        return ayniGrup || ayniPeriyot;
+        // Geçerli kombinasyon: En az 4 periyot VE en az 3 grup VE (aynı gruptan VEYA aynı periyottan)
+        return yeterliPeriyot && yeterliGrup && (ayniGrup || ayniPeriyot);
     }
     
     // Aynı grup kontrolü
@@ -196,7 +204,7 @@ class PeriyodikOkey {
         const mevcutYildiz = this.oyuncuYildizlari.get(oyuncu) || 0;
         this.oyuncuYildizlari.set(oyuncu, mevcutYildiz + 1);
 
-        // Oyun bitişi kontrolü
+        // Oyun bitişi kontrolü - 3 yıldıza ulaşan kazanır
         if (mevcutYildiz + 1 >= 3) {
             this.oyunDurumu = 'bitti';
             return true;
@@ -208,6 +216,28 @@ class PeriyodikOkey {
     siradakiOyuncuyaGec() {
         this.siradakiOyuncu = (this.siradakiOyuncu + 1) % (this.botKartlari.size + 1);
         this.kartCekildi = false;
+    }
+
+    // Son kartı bota verme
+    sonKartiBotaVer() {
+        if (this.oyuncuKartlari.length !== 1) {
+            throw new Error("Son kartı vermek için elinizde tek kart olmalıdır!");
+        }
+
+        const verilenKart = this.oyuncuKartlari.pop();
+        this.acikKart = verilenKart;
+        this.kartCekildi = false;
+        
+        // Turu bitirir ve yıldız ekler
+        const oyunBitti = this.yildizEkle('oyuncu');
+        
+        // Turu bitir
+        this.siradakiOyuncuyaGec();
+        
+        return {
+            kart: verilenKart,
+            oyunBitti: oyunBitti
+        };
     }
 
     // Bot hamlesi yap
@@ -403,67 +433,112 @@ class PeriyodikOkey {
     // Bot kombinasyon kontrolü
     botKombinasyonKontrolEt(botId) {
         const botKartlari = this.botKartlari.get(botId);
+        if (!botKartlari || botKartlari.length < 3) return false;
         
-        // Grup ve periyotlara göre kartları grupla
-        const gruplar = new Map();
-        const periyotlar = new Map();
-        const jokerler = botKartlari.filter(k => k.isJoker);
-        const jokerSayisi = jokerler.length;
-
-        botKartlari.forEach(kart => {
-            if (!kart.isJoker) {
-                // Gruplara göre
-                if (!gruplar.has(kart.grup)) gruplar.set(kart.grup, []);
-                gruplar.get(kart.grup).push(kart);
-
-                // Periyotlara göre
-                if (!periyotlar.has(kart.periyot)) periyotlar.set(kart.periyot, []);
-                periyotlar.get(kart.periyot).push(kart);
-            }
-        });
-
-        // 3 veya daha fazla aynı grup/periyot varsa yıldız kazan
-        let kombinasyonVar = false;
-        let kombinasyonKartlari = [];
+        // Bot için kombinasyon bulma
+        const grupluKartlar = this.botGrupluKartlariBul(botKartlari);
+        const periyotluKartlar = this.botPeriyotluKartlariBul(botKartlari);
         
-        // Önce grupları kontrol et
-        gruplar.forEach((kartlar, grup) => {
-            if (kartlar.length + jokerSayisi >= 3 && kartlar.length >= 2) {
-                kombinasyonVar = true;
-                kombinasyonKartlari = [...kartlar];
-                // Gerektiği kadar joker ekle
-                const gerekliJokerSayisi = Math.min(3 - kartlar.length, jokerSayisi);
-                kombinasyonKartlari = [...kombinasyonKartlari, ...jokerler.slice(0, gerekliJokerSayisi)];
-            }
-        });
+        // En iyi kombinasyonu seç
+        let enIyiKombinasyon = null;
         
-        // Kombinasyon bulunamadıysa periyotları kontrol et
-        if (!kombinasyonVar) {
-            periyotlar.forEach((kartlar, periyot) => {
-                if (kartlar.length + jokerSayisi >= 3 && kartlar.length >= 2) {
-                    kombinasyonVar = true;
-                    kombinasyonKartlari = [...kartlar];
-                    // Gerektiği kadar joker ekle
-                    const gerekliJokerSayisi = Math.min(3 - kartlar.length, jokerSayisi);
-                    kombinasyonKartlari = [...kombinasyonKartlari, ...jokerler.slice(0, gerekliJokerSayisi)];
-                }
-            });
+        if (grupluKartlar.length >= 3 && periyotluKartlar.length >= 3) {
+            // Hem grup hem periyot kombinasyonu varsa, daha uzun olanı seç
+            enIyiKombinasyon = grupluKartlar.length > periyotluKartlar.length ? grupluKartlar : periyotluKartlar;
+        } else if (grupluKartlar.length >= 3) {
+            enIyiKombinasyon = grupluKartlar;
+        } else if (periyotluKartlar.length >= 3) {
+            enIyiKombinasyon = periyotluKartlar;
         }
-
-        if (kombinasyonVar && kombinasyonKartlari.length >= 3) {
-            // Kombinasyon yapılan kartları elden çıkar
-            kombinasyonKartlari.forEach(kart => {
-                const kartIndex = botKartlari.findIndex(k => k.id === kart.id);
-                if (kartIndex !== -1) {
-                    botKartlari.splice(kartIndex, 1);
-                }
-            });
+        
+        if (enIyiKombinasyon) {
+            // Kombinasyon yeterli mi kontrol et: en az 4 periyot ve en az 3 grup
+            const farkliPeriyotlar = new Set(enIyiKombinasyon.filter(k => !k.isJoker).map(k => k.periyot));
+            const farkliGruplar = new Set(enIyiKombinasyon.filter(k => !k.isJoker).map(k => k.grup));
             
-            this.yildizEkle(botId);
-            return true;
+            if (farkliPeriyotlar.size >= 4 && farkliGruplar.size >= 3) {
+                // Kartları elden çıkar
+                enIyiKombinasyon.forEach(kart => {
+                    const kartIndex = botKartlari.findIndex(k => k.id === kart.id);
+                    if (kartIndex !== -1) {
+                        botKartlari.splice(kartIndex, 1);
+                    }
+                });
+                
+                // Bot yıldız kazandı
+                return this.yildizEkle(botId);
+            }
         }
         
         return false;
+    }
+    
+    // Botun grup kombinasyonlarını bulması
+    botGrupluKartlariBul(botKartlari) {
+        const jokerler = botKartlari.filter(k => k.isJoker);
+        const normalKartlar = botKartlari.filter(k => !k.isJoker);
+        
+        const grupListesi = Array.from(new Set(normalKartlar.map(k => k.grup)));
+        
+        let enIyiKombinasyon = [];
+        
+        grupListesi.forEach(grup => {
+            const gruptakiKartlar = normalKartlar.filter(k => k.grup === grup);
+            
+            if (gruptakiKartlar.length + jokerler.length >= 3) {
+                const farkliPeriyotlar = new Set(gruptakiKartlar.map(k => k.periyot));
+                
+                // En az 4 periyot ve 3 grup varsa kombinasyon geçerli
+                if (farkliPeriyotlar.size + jokerler.length >= 4) {
+                    const kombinasyon = [...gruptakiKartlar];
+                    
+                    // Gerekirse joker ekle
+                    for (let i = 0; i < jokerler.length && i < 4 - farkliPeriyotlar.size; i++) {
+                        kombinasyon.push(jokerler[i]);
+                    }
+                    
+                    if (kombinasyon.length > enIyiKombinasyon.length) {
+                        enIyiKombinasyon = kombinasyon;
+                    }
+                }
+            }
+        });
+        
+        return enIyiKombinasyon;
+    }
+    
+    // Botun periyot kombinasyonlarını bulması
+    botPeriyotluKartlariBul(botKartlari) {
+        const jokerler = botKartlari.filter(k => k.isJoker);
+        const normalKartlar = botKartlari.filter(k => !k.isJoker);
+        
+        const periyotListesi = Array.from(new Set(normalKartlar.map(k => k.periyot)));
+        
+        let enIyiKombinasyon = [];
+        
+        periyotListesi.forEach(periyot => {
+            const periyottakiKartlar = normalKartlar.filter(k => k.periyot === periyot);
+            
+            if (periyottakiKartlar.length + jokerler.length >= 3) {
+                const farkliGruplar = new Set(periyottakiKartlar.map(k => k.grup));
+                
+                // En az 3 grup varsa kombinasyon geçerli
+                if (farkliGruplar.size + jokerler.length >= 3) {
+                    const kombinasyon = [...periyottakiKartlar];
+                    
+                    // Gerekirse joker ekle
+                    for (let i = 0; i < jokerler.length && i < 3 - farkliGruplar.size; i++) {
+                        kombinasyon.push(jokerler[i]);
+                    }
+                    
+                    if (kombinasyon.length > enIyiKombinasyon.length) {
+                        enIyiKombinasyon = kombinasyon;
+                    }
+                }
+            }
+        });
+        
+        return enIyiKombinasyon;
     }
 }
 

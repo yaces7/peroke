@@ -40,7 +40,7 @@
 
 ### 2. Kart Dağıtma
 - Desteyi oluştur ve karıştır
-- Oyuncuya 14 kart dağıt
+- Oyuncuya 15 kart dağıt
 - Her bota 14 kart dağıt
 - Açık kartı belirle
 

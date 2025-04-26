@@ -438,7 +438,7 @@ class PeriyodikOkey {
         // Bot için kombinasyon bulma
         const grupluKartlar = this.botGrupluKartlariBul(botKartlari);
         const periyotluKartlar = this.botPeriyotluKartlariBul(botKartlari);
-        
+
         // En iyi kombinasyonu seç
         let enIyiKombinasyon = null;
         
@@ -459,12 +459,12 @@ class PeriyodikOkey {
             if (farkliPeriyotlar.size >= 4 && farkliGruplar.size >= 3) {
                 // Kartları elden çıkar
                 enIyiKombinasyon.forEach(kart => {
-                    const kartIndex = botKartlari.findIndex(k => k.id === kart.id);
-                    if (kartIndex !== -1) {
-                        botKartlari.splice(kartIndex, 1);
-                    }
-                });
-                
+                const kartIndex = botKartlari.findIndex(k => k.id === kart.id);
+                if (kartIndex !== -1) {
+                    botKartlari.splice(kartIndex, 1);
+                }
+            });
+            
                 // Bot yıldız kazandı
                 return this.yildizEkle(botId);
             }

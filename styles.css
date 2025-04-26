@@ -1,0 +1,627 @@
+/* Periyodik Okey Ana CSS Dosyası - Birleştirilmiş */
+
+/* Genel Stiller */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #222;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Başlık */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 36px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+/* Ekranlar */
+.ekran {
+    display: none;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.ekran.gizli {
+    display: none !important;
+}
+
+/* Menü Ekranı */
+#menu-screen {
+    text-align: center;
+    position: relative;
+}
+
+#menu-screen h1 {
+    font-size: 3em;
+    margin-bottom: 40px;
+    color: #4CAF50;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.menu-butonlar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 250px;
+}
+
+.btn-ana {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-ana:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.btn-ana.iptal {
+    background-color: #f44336;
+}
+
+.btn-ana.iptal:hover {
+    background-color: #d32f2f;
+}
+
+.versiyon {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 0.8em;
+    color: #888;
+}
+
+/* Oyun Başlangıç Ekranı */
+#oyun-baslangic-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#oyun-baslangic-screen h2 {
+    font-size: 2.2em;
+    margin-bottom: 30px;
+    color: #4CAF50;
+}
+
+.baslangic-form {
+    background-color: #2a2a2a;
+    padding: 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    margin: 0 auto;
+}
+
+.form-grup {
+    margin-bottom: 20px;
+}
+
+.form-grup label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.secim-butonlar {
+    display: flex;
+    gap: 10px;
+}
+
+.secim-buton {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a3a;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.secim-buton:hover {
+    background-color: #4c4c4c;
+}
+
+.secim-buton.secili {
+    background-color: #4CAF50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+#baslangic-oyuncu-ismi {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a3a;
+    color: white;
+    font-size: 1em;
+}
+
+.baslangic-butonlar {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.baslangic-butonlar button {
+    flex: 1;
+}
+
+/* Yükleme Ekranı */
+#yukleme-screen {
+    text-align: center;
+}
+
+.yukleme-container {
+    background-color: #2a2a2a;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+}
+
+.yukleme-bar {
+    height: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    margin: 20px 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.yukleme-ilerleyis {
+    height: 100%;
+    background-color: #4CAF50;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.yukleme-mesaj {
+    font-size: 18px;
+    margin-top: 15px;
+    color: #aaa;
+}
+
+/* Ayarlar Ekranı */
+#ayarlar-screen h2 {
+    font-size: 2.2em;
+    margin-bottom: 30px;
+    color: #4CAF50;
+    text-align: center;
+}
+
+.ayarlar-form {
+    background-color: #2a2a2a;
+    padding: 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    margin: 0 auto;
+}
+
+.ayar-grup {
+    margin-bottom: 20px;
+}
+
+.ayar-grup label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.ayar-grup select, 
+.ayar-grup input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a3a;
+    color: white;
+    font-size: 1em;
+}
+
+.checkbox-grup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-grup input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.ayar-butonlar {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-ayar {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#btn-ayarlari-kaydet {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#btn-ayarlari-kaydet:hover {
+    background-color: #45a049;
+}
+
+#btn-ayarlari-iptal {
+    background-color: #f44336;
+    color: white;
+}
+
+#btn-ayarlari-iptal:hover {
+    background-color: #d32f2f;
+}
+
+/* Oyun Ekranı */
+#oyun-screen {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Oyun Kartları ve Kart Alanları Düzeni */
+.kart {
+    position: relative;
+    width: 120px;
+    height: 170px;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    user-select: none;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    overflow: hidden;
+}
+
+.kart:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.kart.secili {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    border: 3px solid #ffcc00;
+}
+
+.kart-baslik {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.kart-atomno {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.kart-isim {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #0066cc;
+}
+
+.kart-detay {
+    font-size: 12px;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Bot Kartları */
+.bot-alan .kart {
+    width: 72px; /* %60 küçük */
+    height: 102px; /* %60 küçük */
+    margin: 3px;
+    padding: 6px;
+}
+
+.bot-alan .kart-baslik {
+    font-size: 14px;
+}
+
+.bot-alan .kart-atomno {
+    font-size: 10px;
+}
+
+.bot-alan .kart-isim {
+    font-size: 10px;
+    margin-top: 5px;
+}
+
+.bot-alan .kart-detay {
+    font-size: 8px;
+    margin-top: 2px;
+}
+
+/* Çek */
+.cek-alani {
+    width: 120px;
+    height: 170px;
+    margin: 10px auto;
+    border-radius: 10px;
+    background-color: #333;
+    border: 2px solid #666;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    background-image: linear-gradient(45deg, #333 25%, #444 25%, #444 50%, #333 50%, #333 75%, #444 75%, #444 100%);
+    background-size: 20px 20px;
+}
+
+/* Oyun İçi Butonlar */
+.buton-grubu {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.oyun-buton {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.oyun-buton:hover {
+    background-color: #45a049;
+}
+
+.oyun-buton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.oyun-buton.gizli {
+    display: none;
+}
+
+/* Oyun Yükleniyor Mesajı */
+#oyun-yukleniyor {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    z-index: 1000;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Minimal Tasarım */
+.oyun-alan {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.ust-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #333;
+}
+
+.orta-alan {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.bot-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.bot-alan {
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #333;
+    width: 30%;
+}
+
+.oyuncu-alan {
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #333;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#oyuncu-kartlari {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Sürükle-Bırak için Stil */
+.sürüklenebilir {
+    cursor: grab;
+}
+
+.sürüklenen {
+    opacity: 0.7;
+    cursor: grabbing;
+}
+
+.hedef-alan {
+    min-height: 200px;
+    border: 2px dashed #666;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.hedef-alan.üzerinde {
+    background-color: rgba(76, 175, 80, 0.3);
+    border-color: #4CAF50;
+}
+
+/* Durum mesajı stil */
+#durum-mesaji {
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+/* Kontrol paneli */
+.kontroller-icerik {
+    background-color: #333;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 600px;
+    width: 90%;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.kontroller-icerik h3 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #4CAF50;
+}
+
+.kontroller-icerik ul {
+    list-style-type: none;
+    padding: 0 20px;
+}
+
+.kontroller-icerik li {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.btn-kapat {
+    display: block;
+    width: 150px;
+    margin: 20px auto 0;
+    padding: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Duyarlı tasarım */
+@media (max-width: 768px) {
+    .bot-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .bot-alan {
+        width: 100%;
+    }
+    
+    .orta-alan {
+        flex-direction: column;
+    }
+    
+    .buton-grubu {
+        flex-wrap: wrap;
+    }
+    
+    .kart {
+        width: 100px;
+        height: 142px;
+    }
+    
+    .bot-alan .kart {
+        width: 60px;
+        height: 85px;
+    }
+} 

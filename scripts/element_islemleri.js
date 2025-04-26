@@ -255,6 +255,60 @@ function atomNoyaGoreElementBul(elementler, atomNo) {
     return elementler.find(element => element.atom_no === atomNo);
 }
 
+/**
+ * Element İşlemleri - elementler.csv dosyasından veri yükleme
+ */
+
+// Element verilerini CSV dosyasından yükle
+async function elementleriCSVdenYukle() {
+    try {
+        const response = await fetch('../elementler.csv');
+        const csvData = await response.text();
+        
+        return csvDosyasindanElementleriParsele(csvData);
+    } catch (error) {
+        console.error('CSV dosyası yüklenirken hata oluştu:', error);
+        // Hata durumunda varsayılan element verilerini dön
+        return ELEMENT_VERILERI;
+    }
+}
+
+// CSV verisini parse et
+function csvDosyasindanElementleriParsele(csvVeri) {
+    const satirlar = csvVeri.split('\n');
+    const elementler = [];
+    
+    // Başlık satırını atla
+    for (let i = 1; i < satirlar.length; i++) {
+        const satir = satirlar[i].trim();
+        if (satir.length === 0) continue;
+        
+        const parcalar = satir.split(',');
+        if (parcalar.length < 6) continue;
+        
+        const [atomNumarasi, sembol, isim, grupNumarasi, periyotNumarasi, grupTuru] = parcalar;
+        
+        elementler.push({
+            id: parseInt(atomNumarasi),
+            sembol,
+            isim,
+            atomNumarasi: parseInt(atomNumarasi),
+            grupNumarasi,
+            periyotNumarasi: parseInt(periyotNumarasi),
+            grupTuru
+        });
+    }
+    
+    return elementler;
+}
+
+// Element verilerini yukarıdaki fonksiyonları kullanarak yükle
+async function elementVerileriniYukle() {
+    const elementler = await elementleriCSVdenYukle();
+    console.log(`${elementler.length} element başarıyla yüklendi`);
+    return elementler;
+}
+
 // Tüm fonksiyonları global olarak erişilebilir yap
 window.ELEMENT_VERILERI = ELEMENT_VERILERI;
 window.csvDosyasindanElementleriYukle = csvDosyasindanElementleriYukle;
@@ -264,4 +318,6 @@ window.grupElementleriniGetir = grupElementleriniGetir;
 window.periyotElementleriniGetir = periyotElementleriniGetir;
 window.elementBul = elementBul;
 window.atomNoyaGoreElementBul = atomNoyaGoreElementBul;
-window.elementTuruneGoreRenkGetir = elementTuruneGoreRenkGetir; 
+window.elementTuruneGoreRenkGetir = elementTuruneGoreRenkGetir;
+window.elementVerileriniYukle = elementVerileriniYukle;
+window.csvDosyasindanElementleriParsele = csvDosyasindanElementleriParsele; 

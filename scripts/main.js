@@ -4,7 +4,7 @@
  */
 
 // Temel Element Verileri
-const ELEMENT_VERILERI = [
+const ELEMENT_VERILERI_ANA = [
     { atom_no: 1, sembol: "H", isim: "Hidrojen", grup: 1, periyot: 1 },
     { atom_no: 2, sembol: "He", isim: "Helyum", grup: 18, periyot: 1 },
     { atom_no: 3, sembol: "Li", isim: "Lityum", grup: 1, periyot: 2 },
@@ -143,6 +143,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error(`Ekran bulunamadı: ${ekranId}`);
         }
     }
+    
+    // Global erişim için ekraniGoster fonksiyonunu dışa açalım
+    window.ekraniGoster = ekraniGoster;
     
     // Element kartı oluşturma fonksiyonu
     function elementKartiOlustur(element) {
@@ -1149,7 +1152,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Global erişim için element verilerini ekleyelim
-window.ELEMENT_VERILERI = ELEMENT_VERILERI; 
+window.ELEMENT_VERILERI_ANA = ELEMENT_VERILERI_ANA; 
 // Event Listeners
 function eventListenerleriEkle() {
     // Ana menü butonları

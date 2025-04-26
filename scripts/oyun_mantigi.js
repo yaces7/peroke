@@ -290,69 +290,76 @@ class PeriyodikOkey {
 
     /**
      * Botların sırasını işle
-     * @private
      */
     botlarinSirasiniIsle() {
+        // Oyun devam ediyor mu?
         if (this.oyunDurumu !== 'devam') return;
         
-        console.log("Bot sırası işleniyor... Aktif oyuncu:", this.aktifOyuncu);
+        // Aktif oyuncu oyuncu ise işlem yapma
+        if (this.aktifOyuncu === 0) return;
         
-        // Güvenlik kontrolü: Aktif oyuncu oyuncu ise bot hamlesi yapma
-        if (this.aktifOyuncu === 0) {
-            console.warn("Hata: Bot sırası işlenirken aktif oyuncu oyuncu!");
+        const botId = this.aktifOyuncu;
+        console.log(`Bot sırası işleniyor: Bot ${botId}`);
+        
+        // Eğer bot kartını atmış ve fazla kartı yoksa, sıradaki oyuncuya geç
+        if (this.fazlaKartiOlanOyuncu === null) {
+            // Bot hamlesi yap
+            let sonuc = this.tekBotHamlesiYap(botId);
+            
+            if (sonuc === "hatali_sira") {
+                console.log(`Hatalı sıra, bir sonraki oyuncuya geçiliyor`);
+                this.siradakiOyuncuyaGec();
+                return;
+            } else if (sonuc === "kart_cekme_hatasi") {
+                console.log(`Kart çekme hatası, sırayı düzeltiyorum`);
+                this.aktifOyuncu = botId;
+                return;
+            }
+        } else if (this.fazlaKartiOlanOyuncu === botId) {
+            // Bot elinden kart atmalı
+            try {
+                console.log(`Bot ${botId} elinden kart atıyor`);
+                const atilacakKart = this.botKartSecimi(botId);
+                this.botKartAt(botId, atilacakKart);
+                this.oyuncuKartCekildi = false;
+            } catch (error) {
+                console.error(`Bot ${botId} kart atarken hata:`, error);
+                this.siradakiOyuncuyaGec(); // Hata olursa sıradaki oyuncuya geç
+            }
+        } else {
+            // Fazla kart başka birinde, bir şey yapma
+            console.warn(`Bot ${botId} sırası ama fazla kart başka birinde:`, this.fazlaKartiOlanOyuncu);
+            this.siradakiOyuncuyaGec();
+        }
+    }
+
+    /**
+     * Sıradaki oyuncuya geç
+     */
+    siradakiOyuncuyaGec() {
+        // Oyun bitmiş mi kontrolü
+        if (this.oyunDurumu !== 'devam') return;
+        
+        // Fazla kartı olan oyuncu var mı kontrolü
+        if (this.fazlaKartiOlanOyuncu !== null) {
+            console.error("Uyarı: Fazla kartı olan oyuncu varken sıra geçilmeye çalışılıyor!");
             return;
         }
         
-        const botId = this.aktifOyuncu;
+        // Sıradaki oyuncuya geç
+        this.aktifOyuncu = (this.aktifOyuncu + 1) % (this.botSayisi + 1);
+        console.log(`Sıra şimdi: ${this.aktifOyuncu === 0 ? 'Oyuncu' : 'Bot ' + this.aktifOyuncu}'da`);
         
-        try {
-            // Bot hamlesini rastgele bir gecikmeden sonra yap (daha doğal gözükmesi için)
-            const gecikme = Math.floor(Math.random() * 400) + 800; // 800-1200ms arası
-            
-            console.log(`Bot ${botId} hamlesi ${gecikme}ms sonra yapılacak`);
-            
+        // Bot ise otomatik oyna
+        if (this.aktifOyuncu !== 0) {
+            // Kısa bir gecikme ile bot hamlesi yap
             setTimeout(() => {
-                try {
-                    // Bot hamlesi yap
-                    const sonuc = this.tekBotHamlesiYap(botId);
-                    console.log(`Bot ${botId} hamlesi sonucu:`, sonuc);
-                    
-                    // Sonraki bota geç
-                    if (this.aktifOyuncu === botId) { // Eğer aktif oyuncu değişmediyse
-                        const sonrakiOyuncu = (botId < this.botSayisi) ? botId + 1 : 0;
-                        this.aktifOyuncu = sonrakiOyuncu;
-                        
-                        // Eğer sonraki oyuncu da bot ise, onun sırasını işle
-                        if (sonrakiOyuncu !== 0) {
-                            console.log(`Sıra Bot ${sonrakiOyuncu}'e geçti`);
-                            this.botlarinSirasiniIsle();
-                        } else {
-                            console.log("Sıra oyuncuya geçti");
-                            this.oyuncuKartCekildi = false; // Oyuncu için kart çekme durumunu sıfırla
-                        }
-                    }
-                } catch (error) {
-                    console.error(`Bot ${botId} hamlesi yapılırken hata:`, error);
-                    
-                    // Hata durumunda bir sonraki bota geç
-                    const sonrakiOyuncu = (botId < this.botSayisi) ? botId + 1 : 0;
-                    this.aktifOyuncu = sonrakiOyuncu;
-                    
-                    if (sonrakiOyuncu !== 0) {
-                        console.log(`Hata sonrası sıra Bot ${sonrakiOyuncu}'e geçti`);
-                        this.botlarinSirasiniIsle();
-                    } else {
-                        console.log("Hata sonrası sıra oyuncuya geçti");
-                        this.oyuncuKartCekildi = false;
-                    }
-                }
-            }, gecikme);
-        } catch (error) {
-            console.error("Bot sırası işlenirken beklenmeyen hata:", error);
-            // Ciddi bir hata varsa oyuncuya geç
-            this.aktifOyuncu = 0;
-            this.oyuncuKartCekildi = false;
+                this.botlarinSirasiniIsle();
+            }, 800);
         }
+        
+        this.oyuncuKartCekildi = false;
+        return this.aktifOyuncu;
     }
 
     /**

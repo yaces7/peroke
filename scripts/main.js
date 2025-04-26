@@ -545,7 +545,47 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Oyuna başla butonu
     document.getElementById('btn-oyuna-basla').addEventListener('click', () => {
-        oyunuBaslat();
+        ekraniGoster('oyun-baslangic-screen');
+    });
+    
+    // Oyunu başlat butonu
+    document.getElementById('btn-oyunu-baslat').addEventListener('click', () => {
+        // Seçilen ayarları al
+        const botSayisi = document.querySelector('.secim-buton.secili[data-value="1"], .secim-buton.secili[data-value="2"], .secim-buton.secili[data-value="3"]').dataset.value;
+        const zorluk = document.querySelector('.secim-buton.secili[data-value="kolay"], .secim-buton.secili[data-value="orta"], .secim-buton.secili[data-value="zor"]').dataset.value;
+        const oyuncuIsmi = document.getElementById('baslangic-oyuncu-ismi').value.trim() || 'Oyuncu';
+        
+        // Ayarları güncelle
+        OYUN_AYARLARI.botSayisi = parseInt(botSayisi, 10);
+        OYUN_AYARLARI.zorlukSeviyesi = zorluk;
+        OYUN_AYARLARI.oyuncuIsmi = oyuncuIsmi;
+        
+        // Yükleme ekranını göster
+        ekraniGoster('yukleme-screen');
+        
+        // 3 saniye sonra oyunu başlat
+        setTimeout(() => {
+            oyunuBaslat();
+        }, 3000);
+    });
+    
+    // Başlangıç iptal butonu
+    document.getElementById('btn-baslangic-iptal').addEventListener('click', () => {
+        ekraniGoster('menu-screen');
+    });
+    
+    // Seçim butonları için olay dinleyicileri
+    document.querySelectorAll('.secim-buton').forEach(buton => {
+        buton.addEventListener('click', function() {
+            // Aynı gruptaki diğer butonlardan seçili sınıfını kaldır
+            const grup = this.parentNode;
+            grup.querySelectorAll('.secim-buton').forEach(b => {
+                b.classList.remove('secili');
+            });
+            
+            // Bu butona seçili sınıfını ekle
+            this.classList.add('secili');
+        });
     });
     
     // Ayarlar butonu

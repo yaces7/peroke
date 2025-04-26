@@ -1,7 +1,7 @@
 /**
  * Periyodik Tablo Element Verileri
  */
-var ELEMENT_VERILERI = [
+const ELEMENT_VERILERI = [
     {
         id: 1,
         sembol: "H",
@@ -98,7 +98,7 @@ var ELEMENT_VERILERI = [
 ];
 
 // Joker kartlar
-var JOKER_VERILERI = [
+const JOKER_VERILERI = [
     {
         id: 119,
         sembol: "SE1",
@@ -168,7 +168,7 @@ if (typeof module !== 'undefined' && module.exports) {
  */
 
 // Elementlerin varsayılan verileri
-var ELEMENT_VERILERI_OKEY = [
+const ELEMENT_VERILERI_OKEY = [
     { atom_no: 1, sembol: "H", isim: "Hidrojen", grup: 1, periyot: 1, element_turu: "Ametal" },
     { atom_no: 2, sembol: "He", isim: "Helyum", grup: 18, periyot: 1, element_turu: "Soy Gaz" },
     { atom_no: 3, sembol: "Li", isim: "Lityum", grup: 1, periyot: 2, element_turu: "Alkali Metal" },

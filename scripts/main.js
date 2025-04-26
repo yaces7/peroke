@@ -912,19 +912,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Ana menüdeki butonların işlevselliği
-    document.getElementById('btn-nasil-oynanir').addEventListener('click', () => {
-        document.getElementById('menu-screen').classList.add('gizli');
-        document.getElementById('nasil-oynanir-screen').classList.remove('gizli');
+    document.getElementById('nasil-oynanir-btn').addEventListener('click', () => {
+        document.getElementById('ana-menu-ekrani').classList.add('gizli');
+        document.getElementById('nasil-oynanir-ekrani').classList.remove('gizli');
     });
     
-    document.getElementById('btn-istatistikler').addEventListener('click', () => {
-        document.getElementById('menu-screen').classList.add('gizli');
-        document.getElementById('istatistikler-screen').classList.remove('gizli');
+    document.getElementById('istatistikler-btn').addEventListener('click', () => {
+        document.getElementById('ana-menu-ekrani').classList.add('gizli');
+        document.getElementById('istatistikler-ekrani').classList.remove('gizli');
     });
     
-    document.getElementById('btn-ayarlar').addEventListener('click', () => {
-        document.getElementById('menu-screen').classList.add('gizli');
-        document.getElementById('ayarlar-screen').classList.remove('gizli');
+    document.getElementById('ayarlar-btn').addEventListener('click', () => {
+        document.getElementById('ana-menu-ekrani').classList.add('gizli');
+        document.getElementById('ayarlar-ekrani').classList.remove('gizli');
+    });
+    
+    // Yeni oyun butonu
+    document.getElementById('yeni-oyun-btn').addEventListener('click', () => {
+        document.getElementById('ana-menu-ekrani').classList.add('gizli');
+        document.getElementById('oyun-ekrani').classList.remove('gizli');
+        
+        // Test kartlarını oluştur
+        testKartlariOlustur();
+        
+        // İlk tur başlat
+        turBaslat();
     });
     
     // Ekranlardan ana menüye dönüş butonları
@@ -935,22 +947,102 @@ document.addEventListener('DOMContentLoaded', () => {
                 ekran.classList.add('gizli');
             });
             // Ana menüyü göster
-            document.getElementById('menu-screen').classList.remove('gizli');
+            document.getElementById('ana-menu-ekrani').classList.remove('gizli');
         });
     });
     
-    // Oyun içindeki butonlar
-    document.getElementById('btn-oyun-menu').addEventListener('click', () => {
-        // Oyun ekranını gizle ve ana menüyü göster
-        document.getElementById('oyun-screen').classList.add('gizli');
-        document.getElementById('menu-screen').classList.remove('gizli');
-    });
+    // Her ekrandaki geri butonlarına özel olay dinleyicileri
+    if (document.getElementById('nasil-oynanir-geri-btn')) {
+        document.getElementById('nasil-oynanir-geri-btn').addEventListener('click', () => {
+            document.getElementById('nasil-oynanir-ekrani').classList.add('gizli');
+            document.getElementById('ana-menu-ekrani').classList.remove('gizli');
+        });
+    }
     
-    document.getElementById('btn-oyun-yardim').addEventListener('click', () => {
-        // Oyun ekranını gizle ve nasıl oynanır ekranını göster
-        document.getElementById('oyun-screen').classList.add('gizli');
-        document.getElementById('nasil-oynanir-screen').classList.remove('gizli');
-    });
+    if (document.getElementById('istatistik-geri-btn')) {
+        document.getElementById('istatistik-geri-btn').addEventListener('click', () => {
+            document.getElementById('istatistikler-ekrani').classList.add('gizli');
+            document.getElementById('ana-menu-ekrani').classList.remove('gizli');
+        });
+    }
+    
+    if (document.getElementById('ayarlar-geri-btn')) {
+        document.getElementById('ayarlar-geri-btn').addEventListener('click', () => {
+            document.getElementById('ayarlar-ekrani').classList.add('gizli');
+            document.getElementById('ana-menu-ekrani').classList.remove('gizli');
+        });
+    }
+    
+    // Oyun ekranındaki butonlar
+    if (document.getElementById('ana-menu-don-btn')) {
+        document.getElementById('ana-menu-don-btn').addEventListener('click', () => {
+            document.getElementById('oyun-ekrani').classList.add('gizli');
+            document.getElementById('ana-menu-ekrani').classList.remove('gizli');
+        });
+    }
+    
+    if (document.getElementById('yardim-btn')) {
+        document.getElementById('yardim-btn').addEventListener('click', () => {
+            document.getElementById('oyun-ekrani').classList.add('gizli');
+            document.getElementById('nasil-oynanir-ekrani').classList.remove('gizli');
+        });
+    }
+    
+    // Kart çekme butonları
+    if (document.getElementById('kart-cek-btn')) {
+        document.getElementById('kart-cek-btn').addEventListener('click', () => {
+            if (kartCekildi) {
+                durumMesajiGoster("Her tur sadece bir kart çekebilirsiniz!", '#ff0000');
+                return;
+            }
+            
+            console.log("Desteden kart çekiliyor...");
+            destedenKartCek();
+        });
+    }
+    
+    // Oyun sonu ekranındaki butonlar
+    if (document.getElementById('yeni-oyun-baslat-btn')) {
+        document.getElementById('yeni-oyun-baslat-btn').addEventListener('click', () => {
+            document.getElementById('oyun-sonu-ekrani').classList.add('gizli');
+            document.getElementById('oyun-ekrani').classList.remove('gizli');
+            
+            // Yeni oyun başlat
+            testKartlariOlustur();
+            turBaslat();
+        });
+    }
+    
+    if (document.getElementById('oyun-sonu-ana-menu-btn')) {
+        document.getElementById('oyun-sonu-ana-menu-btn').addEventListener('click', () => {
+            document.getElementById('oyun-sonu-ekrani').classList.add('gizli');
+            document.getElementById('ana-menu-ekrani').classList.remove('gizli');
+        });
+    }
+    
+    // İstatistikler temizleme butonu
+    if (document.getElementById('istatistik-temizle-btn')) {
+        document.getElementById('istatistik-temizle-btn').addEventListener('click', () => {
+            // İstatistikleri sıfırla
+            const varsayilanIstatistikler = {
+                oyunSayisi: 0,
+                kazanmaSayisi: 0,
+                kaybetmeSayisi: 0,
+                toplamPuan: 0,
+                enYuksekSkor: 0
+            };
+            
+            localStorage.setItem('periyodikOkey_istatistikler', JSON.stringify(varsayilanIstatistikler));
+            
+            // Ekrandaki istatistikleri güncelle
+            document.querySelectorAll('.istatistik-satir span:nth-child(2)').forEach(span => {
+                span.textContent = '0';
+            });
+            document.getElementById('kazanma-orani').textContent = '0%';
+            
+            durumMesajiGoster('İstatistikler temizlendi', '#008000', 2000);
+        });
+    }
     
     console.log("Periyodik Okey oyunu hazır!");
 }); 

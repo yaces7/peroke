@@ -153,7 +153,7 @@ function taslarıKaristir(taslar) {
 function taslarıDagit(taslar) {
     const oyuncuSayisi = oyunDurumu.oyuncular.length;
     
-    // Her oyuncuya başlangıç taş sayısı kadar taş ver (14 taş)
+    // Her oyuncuya başlangıç taş sayısı kadar taş ver
     for (let i = 0; i < OYUN_AYARLARI.baslangic_tas_sayisi; i++) {
         for (let j = 0; j < oyuncuSayisi; j++) {
             if (taslar.length > 0) {
@@ -161,12 +161,6 @@ function taslarıDagit(taslar) {
                 oyunDurumu.oyuncular[j].taslar.push(tas);
             }
         }
-    }
-    
-    // İlk oyuncuya (insan oyuncuya) fazladan bir taş ver (toplam 15 taş)
-    if (taslar.length > 0 && oyunDurumu.oyuncular.length > 0) {
-        const tas = taslar.pop();
-        oyunDurumu.oyuncular[0].taslar.push(tas);
     }
     
     // Açık taş oluştur
@@ -803,7 +797,7 @@ class PeriyodikOkey {
             }
         }
         
-        // Oyuncuya fazladan bir kart ver (toplam 15 kart olacak)
+        // Oyuncuya fazladan bir kart ver
         if (this.deste.length > 0) {
             this.oyuncu.kartlar.push(this.deste.pop());
         }

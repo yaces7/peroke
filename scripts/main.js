@@ -89,20 +89,39 @@ function varsayilanElementleriGetir() {
     return varsayilanElementler;
 }
     
-    // Ekranları gösterme/gizleme
-    function ekraniGoster(ekranId) {
-    console.log("Ekran değiştiriliyor: " + ekranId);
-        document.querySelectorAll('.ekran').forEach(ekran => {
-            ekran.classList.add('gizli');
-        ekran.style.display = 'none';
+// Ekranları gösterme/gizleme
+function ekraniGoster(ekranId) {
+    // Tüm ekranları gizle
+    document.querySelectorAll('.yukleniyor-ekrani, .menu-container, #oyunEkrani, #nasilOynanirEkrani, #yapimcilarEkrani').forEach(ekran => {
+        ekran.classList.add('gizli');
     });
-    const ekran = document.getElementById(ekranId);
-    if (ekran) {
-        ekran.classList.remove('gizli');
-        ekran.style.display = 'block';
-    } else {
-        console.error(`Ekran bulunamadı: ${ekranId}`);
+    
+    // İstenilen ekranı göster
+    document.getElementById(ekranId).classList.remove('gizli');
+}
+
+// Menü ekranına geçiş
+function menuEkraniniGoster() {
+    ekraniGoster('menuEkrani');
+}
+
+// Oyun ekranına geçiş
+function oyunEkraniniGoster() {
+    ekraniGoster('oyunEkrani');
+    // Oyun başlatılmadıysa başlat
+    if (!window.oyun || !window.oyun.oyunDurumuGetir().devamEdiyor) {
+        oyunuBaslat();
     }
+}
+
+// Nasıl Oynanır ekranına geçiş
+function nasilOynanirEkraniniGoster() {
+    ekraniGoster('nasilOynanirEkrani');
+}
+
+// Yapımcılar ekranına geçiş
+function yapimcilarEkraniniGoster() {
+    ekraniGoster('yapimcilarEkrani');
 }
 
 // Element kartı oluşturma

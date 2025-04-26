@@ -692,19 +692,32 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Oyun butonları
     document.getElementById('btn-kontrol-et')?.addEventListener('click', function() {
-        if (seciliKartlar.length < 3) {
-            alert("En az 3 kart seçmelisiniz!");
-            return;
-        }
-        
         if (oyun) {
-            const kombinasyonSonuc = oyun.kombinasyonKontrolEtVeKaldir(seciliKartlar);
+            // Artık seçili kartları değil, tüm kartları kontrol ediyoruz
+            const kombinasyonSonuc = oyun.tumKartlariKontrolEt();
             
             if (kombinasyonSonuc) {
-                seciliKartlar = [];
+                // Başarılı kombinasyon - kartlar otomatik çıkarıldı
+                seciliKartlar = []; // Seçili kartları temizle
                 oyunDurumunuGuncelle();
+                
+                // Başarılı mesajı göster
+                const durumMesaji = document.getElementById('durum-mesaji');
+                if (durumMesaji) {
+                    durumMesaji.textContent = "Kombinasyon başarılı!";
+                    durumMesaji.style.color = "#4CAF50";
+                    
+                    // 2 saniye sonra eski haline getir
+                    setTimeout(() => {
+                        durumMesaji.style.color = "";
+                        if (oyun.oyunDurumuGetir().aktifOyuncu === 0) {
+                            durumMesaji.textContent = "Sıra sizde. Desteden kart çekin veya açık kartı alın.";
+                        }
+                    }, 2000);
+                }
             } else {
-                alert("Geçersiz kombinasyon. Lütfen aynı grupta veya periyotta olan kartları seçin.");
+                // Başarısız kombinasyon
+                alert("Geçerli bir kombinasyon bulunamadı veya çok fazla kart kalıyor!");
             }
         }
     });

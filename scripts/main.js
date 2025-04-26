@@ -411,6 +411,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // Global olarak ElementKartiSinifi'ni tanımla
+    window.ElementKartiSinifi = ElementKartiSinifi;
+    
     // Sürükleme ile ilgili değişkenler
     let suruklenenKart = null;
     
@@ -493,9 +496,20 @@ document.addEventListener('DOMContentLoaded', () => {
      * Test amaçlı belirli grup ve periyot örüntüsüne sahip kartlar oluşturur
      */
     function testKartlariOlustur() {
-        elementVerileriniYukle().then(elementVerileri => {
+        console.log("Test kartları oluşturuluyor...");
+        try {
+            // Element verilerini doğrudan kullan
+            const elementVerileri = window.ELEMENT_VERILERI_OKEY;
+            if (!elementVerileri || elementVerileri.length === 0) {
+                console.error("Element verileri bulunamadı!");
+                return;
+            }
+            
             const oyuncuKartlari = document.getElementById('oyuncu-kartlari');
-            if (!oyuncuKartlari) return;
+            if (!oyuncuKartlari) {
+                console.error("Oyuncu kartları alanı bulunamadı!");
+                return;
+            }
 
             // Oyuncu kartlarını temizle
             oyuncuKartlari.innerHTML = '';
@@ -511,18 +525,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 !(grup1Elementleri.includes(e) || periyot2Elementleri.includes(e))
             ).sort(() => Math.random() - 0.5).slice(0, 7);
 
-            // Tüm kartları birleştir ve karıştır (toplam 14 kart)
+            // Tüm kartları birleştir (toplam 14 kart)
             const tumKartlar = [...grup1Elementleri, ...periyot2Elementleri, ...digerElementler];
+            
+            console.log(`Toplam ${tumKartlar.length} kart oluşturulacak`);
             
             // Kartları oluştur ve ekle
             tumKartlar.forEach(element => {
-                const kart = elementKartiOlusturDOM(element);
-                oyuncuKartlari.appendChild(kart);
+                try {
+                    const kart = elementKartiOlusturDOM(element);
+                    oyuncuKartlari.appendChild(kart);
+                } catch (err) {
+                    console.error(`Kart oluşturulurken hata: ${err.message}`);
+                }
             });
             
             // Bot kartlarını oluştur (gizli)
-            for (let i = 1; i <= 3; i++) {
-                const botKartlari = document.getElementById(`bot${i}-alani`).querySelector('.bot-kartlar');
+            for (let i = 1; i <= 2; i++) {
+                const botKartlari = document.getElementById(`bot${i}-kartlar`);
+                if (!botKartlari) {
+                    console.error(`Bot ${i} kartları alanı bulunamadı!`);
+                    continue;
+                }
+                
                 botKartlari.innerHTML = '';
                 
                 // Her bota 14 kart ekle
@@ -536,9 +561,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
+            // Açık kart oluştur
+            const acikKartAlani = document.getElementById('acik-kart');
+            if (acikKartAlani) {
+                acikKartAlani.innerHTML = '';
+                
+                // Rastgele bir element seç
+                const randomIndex = Math.floor(Math.random() * elementVerileri.length);
+                const acikKart = elementKartiOlusturDOM(elementVerileri[randomIndex]);
+                acikKartAlani.appendChild(acikKart);
+            }
+            
             // Kalan kart sayısını güncelle
-            document.getElementById('kalan-kart').textContent = kalanKartSayisi - 56; // 56 kart dağıtıldı
-        });
+            const kalanKartSpan = document.getElementById('kalan-kart');
+            if (kalanKartSpan) {
+                kalanKartSayisi = 100; // Demo için sabit değer
+                kalanKartSpan.textContent = kalanKartSayisi;
+            }
+        } catch (error) {
+            console.error("Test kartları oluşturulurken hata:", error);
+        }
     }
     
     /**
@@ -1176,32 +1218,40 @@ function elementKartiOlusturDOM(element, takim = 1, joker = false) {
         return document.createElement('div');
     }
     
-    // ElementKartiSinifi sınıfını kullanarak kart nesnesi oluştur
-    const elementKarti = new ElementKartiSinifi(element);
-    
-    // Kart HTML elementini oluştur
-    const kartDiv = elementKarti.htmlOlustur(false);
-    
-    // Karta tıklama işlevi ekle
-    kartDiv.addEventListener('click', function(e) {
-        // Diğer seçili kartları temizle
-        document.querySelectorAll('.element-kart.secili').forEach(kart => {
-            kart.classList.remove('secili');
+    try {
+        // ElementKartiSinifi sınıfını kullanarak kart nesnesi oluştur
+        const elementKarti = new ElementKartiSinifi(element);
+        
+        // Kart HTML elementini oluştur
+        const kartDiv = elementKarti.htmlOlustur(false);
+        
+        // Karta tıklama işlevi ekle
+        kartDiv.addEventListener('click', function(e) {
+            // Diğer seçili kartları temizle
+            document.querySelectorAll('.element-kart.secili').forEach(kart => {
+                kart.classList.remove('secili');
+            });
+            
+            // Bu kartı seçili yap
+            this.classList.toggle('secili');
         });
         
-        // Bu kartı seçili yap
-        this.classList.toggle('secili');
-    });
-    
-    // Kartı sürüklenebilir yap
-    kartDiv.setAttribute('draggable', 'true');
-    kartDiv.addEventListener('dragstart', handleDragStart);
-    kartDiv.addEventListener('dragend', handleDragEnd);
-    
-    // Takım bilgisini ekle
-    kartDiv.dataset.takim = takim;
-    
-    return kartDiv;
+        // Kartı sürüklenebilir yap
+        kartDiv.setAttribute('draggable', 'true');
+        
+        if (typeof handleDragStart === 'function' && typeof handleDragEnd === 'function') {
+            kartDiv.addEventListener('dragstart', handleDragStart);
+            kartDiv.addEventListener('dragend', handleDragEnd);
+        }
+        
+        // Takım bilgisini ekle
+        kartDiv.dataset.takim = takim;
+        
+        return kartDiv;
+    } catch (error) {
+        console.error("Kart oluşturma hatası:", error);
+        return document.createElement('div');
+    }
 }
 
 // Oyunu başlat

@@ -105,66 +105,22 @@ h2 {
 }
 
 .bot-alani {
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    padding: 8px;
-    margin: 10px 0;
-    background-color: rgba(220, 220, 220, 0.8);
-    position: relative;
-    transition: all 0.3s ease;
+    flex: 1;
+    margin: 0 10px;
+    padding: 10px;
+    background-color: #1f4068;
+    border-radius: 5px;
+    text-align: center;
 }
 
-/* Botların zorluk seviyelerine göre renk kodlaması */
-.bot-alani[data-zorluk="kolay"] {
-    border-color: #4CAF50;
-    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+.bot-bilgi {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }
 
-.bot-alani[data-zorluk="orta"] {
-    border-color: #FFC107;
-    box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
-}
-
-.bot-alani[data-zorluk="zor"] {
-    border-color: #F44336;
-    box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
-}
-
-/* Bot ismi alanı */
 .bot-isim {
     font-weight: bold;
-    padding: 5px;
-    border-radius: 5px;
-    background-color: #333;
-    color: white;
-    display: inline-block;
-    margin-bottom: 8px;
-    font-size: 14px;
-}
-
-/* Bot zorluk seviyesi etiketi */
-.bot-zorluk {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    padding: 3px 8px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
-}
-
-.bot-zorluk.kolay {
-    background-color: #4CAF50;
-}
-
-.bot-zorluk.orta {
-    background-color: #FFC107;
-    color: #333;
-}
-
-.bot-zorluk.zor {
-    background-color: #F44336;
 }
 
 /* Orta Alan */
@@ -272,7 +228,7 @@ h2 {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: #000000;
+    color: #e6e6e6;
 }
 
 .element-kart:hover {
@@ -291,7 +247,6 @@ h2 {
     top: 5px;
     left: 5px;
     font-size: 12px;
-    color: #000000;
 }
 
 .element-kart .sembol {
@@ -299,26 +254,23 @@ h2 {
     font-weight: bold;
     text-align: center;
     margin-top: 10px;
-    color: #000000;
 }
 
 .element-kart .isim {
     font-size: 10px;
     text-align: center;
-    color: #000000;
 }
 
 /* Element kartlarındaki grup-periyot bilgileri */
 .element-kart .grup-periyot {
     font-size: 11px;
     font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
     padding: 2px 4px;
     margin: 2px auto;
     text-align: center;
     width: 80%;
-    color: #000000;
 }
 
 .element-kart .takim {
@@ -327,7 +279,6 @@ h2 {
     right: 5px;
     font-size: 10px;
     font-weight: bold;
-    color: #000000;
 }
 
 .element-kart.arka-yuz {
@@ -340,9 +291,8 @@ h2 {
 
 .element-kart.arka-yuz::after {
     content: "PO";
-    font-size: 16px;
+    font-size: 24px;
     font-weight: bold;
-    color: #4cc9f0;
 }
 
 /* Joker kartı */
@@ -426,531 +376,4 @@ h2 {
     .kontroller {
         flex-wrap: wrap;
     }
-}
-
-/* Bildirim stilleri */
-.bildirim {
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    z-index: 9999;
-    color: #000000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease;
-    margin-bottom: 10px;
-    max-width: 80%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.bildirim-success {
-    background-color: #a3ffb3; /* Açık yeşil */
-    border-left: 5px solid #28a745;
-}
-
-.bildirim-error {
-    background-color: #ffb3b3; /* Açık kırmızı */
-    border-left: 5px solid #dc3545;
-}
-
-.bildirim-warning {
-    background-color: #ffe0b3; /* Açık turuncu */
-    border-left: 5px solid #ffc107;
-}
-
-.bildirim-info {
-    background-color: #b3e0ff; /* Açık mavi */
-    border-left: 5px solid #17a2b8;
-}
-
-/* Sabit puan göstergesi */
-.sabit-puan {
-    background-color: rgba(25, 118, 210, 0.8);
-    color: white;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 16px;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    z-index: 50;
-}
-
-.sabit-puan-deger {
-    color: #ffd700;
-    font-size: 18px;
-}
-
-/* Puan değişimi animasyonu sabit puan için de geçerli */
-.sabit-puan-deger.puan-degisti {
-    animation: puanDegisimi 0.5s ease-in-out;
-    color: #ffff00;
-    text-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -10px); }
-    to { opacity: 1; transform: translate(-50%, 0); }
-}
-
-/* Kart stilleri için ek düzenlemeler */
-.element-kart {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-    user-select: none;
-}
-
-.element-kart.secili {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    border: 3px solid #ff0000 !important;
-}
-
-.element-kart:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Puan animasyonu */
-@keyframes puanDegisimi {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.5); }
-    100% { transform: scale(1); }
-}
-
-.puan-degisti {
-    animation: puanDegisimi 0.5s ease-in-out;
-}
-
-/* Oyuncu ve bot puanları için gelişmiş stiller */
-.oyuncu-puan, .bot-puan {
-    font-weight: bold;
-    padding: 5px 8px;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    display: inline-block;
-    min-width: 30px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.oyuncu-puan {
-    font-size: 20px;
-    color: #ffd700; /* Altın rengi */
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-}
-
-.bot-puan {
-    font-size: 16px;
-    color: #ff9900; /* Turuncu */
-}
-
-/* Bot Kartları Stilleri */
-.bot-kartlar {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-}
-
-.bot-kart {
-    width: 20px;
-    height: 30px;
-    margin: 2px;
-    display: inline-block;
-    background-color: #0f3460;
-    border: 1px solid #4cc9f0;
-    border-radius: 3px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.bot-kart:hover {
-    transform: scale(1.05);
-}
-
-.arka-yuz.bot-kart::after {
-    content: "PO";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 8px;
-    font-weight: bold;
-    color: #4cc9f0;
-}
-
-.po-kart {
-    width: 40px;
-    height: 60px;
-    background-color: #0f3460;
-    color: #4cc9f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-.po-kart::after {
-    content: "PO";
-    font-size: 16px;
-    font-weight: bold;
-}
-
-/* Konuşma Balonu Stilleri */
-.konusma-balonu {
-    position: absolute;
-    background-color: #f9fafb;
-    color: #111827;
-    padding: 8px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    max-width: 150px;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    top: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: balon-goster 0.3s ease-in-out forwards;
-    border: 1px solid #e5e7eb;
-}
-
-.konusma-balonu::after {
-    content: "";
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 10px 10px 0;
-    border-style: solid;
-    border-color: #f9fafb transparent transparent;
-}
-
-.konusma-balonu.kaybol {
-    animation: balon-kaybol 0.5s ease-in-out forwards;
-}
-
-@keyframes balon-goster {
-    0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-}
-
-@keyframes balon-kaybol {
-    0% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-10px);
-    }
-}
-
-/* Ayarlar ekranı stillerini güncelle */
-.bot-sayisi-secici, .zorluk-seviyesi-secici {
-    margin: 15px 0;
-}
-
-.secim-etiket {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-select, input[type="range"] {
-    width: 100%;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-}
-
-.ayar-aciklama {
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
-}
-
-/* Ayarlar kaydet butonu */
-#btn-ayarlar-kaydet {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 20px;
-    width: 100%;
-    transition: background-color 0.3s;
-}
-
-#btn-ayarlar-kaydet:hover {
-    background-color: #218838;
-}
-
-/* Yıldız Sistemi */
-.oyuncu-yildizlar, .bot1-yildizlar, .bot2-yildizlar, .bot3-yildizlar {
-    display: flex;
-    margin: 0 5px;
-}
-
-.yildiz {
-    color: gold;
-    font-size: 18px;
-    margin: 0 2px;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-    animation: yildiz-parlama 1.5s infinite alternate;
-}
-
-@keyframes yildiz-parlama {
-    from {
-        opacity: 0.7;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-}
-
-/* Bot bilgi alanı düzenlemeleri */
-.bot-bilgi {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    padding: 5px;
-}
-
-/* Oyuncu bilgi alanı düzenlemeleri */
-.oyuncu-bilgi {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    padding: 5px;
-    margin-bottom: 10px;
-}
-
-/* Tur Başlangıç Animasyonu */
-.tur-baslangic-animasyon {
-    position: relative;
-    animation: pulseBackground 2s infinite;
-    overflow: hidden;
-}
-
-.tur-baslangic-mesaji {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 36px;
-    font-weight: bold;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px 40px;
-    border-radius: 10px;
-    z-index: 9999;
-    animation: pulse 1s infinite;
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
-}
-
-@keyframes pulseBackground {
-    0% {
-        box-shadow: 0 0 10px 5px rgba(255, 215, 0, 0.2) inset;
-    }
-    50% {
-        box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.5) inset;
-    }
-    100% {
-        box-shadow: 0 0 10px 5px rgba(255, 215, 0, 0.2) inset;
-    }
-}
-
-@keyframes pulse {
-    0% {
-        opacity: 0.8;
-        transform: translate(-50%, -50%) scale(0.95);
-    }
-    50% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.05);
-    }
-    100% {
-        opacity: 0.8;
-        transform: translate(-50%, -50%) scale(0.95);
-    }
-}
-
-/* Büyük Bildirim Stilleri */
-.buyuk-bildirim {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 80%;
-    padding: 20px 30px;
-    border-radius: 10px;
-    color: #000;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    z-index: 9999;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    animation: buyukBildirimGoster 0.5s ease-out;
-}
-
-.buyuk-bildirim.kaybol {
-    animation: buyukBildirimKaybol 1s ease-in-out forwards;
-}
-
-.buyuk-bildirim-success {
-    background-color: rgba(46, 204, 113, 0.9);
-    border: 3px solid #27ae60;
-}
-
-.buyuk-bildirim-error {
-    background-color: rgba(231, 76, 60, 0.9);
-    border: 3px solid #c0392b;
-}
-
-.buyuk-bildirim-warning {
-    background-color: rgba(241, 196, 15, 0.9);
-    border: 3px solid #f39c12;
-}
-
-.buyuk-bildirim-info {
-    background-color: rgba(52, 152, 219, 0.9);
-    border: 3px solid #2980b9;
-}
-
-@keyframes buyukBildirimGoster {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -70%);
-    }
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
-@keyframes buyukBildirimKaybol {
-    0% {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-    100% {
-        opacity: 0;
-        transform: translate(-50%, -30%);
-    }
-}
-
-/* Gelişmiş Yıldız Gösterge Stilleri */
-.yildiz {
-    display: inline-block;
-    font-size: 24px;
-    margin: 0 3px;
-    color: gold;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    animation: yildizParlat 2s infinite alternate;
-}
-
-.yildiz-sayisi {
-    color: gold;
-    font-weight: bold;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.7);
-    animation: yildizSayisiParlat 1.5s infinite alternate;
-}
-
-@keyframes yildizParlat {
-    0% {
-        opacity: 0.8;
-        transform: scale(0.9);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-}
-
-@keyframes yildizSayisiParlat {
-    0% {
-        text-shadow: 0 0 5px rgba(255, 215, 0, 0.7);
-    }
-    100% {
-        text-shadow: 0 0 15px rgba(255, 215, 0, 1);
-    }
-}
-
-/* Bot ve Oyuncu Bilgi Alanları İçin Yıldız Kutusu */
-.bot-bilgi, .oyuncu-bilgi {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.bot-isim, .oyuncu-isim {
-    flex: 1;
-    font-weight: bold;
-}
-
-.bot1-yildizlar, .bot2-yildizlar, .bot3-yildizlar, .oyuncu-yildizlar {
-    display: flex;
-    justify-content: center;
-    flex: 2;
-    margin: 0 5px;
-}
-
-.bot-puan, .oyuncu-puan {
-    flex: 1;
-    text-align: right;
-}
-
-/* Kart Dağıtma Animasyonu */
-@keyframes kartDagit {
-    0% {
-        opacity: 0;
-        transform: translateY(-50px) rotate(-10deg);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) rotate(0);
-    }
-}
-
-.element-kart.yeni-dagitilan {
-    animation: kartDagit 0.5s ease-out forwards;
-}
-
-.bot-kart.yeni-dagitilan {
-    animation: kartDagit 0.5s ease-out forwards;
 }

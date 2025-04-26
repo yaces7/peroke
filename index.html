@@ -8,138 +8,26 @@
 </head>
 <body>
     <div id="oyun-container">
-        <!-- Ana Menü Ekranı -->
-        <div id="ana-menu-ekrani" class="ekran">
+        <div id="menu-screen" class="ekran">
             <h1>Periyodik Okey</h1>
             <div class="menu-buttons">
-                <button id="yeni-oyun-btn" class="btn">Yeni Oyun</button>
-                <button id="istatistikler-btn" class="btn">İstatistikler</button>
-                <button id="ayarlar-btn" class="btn">Ayarlar</button>
-                <button id="nasil-oynanir-btn" class="btn">Nasıl Oynanır?</button>
+                <button id="btn-oyuna-basla" class="btn">Oyuna Başla</button>
+                <button id="btn-nasil-oynanir" class="btn">Nasıl Oynanır</button>
+                <button id="btn-istatistikler" class="btn">İstatistikler</button>
+                <button id="btn-ayarlar" class="btn">Ayarlar</button>
+                <button id="btn-cikis" class="btn">Çıkış</button>
             </div>
         </div>
 
-        <!-- Oyun Ekranı -->
-        <div id="oyun-ekrani" class="ekran gizli">
-            <h1>Periyodik Okey</h1>
-            <div class="oyun-alani">
-                <div class="ust-panel">
-                    <button id="ana-menu-don-btn" class="btn btn-mini">Ana Menü</button>
-                    <div class="durum-mesaji" id="durum-mesaji">Oyun Başladı</div>
-                    <button id="yardim-btn" class="btn btn-mini">Yardım</button>
-                </div>
-
-                <!-- Bot Alanları -->
-                <div class="bot-alanlari">
-                    <div class="bot-alani">
-                        <div class="bot-bilgi">
-                            <div class="bot-isim">Bot 1</div>
-                            <div class="bot-puan" id="bot1-puan">0</div>
-                        </div>
-                        <div class="bot-kartlar" id="bot1-kartlar"></div>
-                    </div>
-                    <div class="bot-alani">
-                        <div class="bot-bilgi">
-                            <div class="bot-isim">Bot 2</div>
-                            <div class="bot-puan" id="bot2-puan">0</div>
-                        </div>
-                        <div class="bot-kartlar" id="bot2-kartlar"></div>
-                    </div>
-                </div>
-
-                <!-- Orta Alan -->
-                <div class="orta-alan">
-                    <div class="deste-alani">
-                        <h3>Deste</h3>
-                        <div class="deste-kart" id="deste-kart">
-                            <div class="element-kart arka-yuz"></div>
-                        </div>
-                        <div class="kalan-kart" id="kalan-kart">Kalan: 0</div>
-                    </div>
-                    <div class="acik-kart-alani">
-                        <h3>Açık Kart</h3>
-                        <div id="acik-kart"></div>
-                    </div>
-                </div>
-
-                <!-- Oyuncu Alanı -->
-                <div class="oyuncu-alani">
-                    <div class="oyuncu-bilgi">
-                        <div class="oyuncu-isim">Oyuncu</div>
-                        <div class="oyuncu-puan" id="oyuncu-puan">0</div>
-                    </div>
-                    <div class="oyuncu-kartlari" id="oyuncu-kartlari"></div>
-                </div>
-
-                <!-- Kontrol Butonları -->
-                <div class="kontroller">
-                    <button id="kart-cek" class="btn">Kart Çek</button>
-                    <button id="acik-kart-al" class="btn">Açık Kartı Al</button>
-                    <button id="kart-at" class="btn">Kart At</button>
-                    <button id="kontrol-et" class="btn">Kontrol Et</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- İstatistikler Ekranı -->
-        <div id="istatistikler-ekrani" class="ekran gizli">
-            <h1>İstatistikler</h1>
-            <div class="istatistik-kutusu">
-                <div class="istatistik-grup">
-                    <h2>Oyun İstatistikleri</h2>
-                    <div class="istatistik-satir">
-                        <span>Toplam Oyun:</span>
-                        <span id="toplam-oyun">0</span>
-                    </div>
-                    <div class="istatistik-satir">
-                        <span>Kazanılan Oyun:</span>
-                        <span id="kazanilan-oyun">0</span>
-                    </div>
-                    <div class="istatistik-satir">
-                        <span>Kaybedilen Oyun:</span>
-                        <span id="kaybedilen-oyun">0</span>
-                    </div>
-                    <div class="istatistik-satir">
-                        <span>Kazanma Oranı:</span>
-                        <span id="kazanma-orani">0%</span>
-                    </div>
-                </div>
-                <div class="istatistik-grup">
-                    <h2>Oyun Detayları</h2>
-                    <div class="istatistik-satir">
-                        <span>Yapılan Kombinasyon:</span>
-                        <span id="yapilan-kombinasyon">0</span>
-                    </div>
-                    <div class="istatistik-satir">
-                        <span>Toplam Puan:</span>
-                        <span id="toplam-puan">0</span>
-                    </div>
-                    <div class="istatistik-satir">
-                        <span>En Yüksek Puan:</span>
-                        <span id="en-yuksek-puan">0</span>
-                    </div>
-                    <div class="istatistik-satir">
-                        <span>Ortalama Puan:</span>
-                        <span id="ortalama-puan">0</span>
-                    </div>
-                </div>
-            </div>
-            <div class="menu-buttons">
-                <button id="istatistik-temizle-btn" class="btn">İstatistikleri Temizle</button>
-                <button id="istatistik-geri-btn" class="btn">Geri</button>
-            </div>
-        </div>
-
-        <!-- Ayarlar Ekranı -->
-        <div id="ayarlar-ekrani" class="ekran gizli">
+        <div id="ayarlar-screen" class="ekran gizli">
             <h1>Ayarlar</h1>
             <div class="ayarlar-form">
                 <div class="form-group">
                     <label for="bot-sayisi">Bot Sayısı:</label>
                     <select id="bot-sayisi">
                         <option value="1">1 Bot</option>
-                        <option value="2" selected>2 Bot</option>
-                        <option value="3">3 Bot</option>
+                        <option value="2">2 Bot</option>
+                        <option value="3" selected>3 Bot</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -151,73 +39,177 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="ses-efekti">Ses Efektleri:</label>
-                    <input type="checkbox" id="ses-efekti" checked>
+                    <label for="ses-efektleri">Ses Efektleri:</label>
+                    <input type="checkbox" id="ses-efektleri" checked>
                 </div>
                 <div class="form-group">
                     <label for="muzik">Müzik:</label>
                     <input type="checkbox" id="muzik" checked>
                 </div>
-                <div class="form-group">
-                    <label for="otomatik-yerlesim">Otomatik Yerleşim:</label>
-                    <input type="checkbox" id="otomatik-yerlesim" checked>
-                </div>
-                <div class="form-group">
-                    <label for="ipucu-goster">İpuçlarını Göster:</label>
-                    <input type="checkbox" id="ipucu-goster" checked>
-                </div>
             </div>
             <div class="menu-buttons">
-                <button id="ayarlar-kaydet-btn" class="btn">Kaydet</button>
-                <button id="ayarlar-geri-btn" class="btn">Geri</button>
+                <button id="btn-ayarlar-kaydet" class="btn">Kaydet</button>
+                <button id="btn-ayarlar-iptal" class="btn btn-geri">İptal</button>
             </div>
         </div>
 
-        <!-- Nasıl Oynanır Ekranı -->
-        <div id="nasil-oynanir-ekrani" class="ekran gizli">
-            <h1>Nasıl Oynanır?</h1>
-            <div>
-                <h2>Oyunun Amacı</h2>
-                <p>Periyodik Okey, periyodik tablo elementlerini kullanarak oynanan bir kart oyunudur. Oyunun amacı, periyodik tablodaki aynı gruba veya periyoda ait elementleri bir araya getirerek yıldız kazanmak ve 3 yıldıza ulaşarak oyunu kazanmaktır.</p>
-                
+        <div id="nasil-oynanir-screen" class="ekran gizli">
+            <h1>Nasıl Oynanır</h1>
+            <div class="kural-kutusu">
                 <h2>Oyun Kuralları</h2>
+                <p>Periyodik Okey, elementlerin periyodik tablosundan esinlenerek oluşturulmuş bir kart oyunudur.</p>
+                <h3>Temel Kurallar</h3>
                 <ul>
-                    <li>Oyuna 14 kart ile başlarsınız, botlar da 14'er kart alır.</li>
-                    <li>Sırayla kart çekilir.</li>
-                    <li>Oyuncu kendi kartları arasında aynı grupta veya aynı periyotta olan elementleri bir araya getirmelidir.</li>
-                    <li>Kontrol Et butonuna basıldığında, uygun kombinasyonlar otomatik olarak tespit edilir.</li>
-                    <li>Eğer uygun kombinasyon varsa, tüm kartlar silinir ve bir yıldız kazanılır.</li>
-                    <li>İlk önce 3 yıldıza ulaşan oyunu kazanır.</li>
+                    <li>Oyun element kartlarıyla oynanır.</li>
+                    <li>Amaç, elinizdeki kartları grup veya periyot kombinasyonları yaparak bitirmektir.</li>
+                    <li>Bir grup kombinasyonu, aynı periyottaki 3 veya daha fazla ardışık gruba ait elementlerden oluşur.</li>
+                    <li>Bir periyot kombinasyonu, aynı gruptaki 3 veya daha fazla ardışık periyoda ait elementlerden oluşur.</li>
                 </ul>
-                
-                <h2>Periyodik Tablo Bilgileri</h2>
-                <p>Element kartlarının üzerinde grup ve periyot bilgileri bulunur. Aynı gruptaki veya aynı periyottaki elementleri bir araya getirerek kombinasyon yapabilirsiniz.</p>
+                <h3>Oyun Akışı</h3>
+                <ol>
+                    <li>Her oyuncuya 7 kart dağıtılır.</li>
+                    <li>Sıra size geldiğinde, desteden bir kart çekebilir veya açık kartı alabilirsiniz.</li>
+                    <li>Kombinasyon yapabiliyorsanız, kartları ilgili alana sürükleyip bırakın ve "Kontrol Et" butonuna basın.</li>
+                    <li>Elinizden bir kartı atmak için, kartı seçin ve "Kart Ver" butonuna basın.</li>
+                    <li>Elinizdeki tüm kartları bitirdiğinizde oyunu kazanırsınız.</li>
+                </ol>
             </div>
             <div class="menu-buttons">
-                <button id="nasil-oynanir-geri-btn" class="btn">Geri</button>
+                <button class="btn btn-geri">Ana Menü</button>
             </div>
         </div>
 
-        <!-- Oyun Sonu Ekranı -->
-        <div id="oyun-sonu-ekrani" class="ekran gizli">
-            <h1>Oyun Sonu</h1>
-            <div class="sonuc-kutusu">
-                <h2 id="sonuc-baslik">Tebrikler! Kazandınız!</h2>
-                <div class="sonuc-detay" id="sonuc-detay">
-                    Oyuncu: 3 yıldız | Bot 1: 0 yıldız | Bot 2: 1 yıldız
+        <div id="istatistikler-screen" class="ekran gizli">
+            <h1>İstatistikler</h1>
+            <div class="istatistik-kutusu">
+                <div class="istatistik-grup">
+                    <h2>Oyun İstatistikleri</h2>
+                    <div class="istatistik-satir">
+                        <span>Toplam Oyun:</span>
+                        <span id="oyun-sayisi">0</span>
+                    </div>
+                    <div class="istatistik-satir">
+                        <span>Kazanılan Oyun:</span>
+                        <span id="kazanma-sayisi">0</span>
+                    </div>
+                    <div class="istatistik-satir">
+                        <span>Kaybedilen Oyun:</span>
+                        <span id="kaybetme-sayisi">0</span>
+                    </div>
+                    <div class="istatistik-satir">
+                        <span>Kazanma Oranı:</span>
+                        <span id="kazanma-orani">0%</span>
+                    </div>
+                </div>
+                <div class="istatistik-grup">
+                    <h2>Puan İstatistikleri</h2>
+                    <div class="istatistik-satir">
+                        <span>En Yüksek Puan:</span>
+                        <span id="en-yuksek-skor">0</span>
+                    </div>
+                    <div class="istatistik-satir">
+                        <span>Toplam Puan:</span>
+                        <span id="toplam-puan">0</span>
+                    </div>
                 </div>
             </div>
             <div class="menu-buttons">
-                <button id="yeni-oyun-baslat-btn" class="btn">Yeni Oyun</button>
-                <button id="oyun-sonu-ana-menu-btn" class="btn">Ana Menü</button>
+                <button id="btn-istatistik-sifirla" class="btn">İstatistikleri Sıfırla</button>
+                <button id="btn-istatistik-geri" class="btn btn-geri">Ana Menü</button>
+            </div>
+        </div>
+
+        <div id="oyun-screen" class="ekran gizli">
+            <div class="oyun-alani">
+                <div class="ust-panel">
+                    <div class="durum-mesaji" id="durum-mesaji">Oyun başladı!</div>
+                    <div class="oyun-butonlari">
+                        <button id="btn-oyun-menu" class="btn-mini">Menü</button>
+                        <button id="btn-oyun-yardim" class="btn-mini">Yardım</button>
+                    </div>
+                </div>
+                
+                <div class="bot-alanlari">
+                    <div class="bot-alani" id="bot1-alani">
+                        <div class="bot-bilgi">
+                            <span class="bot-isim">Bot 1</span>
+                            <span class="bot-puan" id="bot1-puan">0</span>
+                        </div>
+                        <div class="bot-kartlar"></div>
+                    </div>
+                    <div class="bot-alani" id="bot2-alani">
+                        <div class="bot-bilgi">
+                            <span class="bot-isim">Bot 2</span>
+                            <span class="bot-puan" id="bot2-puan">0</span>
+                        </div>
+                        <div class="bot-kartlar"></div>
+                    </div>
+                    <div class="bot-alani" id="bot3-alani">
+                        <div class="bot-bilgi">
+                            <span class="bot-isim">Bot 3</span>
+                            <span class="bot-puan" id="bot3-puan">0</span>
+                        </div>
+                        <div class="bot-kartlar"></div>
+                    </div>
+                </div>
+                
+                <div class="orta-alan">
+                    <div class="deste-alani">
+                        <canvas id="deste-canvas" width="100" height="140"></canvas>
+                        <div class="kalan-kart">Kalan: <span id="kalan-kart">54</span></div>
+                    </div>
+                    <div class="acik-kart-alani">
+                        <canvas id="acik-kart-canvas" width="100" height="140"></canvas>
+                    </div>
+                </div>
+                
+                <div class="kombinasyon-alani" id="kombinasyon-alani">
+                    <div class="kombinasyon-baslik">Kombinasyon Alanı</div>
+                    <div id="kombinasyon-icerik" class="kombinasyon-icerik surukle-hedef"></div>
+                </div>
+                
+                <div class="oyuncu-alani">
+                    <div class="oyuncu-bilgi">
+                        <span class="oyuncu-isim">Oyuncu</span>
+                        <span class="oyuncu-puan" id="oyuncu-puan">0</span>
+                    </div>
+                    <div id="oyuncu-kartlari" class="oyuncu-kartlari surukle-hedef"></div>
+                </div>
+
+                <div class="kontroller">
+                    <button id="btn-kontrol-et" class="btn">Kontrol Et</button>
+                    <button id="btn-kart-ver" class="btn">Kart Ver</button>
+                    <button id="btn-desteyi-ac" class="btn">Desteden Çek</button>
+                    <button id="btn-acik-karti-al" class="btn">Açık Kartı Al</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="oyun-sonu-screen" class="ekran gizli">
+            <h1>Oyun Sona Erdi</h1>
+            <div class="sonuc-kutusu">
+                <h2 id="sonuc-mesaji">Tebrikler! Kazandınız!</h2>
+                <div class="sonuc-detay">
+                    <p>Puanınız: <span id="sonuc-puan">0</span></p>
+                    <p>Grup Kombinasyonları: <span id="sonuc-grup">0</span></p>
+                    <p>Periyot Kombinasyonları: <span id="sonuc-periyot">0</span></p>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button id="btn-yeni-oyun" class="btn">Yeni Oyun</button>
+                <button id="btn-ana-menu" class="btn btn-geri">Ana Menü</button>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Dosyaları -->
+    <!-- Scripts -->
     <script src="scripts/element_verileri.js"></script>
-    <script src="scripts/kart_sablonu.js"></script>
+    <script src="scripts/element_islemleri.js"></script>
+    <script src="scripts/ses_yoneticisi.js"></script>
+    <script src="scripts/element_karti.js"></script>
+    <script src="scripts/oyun_mekanikleri.js"></script>
     <script src="scripts/oyun_mantigi.js"></script>
+    <script src="scripts/arayuz_kontrolu.js"></script>
     <script src="scripts/main.js"></script>
 </body>
 </html> 

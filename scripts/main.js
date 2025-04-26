@@ -242,32 +242,11 @@ function botKartlariniGoster(botId, kartSayisi) {
     if (botKartlarDiv) {
         botKartlarDiv.innerHTML = '';
         
-        // Bot kartları için düzen: iki satır halinde
-        const kartlarBirinci = Math.ceil(kartSayisi / 2); // İlk satırdaki kart sayısı
-        const kartlarIkinci = kartSayisi - kartlarBirinci; // İkinci satırdaki kart sayısı
-        
-        // İlk satır
-        const satirBir = document.createElement('div');
-        satirBir.className = 'bot-kart-satiri';
-        botKartlarDiv.appendChild(satirBir);
-        
-        // İkinci satır
-        const satirIki = document.createElement('div');
-        satirIki.className = 'bot-kart-satiri';
-        botKartlarDiv.appendChild(satirIki);
-        
-        // Birinci satır kartlarını oluştur
-        for (let i = 0; i < kartlarBirinci; i++) {
+        // Mini kart arka yüzleri oluştur
+        for (let i = 0; i < kartSayisi; i++) {
             const botKart = document.createElement('div');
             botKart.className = 'element-kart arka-yuz';
-            satirBir.appendChild(botKart);
-        }
-        
-        // İkinci satır kartlarını oluştur (varsa)
-        for (let i = 0; i < kartlarIkinci; i++) {
-            const botKart = document.createElement('div');
-            botKart.className = 'element-kart arka-yuz';
-            satirIki.appendChild(botKart);
+            botKartlarDiv.appendChild(botKart);
         }
     }
 }

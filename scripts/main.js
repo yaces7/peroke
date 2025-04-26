@@ -242,31 +242,32 @@ function botKartlariniGoster(botId, kartSayisi) {
     if (botKartlarDiv) {
         botKartlarDiv.innerHTML = '';
         
-        // Bot kartları için yuvaları oluştur
-        const kartDizilimi = document.createElement('div');
-        kartDizilimi.className = 'bot-kart-dizilimi';
-        kartDizilimi.style.display = 'flex';
-        kartDizilimi.style.width = '100%';
+        // Bot kartları için düzen: iki satır halinde
+        const kartlarBirinci = Math.ceil(kartSayisi / 2); // İlk satırdaki kart sayısı
+        const kartlarIkinci = kartSayisi - kartlarBirinci; // İkinci satırdaki kart sayısı
         
-        // Bot kartlarını oluştur (arka yüz)
-        for (let i = 0; i < kartSayisi; i++) {
+        // İlk satır
+        const satirBir = document.createElement('div');
+        satirBir.className = 'bot-kart-satiri';
+        botKartlarDiv.appendChild(satirBir);
+        
+        // İkinci satır
+        const satirIki = document.createElement('div');
+        satirIki.className = 'bot-kart-satiri';
+        botKartlarDiv.appendChild(satirIki);
+        
+        // Birinci satır kartlarını oluştur
+        for (let i = 0; i < kartlarBirinci; i++) {
             const botKart = document.createElement('div');
             botKart.className = 'element-kart arka-yuz';
-            botKartlarDiv.appendChild(botKart);
+            satirBir.appendChild(botKart);
         }
         
-        // Kartta kaç tane olduğunu göster
-        const botBilgi = document.querySelector(`.bot-bilgi:has(+ #bot${botId}-kartlar)`);
-        if (botBilgi) {
-            const kartSayisiGosterge = botBilgi.querySelector('.bot-kart-sayisi');
-            if (kartSayisiGosterge) {
-                kartSayisiGosterge.textContent = `(${kartSayisi} kart)`;
-            } else {
-                const yeniGosterge = document.createElement('span');
-                yeniGosterge.className = 'bot-kart-sayisi';
-                yeniGosterge.textContent = `(${kartSayisi} kart)`;
-                botBilgi.appendChild(yeniGosterge);
-            }
+        // İkinci satır kartlarını oluştur (varsa)
+        for (let i = 0; i < kartlarIkinci; i++) {
+            const botKart = document.createElement('div');
+            botKart.className = 'element-kart arka-yuz';
+            satirIki.appendChild(botKart);
         }
     }
 }
@@ -372,7 +373,7 @@ function acikKartiGoster(kart) {
         } else {
             const bosKart = document.createElement('div');
             bosKart.className = 'element-kart bos-kart';
-            bosKart.textContent = 'Açık kart yok';
+            bosKart.textContent = 'Boş';
             acikKartAlani.appendChild(bosKart);
         }
     }

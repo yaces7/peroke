@@ -28,6 +28,7 @@ body {
 
 .gizli {
     display: none !important;
+    visibility: hidden !important;
 }
 
 /* Ana Menü Stili */

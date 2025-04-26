@@ -414,19 +414,21 @@ body {
 /* Bot Alanları */
 .bot-alanlari {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-around;
     width: 100%;
-    margin-bottom: 20px;
-    gap: 15px;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
 }
 
 .bot-alan {
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    background: #222;
-    border-radius: 8px;
-    width: 100%;
+    padding: 8px;
+    background: rgba(34, 34, 34, 0.7);
+    border-radius: 6px;
+    width: 30%;
 }
 
 .bot-alan.gizli {
@@ -436,8 +438,9 @@ body {
 .bot-bilgi {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     color: #fff;
+    font-size: 0.85em;
 }
 
 .bot-isim {
@@ -445,9 +448,10 @@ body {
 }
 
 .bot-mesaj {
-    margin-left: 10px;
+    margin-left: 8px;
     opacity: 0;
     font-style: italic;
+    font-size: 0.8em;
     animation: mesajGoster 0.5s forwards;
 }
 
@@ -458,31 +462,29 @@ body {
 .bot-kartlar {
     display: flex;
     flex-wrap: wrap;
-    gap: 3px;
-    overflow-x: auto;
-    padding: 5px 0;
-    min-height: 80px;
+    justify-content: center;
+    gap: 1px;
+    overflow-x: hidden;
+    min-height: 50px;
 }
 
 .bot-kartlar .element-kart.arka-yuz {
-    transform: scale(0.65);
-    margin: -6px;
+    transform: scale(0.5);
+    margin: -10px;
     display: inline-block;
     transform-origin: center center;
     position: relative;
+    width: 25px;
+    height: 40px;
 }
 
-.bot-kartlar .element-kart.arka-yuz:first-child,
-.bot-kartlar .element-kart.arka-yuz:hover {
-    z-index: 2;
-}
-
-/* Bot kart düzeni için */
+/* Bot kart düzeni için - kompakt düzen */
 .bot-kart-satiri {
     display: flex;
     flex-wrap: wrap;
-    gap: 2px;
-    margin-bottom: 2px;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 0;
 }
 
 .orta-alan {

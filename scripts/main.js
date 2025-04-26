@@ -798,35 +798,52 @@ document.addEventListener('DOMContentLoaded', function() {
 // Botların sıra geçişi sırasında takılma sorununu engellemek için güvenlik mekanizması
 let sonAktifOyuncu = 0;
 let ayniOyuncudaKalmaSuresi = 0;
+let botSiraBekleme = false;
 
 function botSirasiGuvenligi() {
     if (!oyun || oyun.oyunDurumu !== 'devam') {
+        // Oyun yoksa veya bittiyse işlem yapma
+        ayniOyuncudaKalmaSuresi = 0;
+        sonAktifOyuncu = 0;
+        botSiraBekleme = false;
         return;
     }
     
     const aktifOyuncu = oyun.oyunDurumuGetir().aktifOyuncu;
     
-    // Eğer hala aynı bot aktifse ve botsa
+    // Eğer hala aynı bot aktifse
     if (aktifOyuncu === sonAktifOyuncu && aktifOyuncu > 0) {
         ayniOyuncudaKalmaSuresi += 1;
         console.log(`Bot ${aktifOyuncu} hala oynuyor... (${ayniOyuncudaKalmaSuresi}s)`);
         
-        // Eğer 5 saniyeden fazla aynı botta kalındıysa, sırayı ilerlet
-        if (ayniOyuncudaKalmaSuresi >= 5) {
+        // Eğer 3 saniyeden fazla aynı botta kalındıysa, sırayı ilerlet
+        if (ayniOyuncudaKalmaSuresi >= 3 && !botSiraBekleme) {
             console.warn(`Bot ${aktifOyuncu} takıldı! Sırayı ilerletiyorum.`);
+            botSiraBekleme = true;
             
-            // Bot 2'de özel sorun varsa
-            if (aktifOyuncu === 2) {
-                console.log("Bot 2 takılma sorunu tespit edildi, düzeltiliyor...");
-            }
-            
-            // Bir sonraki bota geç
-            oyun.aktifOyuncu = (aktifOyuncu < oyun.botSayisi) ? aktifOyuncu + 1 : 0;
-            oyun.oyuncuKartCekildi = false;
-            
-            // Botların sırasını yeniden başlat
-            if (oyun.aktifOyuncu > 0) {
-                oyun.botlarinSirasiniIsle();
+            try {
+                // Bir sonraki bota geç
+                const yeniBotId = (aktifOyuncu < oyun.botSayisi) ? aktifOyuncu + 1 : 0;
+                oyun.aktifOyuncu = yeniBotId;
+                
+                // Eğer yeni bot değilse (yani oyuncuya geçtiyse)
+                if (yeniBotId === 0) {
+                    oyun.oyuncuKartCekildi = false;
+                    console.log("Takılma nedeniyle sıra oyuncuya geçti");
+                } else {
+                    // Botların sırasını yeniden başlat
+                    setTimeout(() => {
+                        console.log(`Sıra Bot ${yeniBotId}'e geçti, bot sırasını işliyorum...`);
+                        botSiraBekleme = false;
+                        oyun.botlarinSirasiniIsle();
+                    }, 500);
+                }
+            } catch (err) {
+                console.error("Bot sırası düzeltilirken hata:", err);
+                // Hata olursa direkt oyuncuya geç
+                oyun.aktifOyuncu = 0;
+                oyun.oyuncuKartCekildi = false;
+                botSiraBekleme = false;
             }
             
             // Durumu sıfırla
@@ -838,11 +855,12 @@ function botSirasiGuvenligi() {
     } else {
         // Farklı oyuncuya geçildiyse, sayacı sıfırla
         ayniOyuncudaKalmaSuresi = 0;
+        botSiraBekleme = false;
     }
     
     // Aktif oyuncuyu güncelle
     sonAktifOyuncu = aktifOyuncu;
 }
 
-// Periyodik olarak bot sırası kontrolü yap (daha sık)
-setInterval(botSirasiGuvenligi, 1000); // 1 saniyede bir kontrol et
+// Periyodik olarak bot sırası kontrolü yap (her saniye)
+setInterval(botSirasiGuvenligi, 1000);
